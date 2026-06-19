@@ -1,0 +1,59 @@
+Sheet: MEMBERS
+First Name,Last Name,Email,Phone,Birth Date,Gender,Address,Join Date,Ministry,Status,Photo URL,Notes
+Jean,Baptiste,jean.baptiste@email.com,829-123-4567,1985-03-15,Male,"123 Main St, Santo Domingo",2024-01-15,Worship Team,Active,,Regular attendee
+
+Sheet: STAFF
+Full Name,Email,Phone,Role/Title,Department,Start Date,Employment Type,Bio,Photo URL
+Pastor Emmanuel Dieujuste,pastor@tabernacle.church,829-377-1099,Senior Pastor,Pastoral Team,2020-01-01,Full-Time,Leading the church with passion and dedication,
+
+Sheet: VOLUNTEERS
+First Name,Last Name,Email,Phone,Ministry/Service Area,Availability,Skills,Status,Start Date,Photo URL,Notes
+Jean,Dupont,jean.dupont@email.com,829-777-8888,Worship Team,"Sundays, Wednesdays",Music - Guitar,Active,2025-01-15,,"Plays guitar and bass"
+
+Sheet: VISITORS
+Full Name,Visit Date,Email,Phone,How They Heard About Us,Follow-up Status,Notes,Photo URL
+John Smith,2026-06-02,john.smith@email.com,829-111-2222,Friend/Family,Pending,"First time visitor, interested in youth programs",
+
+---
+
+EXCEL INSTRUCTIONS:
+
+This file can be opened in Microsoft Excel or Google Sheets. It contains all four import templates in one file.
+
+HOW TO USE:
+1. Open this file in Excel or Google Sheets
+2. You'll see sample data in each section
+3. Delete the sample rows (keep headers)
+4. Fill in your data
+5. Save/Export each section as a separate CSV file when ready to import
+
+EXCEL SPECIFIC NOTES:
+- Each "Sheet:" section represents a separate worksheet
+- To create in Excel: Create 4 worksheets named MEMBERS, STAFF, VOLUNTEERS, VISITORS
+- Copy the respective headers and data to each sheet
+- Format date columns as "Date" with YYYY-MM-DD format
+- Use Data Validation for dropdown fields (Status, Ministry, Department, etc.)
+
+DROPDOWN LISTS (Optional but recommended):
+- Ministry: Worship Team, Children's Ministry, Youth Ministry, Hospitality, Tech Team, Prayer Team, Outreach, Administration
+- Status: Active, Inactive, On Leave
+- Department: Pastoral Team, Finance, Administration, Worship, Children's Ministry, Youth Ministry, Communications, Facilities, Events
+- Employment Type: Full-Time, Part-Time, Volunteer, Contract
+- Gender: Male, Female, (blank)
+- How They Heard: Friend/Family, Social Media, Website, Passing By, Other
+- Follow-up Status: Pending, Contacted, Scheduled, Completed, No Response
+
+EXPORTING FROM EXCEL TO CSV:
+1. Select the worksheet you want to export (e.g., MEMBERS)
+2. File → Save As
+3. Choose "CSV (Comma delimited) (*.csv)"
+4. Save with appropriate name (e.g., members-import.csv)
+5. Repeat for each worksheet
+
+GOOGLE SHEETS EXPORT:
+1. Select the worksheet
+2. File → Download → Comma Separated Values (.csv)
+3. Only the current sheet will be exported
+4. Repeat for each sheet
+
+For detailed instructions, see README.md in the templates folder.

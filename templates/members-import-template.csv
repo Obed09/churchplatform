@@ -1,0 +1,19 @@
+First Name,Last Name,Email,Phone,Birth Date,Gender,Address,Join Date,Ministry,Status,Photo URL,Notes
+Jean,Baptiste,jean.baptiste@email.com,829-123-4567,1985-03-15,Male,"123 Main St, Santo Domingo",2024-01-15,Worship Team,Active,,Regular attendee
+Marie,Laurent,marie.laurent@email.com,829-234-5678,1990-07-22,Female,"456 Oak Ave, Santiago",2025-03-20,Children's Ministry,Active,,Loves working with kids
+Pierre,Dubois,pierre.dubois@email.com,829-345-6789,1988-11-30,Male,"789 Pine Rd, La Romana",2023-06-10,Youth Ministry,Active,,Youth leader
+Sophie,Martin,sophie.martin@email.git initcom,829-456-7890,1992-05-18,Female,"321 Elm St, Puerto Plata",2024-11-05,Hospitality,Active,,Greeter team member
+Andre,Joseph,andre.joseph@email.com,829-567-8901,1980-09-25,Male,"654 Maple Dr, San Pedro",2022-08-22,Tech Team,Inactive,,Technical support
+
+Instructions:
+- Fill in all required fields: First Name, Last Name, Email, Phone, Join Date, Ministry, Status
+- Birth Date format: YYYY-MM-DD (e.g., 1985-03-15)
+- Join Date format: YYYY-MM-DD (e.g., 2024-01-15)
+- Gender options: Male, Female, or leave blank
+- Ministry options: Worship Team, Children's Ministry, Youth Ministry, Hospitality, Tech Team, Prayer Team, Outreach, Administration
+- Status options: Active, Inactive
+- Photo URL: Leave blank for now (will be added manually after upload)
+- Notes: Any additional information about the member
+- Keep the header row (first line) exactly as shown
+- Remove the sample rows and add your own members
+- Save as CSV (Comma delimited) format

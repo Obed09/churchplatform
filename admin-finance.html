@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Department - Church Management</title>
+    <link rel="stylesheet" href="css/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-body">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="images/main logo withe BG.png" alt="Church Logo" class="sidebar-logo">
+            <h3>Church Admin</h3>
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="admin-finance.html" class="nav-item active">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Finance</span>
+            </a>
+            <a href="admin-administration.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Administration</span>
+            </a>
+            <a href="admin-events.html" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="admin-communications.html" class="nav-item">
+                <i class="fas fa-bullhorn"></i>
+                <span>Communications</span>
+            </a>
+            <a href="admin-facilities.html" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Facilities</span>
+            </a>
+            <a href="admin-ministries.html" class="nav-item">
+                <i class="fas fa-hands-praying"></i>
+                <span>Ministries</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="nav-item" target="_blank">
+                <i class="fas fa-globe"></i>
+                <span>View Website</span>
+            </a>
+            <a href="admin-login.html" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1><i class="fas fa-dollar-sign"></i> Finance Department</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn-primary" onclick="openModal('transactionModal')">
+                    <i class="fas fa-plus"></i> Add Transaction
+                </button>
+            </div>
+        </header>
+
+        <!-- Finance Content -->
+        <div class="admin-content">
+            <!-- Financial Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalIncome">$0</h3>
+                        <p>Total Income (June)</p>
+                        <span class="stat-change positive">+12.3%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalExpenses">$0</h3>
+                        <p>Total Expenses (June)</p>
+                        <span class="stat-change negative">-5.2%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="netBalance">$0</h3>
+                        <p>Net Balance</p>
+                        <span class="stat-change positive">Healthy</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="savings">$0</h3>
+                        <p>Savings Fund</p>
+                        <span class="stat-change">Building fund</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('requests')">
+                        <i class="fas fa-file-invoice"></i> Requests
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('donations')">
+                        <i class="fas fa-donate"></i> Donations
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('expenses')">
+                        <i class="fas fa-file-invoice-dollar"></i> Expenses
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('reports')">
+                        <i class="fas fa-chart-line"></i> Reports
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('budget')">
+                        <i class="fas fa-calculator"></i> Budget
+                    </button>
+                </div>
+            </div>
+
+            <!-- Requests Tab -->
+            <div id="requests-tab" class="tab-content active">
+                <div class="content-header">
+                    <h2>Finance Requests Management</h2>
+                    <div class="filter-group">
+                        <select id="requestStatusFilter" onchange="filterRequests()">
+                            <option value="all">All Statuses</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="under-review">Under Review</option>
+                            <option value="awaiting-info">Awaiting Information</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="awaiting-payment">Awaiting Payment</option>
+                            <option value="paid">Paid</option>
+                            <option value="receipt-pending">Receipt Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select id="requestDepartmentFilter" onchange="filterRequests()">
+                            <option value="all">All Departments</option>
+                            <option value="worship">Worship Team</option>
+                            <option value="childrens">Children's Ministry</option>
+                            <option value="youth">Youth Ministry</option>
+                            <option value="womens">Women's Ministry</option>
+                            <option value="mens">Men's Ministry</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="tech">Tech Team</option>
+                            <option value="facilities">Facilities</option>
+                            <option value="administration">Administration</option>
+                            <option value="outreach">Outreach</option>
+                        </select>
+                        <button class="btn-secondary" onclick="exportData('requests')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="btn-primary" onclick="window.open('finance-request.html', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> Public Request Form
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Request Statistics Cards -->
+                <div class="request-stats-grid">
+                    <div class="small-stat-card">
+                        <div class="stat-number" id="pendingRequestsCount">0</div>
+                        <div class="stat-label">Pending Review</div>
+                    </div>
+                    <div class="small-stat-card">
+                        <div class="stat-number" id="approvedRequestsCount">0</div>
+                        <div class="stat-label">Approved</div>
+                    </div>
+                    <div class="small-stat-card">
+                        <div class="stat-number" id="awaitingPaymentCount">0</div>
+                        <div class="stat-label">Awaiting Payment</div>
+                    </div>
+                    <div class="small-stat-card">
+                        <div class="stat-number" id="completedRequestsCount">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="small-stat-card">
+                        <div class="stat-number" id="totalRequestedAmount">RD$ 0</div>
+                        <div class="stat-label">Total Requested</div>
+                    </div>
+                    <div class="small-stat-card">
+                        <div class="stat-number" id="totalApprovedAmount">RD$ 0</div>
+                        <div class="stat-label">Total Approved</div>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table" id="requestsTable">
+                        <thead>
+                            <tr>
+                                <th>Request #</th>
+                                <th>Date</th>
+                                <th>Requestor</th>
+                                <th>Department</th>
+                                <th>Purpose</th>
+                                <th>Amount</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Donations Tab -->
+            <div id="donations-tab" class="tab-content">
+                <div class="content-header">
+                    <h2>Recent Donations</h2>
+                    <div class="filter-group">
+                        <select id="donationFilter" onchange="filterDonations()">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                        <button class="btn-secondary" onclick="exportData('donations')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table" id="donationsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Donor Name</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Method</th>
+                                <th>Purpose</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donationsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Expenses Tab -->
+            <div id="expenses-tab" class="tab-content">
+                <div class="content-header">
+                    <h2>Expense Records</h2>
+                    <div class="filter-group">
+                        <select id="expenseFilter" onchange="filterExpenses()">
+                            <option value="all">All Categories</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="salaries">Salaries</option>
+                            <option value="supplies">Supplies</option>
+                            <option value="outreach">Outreach</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table" id="expensesTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Payment Method</th>
+                                <th>Receipt</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expensesTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports-tab" class="tab-content">
+                <div class="content-header">
+                    <h2>Financial Reports</h2>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <div class="report-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3>Monthly Financial Report</h3>
+                        <p>June 2026 - Income, Expenses, and Balance Sheet</p>
+                        <button class="btn-secondary" onclick="generateReport('monthly')">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <h3>Donation Summary</h3>
+                        <p>Complete list of donations with donor information</p>
+                        <button class="btn-secondary" onclick="generateReport('donations')">
+                            <i class="fas fa-download"></i> Download Excel
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3>Expense Breakdown</h3>
+                        <p>Categorized expenses with visual charts</p>
+                        <button class="btn-secondary" onclick="generateReport('expenses')">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Annual Report</h3>
+                        <p>Year-to-date financial summary and projections</p>
+                        <button class="btn-secondary" onclick="generateReport('annual')">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Tab -->
+            <div id="budget-tab" class="tab-content">
+                <div class="content-header">
+                    <h2>Budget Management</h2>
+                    <button class="btn-primary" onclick="openModal('budgetModal')">
+                        <i class="fas fa-plus"></i> Add Budget Category
+                    </button>
+                </div>
+
+                <div class="budget-overview">
+                    <div class="budget-chart-container">
+                        <h3>Monthly Budget Overview</h3>
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+
+                    <div class="budget-list" id="budgetList">
+                        <!-- Budget items populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> Add Transaction</h2>
+                <button class="modal-close" onclick="closeModal('transactionModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="transactionForm" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionType">Transaction Type *</label>
+                        <select id="transactionType" required>
+                            <option value="">Select type</option>
+                            <option value="income">Income/Donation</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transactionDate">Date *</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionAmount">Amount ($) *</label>
+                        <input type="number" id="transactionAmount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="transactionCategory">Category *</label>
+                        <select id="transactionCategory" required>
+                            <option value="">Select category</option>
+                            <!-- Options populated based on transaction type -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionDescription">Description</label>
+                    <textarea id="transactionDescription" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionMethod">Payment Method *</label>
+                    <select id="transactionMethod" required>
+                        <option value="">Select method</option>
+                        <option value="cash">Cash</option>
+                        <option value="check">Check</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="transfer">Bank Transfer</option>
+                        <option value="online">Online Payment</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('transactionModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div id="requestDetailsModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-invoice"></i> Request Details</h2>
+                <button class="modal-close" onclick="closeModal('requestDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="requestDetailsContent">
+                <!-- Content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Payment Modal -->
+    <div id="processPaymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-money-check-alt"></i> Process Payment via Billet</h2>
+                <button class="modal-close" onclick="closeModal('processPaymentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="paymentRequestSummary">
+                    <!-- Request summary populated by JavaScript -->
+                </div>
+
+                <form id="processPaymentForm" class="modal-form">
+                    <input type="hidden" id="paymentRequestNumber">
+
+                    <div class="payment-info-card">
+                        <h3><i class="fas fa-mobile-alt"></i> Billet Payment Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>Account Holder:</strong>
+                                <span id="paymentBilletName"></span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Billet Phone:</strong>
+                                <span id="paymentBilletPhone"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentAmount">Payment Amount (RD$) <span class="required">*</span></label>
+                        <input type="number" id="paymentAmount" step="0.01" min="0" required readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method <span class="required">*</span></label>
+                        <select id="paymentMethod" required>
+                            <option value="">Select method</option>
+                            <option value="Billet" selected>Billet (Digital Wallet)</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Check">Check</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionId">Transaction ID / Reference Number <span class="required">*</span></label>
+                        <input type="text" id="transactionId" required placeholder="Enter Billet transaction ID or reference">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentDate">Payment Date <span class="required">*</span></label>
+                        <input type="date" id="paymentDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentNotes">Payment Notes</label>
+                        <textarea id="paymentNotes" rows="3" placeholder="Any additional notes about this payment..."></textarea>
+                    </div>
+
+                    <div class="confirmation-check">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="confirmPayment" required>
+                            <span>I confirm that payment has been successfully processed through Billet and the transaction is complete. <span class="required">*</span></span>
+                        </label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('processPaymentModal')">Cancel</button>
+                        <button type="submit" class="btn-success">
+                            <i class="fas fa-check-circle"></i> Mark Payment as Complete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Receipt Modal -->
+    <div id="uploadReceiptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-receipt"></i> Upload Payment Receipt</h2>
+                <button class="modal-close" onclick="closeModal('uploadReceiptModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="receiptRequestSummary">
+                    <!-- Request summary populated by JavaScript -->
+                </div>
+
+                <form id="uploadReceiptForm" class="modal-form">
+                    <input type="hidden" id="receiptRequestNumber">
+
+                    <div class="payment-confirmation-card">
+                        <h3><i class="fas fa-info-circle"></i> Payment Information</h3>
+                        <div id="receiptPaymentInfo">
+                            <!-- Payment info populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="receiptFile">Upload Receipt/Proof of Payment <span class="required">*</span></label>
+                        <div class="file-upload-zone" id="receiptFileUpload">
+                            <input type="file" id="receiptFile" accept="image/*,.pdf" required>
+                            <div class="upload-zone-content">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload receipt</p>
+                                <small>Accepted: Images (JPG, PNG) or PDF | Max 5MB</small>
+                            </div>
+                        </div>
+                        <div id="receiptFilePreview" class="file-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="receiptType">Receipt Type <span class="required">*</span></label>
+                        <select id="receiptType" required>
+                            <option value="">Select type</option>
+                            <option value="Billet Transaction">Billet Transaction Screenshot</option>
+                            <option value="Bank Receipt">Bank Receipt</option>
+                            <option value="Invoice">Paid Invoice</option>
+                            <option value="Official Receipt">Official Receipt</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="receiptNotes">Receipt Notes</label>
+                        <textarea id="receiptNotes" rows="3" placeholder="Any additional information about this receipt..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="verifyReceipt" checked>
+                            Verify and approve this receipt immediately
+                        </label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('uploadReceiptModal')">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-upload"></i> Upload Receipt
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin-sidebar.js"></script>
+    <script src="js/admin-finance.js"></script>
+    <script src="js/admin-finance-requests.js"></script>
+</body>
+</html>

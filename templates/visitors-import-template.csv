@@ -1,0 +1,16 @@
+Full Name,Visit Date,Email,Phone,How They Heard About Us,Follow-up Status,Notes,Photo URL
+John Smith,2026-06-02,john.smith@email.com,829-111-2222,Friend/Family,Pending,"First time visitor, interested in youth programs",
+Maria Garcia,2026-06-05,maria.garcia@email.com,829-333-4444,Social Media,Contacted,"Came for special event, wants to join choir",
+Carlos Hernandez,2026-06-09,carlos.hernandez@email.com,829-555-6666,Website,Pending,"Visiting from out of town",
+
+Instructions:
+- Fill in all required fields: Full Name, Visit Date, Phone
+- Visit Date format: YYYY-MM-DD (e.g., 2026-06-02)
+- Email: Optional but recommended
+- How They Heard About Us options: Friend/Family, Social Media, Website, Passing By, Other
+- Follow-up Status options: Pending, Contacted, Scheduled, Completed, No Response
+- Notes: Any additional information about the visitor
+- Photo URL: Leave blank for now (will be added manually after upload)
+- Keep the header row (first line) exactly as shown
+- Remove the sample rows and add your own visitors
+- Save as CSV (Comma delimited) format

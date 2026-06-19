@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal Donation Buttons - Code Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: #2c5282;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .button-example {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button-example h2 {
+            color: #2c5282;
+            margin-top: 0;
+        }
+        .button-example h3 {
+            color: #555;
+            margin-top: 20px;
+        }
+        .preview {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #2c5282;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid: #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .note {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PayPal Donation Buttons</h1>
+        <p><strong>Church:</strong> Tabernacle Amour Pour Le Calvaire</p>
+        <p><strong>PayPal Email:</strong> amorporelcalvario@gmail.com</p>
+        <p><strong>Currency:</strong> DOP (Dominican Peso)</p>
+    </div>
+
+    <div class="instructions">
+        <h3>📋 How to Use These Buttons</h3>
+        <ol>
+            <li>Scroll down to find the button style you want</li>
+            <li>Copy the HTML code from the gray code block</li>
+            <li>Paste it into your website HTML where you want the button to appear</li>
+            <li>Save and publish your website</li>
+            <li>Test the button to make sure it works</li>
+        </ol>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Important:</strong> After adding buttons to your website, remember to manually record donations in your admin panel when they come through!
+    </div>
+
+    <!-- Example 1: Simple Donate Button -->
+    <div class="button-example">
+        <h2>1. Simple "Donate" Button</h2>
+        <p>A basic PayPal donation button. Donors choose their own amount.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="amorporelcalvario@gmail.com" />
+                <input type="hidden" name="currency_code" value="DOP" />
+                <input type="hidden" name="item_name" value="Donation to Tabernacle Amour Pour Le Calvaire" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            </form>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- PayPal Simple Donate Button --&gt;
+&lt;form action="https://www.paypal.com/donate" method="post" target="_top"&gt;
+    &lt;input type="hidden" name="business" value="amorporelcalvario@gmail.com" /&gt;
+    &lt;input type="hidden" name="currency_code" value="DOP" /&gt;
+    &lt;input type="hidden" name="item_name" value="Donation to Tabernacle Amour Pour Le Calvaire" /&gt;
+    &lt;input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" 
+           border="0" name="submit" 
+           title="PayPal - The safer, easier way to pay online!" 
+           alt="Donate with PayPal button" /&gt;
+&lt;/form&gt;
+        </div>
+    </div>
+
+    <!-- Example 2: General Fund/Tithes Button -->
+    <div class="button-example">
+        <h2>2. General Fund / Tithes Button</h2>
+        <p>Specifically for tithes and general giving.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="amorporelcalvario@gmail.com" />
+                <input type="hidden" name="currency_code" value="DOP" />
+                <input type="hidden" name="item_name" value="General Fund / Tithes" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate - General Fund" />
+            </form>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- PayPal General Fund/Tithes Button --&gt;
+&lt;form action="https://www.paypal.com/donate" method="post" target="_top"&gt;
+    &lt;input type="hidden" name="business" value="amorporelcalvario@gmail.com" /&gt;
+    &lt;input type="hidden" name="currency_code" value="DOP" /&gt;
+    &lt;input type="hidden" name="item_name" value="General Fund / Tithes" /&gt;
+    &lt;input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" 
+           border="0" name="submit" alt="Donate - General Fund" /&gt;
+&lt;/form&gt;
+        </div>
+    </div>
+
+    <!-- Example 3: Building Fund Button -->
+    <div class="button-example">
+        <h2>3. Building Fund Button</h2>
+        <p>For construction and building projects.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="amorporelcalvario@gmail.com" />
+                <input type="hidden" name="currency_code" value="DOP" />
+                <input type="hidden" name="item_name" value="Building Fund" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate - Building Fund" />
+            </form>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- PayPal Building Fund Button --&gt;
+&lt;form action="https://www.paypal.com/donate" method="post" target="_top"&gt;
+    &lt;input type="hidden" name="business" value="amorporelcalvario@gmail.com" /&gt;
+    &lt;input type="hidden" name="currency_code" value="DOP" /&gt;
+    &lt;input type="hidden" name="item_name" value="Building Fund" /&gt;
+    &lt;input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" 
+           border="0" name="submit" alt="Donate - Building Fund" /&gt;
+&lt;/form&gt;
+        </div>
+    </div>
+
+    <!-- Example 4: Missions Button -->
+    <div class="button-example">
+        <h2>4. Missions Button</h2>
+        <p>For missionary work and outreach.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="amorporelcalvario@gmail.com" />
+                <input type="hidden" name="currency_code" value="DOP" />
+                <input type="hidden" name="item_name" value="Missions" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate - Missions" />
+            </form>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- PayPal Missions Button --&gt;
+&lt;form action="https://www.paypal.com/donate" method="post" target="_top"&gt;
+    &lt;input type="hidden" name="business" value="amorporelcalvario@gmail.com" /&gt;
+    &lt;input type="hidden" name="currency_code" value="DOP" /&gt;
+    &lt;input type="hidden" name="item_name" value="Missions" /&gt;
+    &lt;input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" 
+           border="0" name="submit" alt="Donate - Missions" /&gt;
+&lt;/form&gt;
+        </div>
+    </div>
+
+    <!-- Example 5: Youth Ministry Button -->
+    <div class="button-example">
+        <h2>5. Youth Ministry Button</h2>
+        <p>For youth programs and activities.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="amorporelcalvario@gmail.com" />
+                <input type="hidden" name="currency_code" value="DOP" />
+                <input type="hidden" name="item_name" value="Youth Ministry" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate - Youth Ministry" />
+            </form>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- PayPal Youth Ministry Button --&gt;
+&lt;form action="https://www.paypal.com/donate" method="post" target="_top"&gt;
+    &lt;input type="hidden" name="business" value="amorporelcalvario@gmail.com" /&gt;
+    &lt;input type="hidden" name="currency_code" value="DOP" /&gt;
+    &lt;input type="hidden" name="item_name" value="Youth Ministry" /&gt;
+    &lt;input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" 
+           border="0" name="submit" alt="Donate - Youth Ministry" /&gt;
+&lt;/form&gt;
+        </div>
+    </div>
+
+    <!-- Example 6: Custom Styled Button -->
+    <div class="button-example">
+        <h2>6. Custom Styled Button (Matches Your Website)</h2>
+        <p>A custom HTML/CSS button that looks like your website design. This opens PayPal in a new window.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&currency_code=DOP&item_name=Donation+to+Tabernacle+Amour+Pour+Le+Calvaire" 
+               target="_blank"
+               style="display: inline-block; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: Arial, sans-serif;">
+                ❤️ Donate Now
+            </a>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- Custom Styled PayPal Button --&gt;
+&lt;a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&amp;currency_code=DOP&amp;item_name=Donation+to+Tabernacle+Amour+Pour+Le+Calvaire" 
+   target="_blank"
+   style="display: inline-block; 
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+          color: white; 
+          padding: 15px 30px; 
+          text-decoration: none; 
+          border-radius: 5px; 
+          font-weight: bold; 
+          font-family: Arial, sans-serif;"&gt;
+    ❤️ Donate Now
+&lt;/a&gt;
+        </div>
+    </div>
+
+    <!-- Example 7: Button with Preset Amounts -->
+    <div class="button-example">
+        <h2>7. Buttons with Preset Amounts</h2>
+        <p>Let donors click a button for common donation amounts.</p>
+        
+        <div class="preview">
+            <h3>Preview:</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&currency_code=DOP&item_name=Donation&amount=500" 
+                   target="_blank"
+                   style="display: inline-block; background: #2c5282; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                    RD$500
+                </a>
+                <a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&currency_code=DOP&item_name=Donation&amount=1000" 
+                   target="_blank"
+                   style="display: inline-block; background: #2c5282; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                    RD$1,000
+                </a>
+                <a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&currency_code=DOP&item_name=Donation&amount=2500" 
+                   target="_blank"
+                   style="display: inline-block; background: #2c5282; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                    RD$2,500
+                </a>
+                <a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&currency_code=DOP&item_name=Donation&amount=5000" 
+                   target="_blank"
+                   style="display: inline-block; background: #2c5282; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                    RD$5,000
+                </a>
+            </div>
+        </div>
+
+        <h3>HTML Code to Copy:</h3>
+        <div class="code-block">
+&lt;!-- Preset Amount Buttons --&gt;
+&lt;div style="display: flex; gap: 10px; flex-wrap: wrap;"&gt;
+    &lt;a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&amp;currency_code=DOP&amp;item_name=Donation&amp;amount=500" 
+       target="_blank"
+       style="display: inline-block; background: #2c5282; color: white; 
+              padding: 12px 25px; text-decoration: none; border-radius: 5px; 
+              font-weight: bold;"&gt;
+        RD$500
+    &lt;/a&gt;
+    &lt;a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&amp;currency_code=DOP&amp;item_name=Donation&amp;amount=1000" 
+       target="_blank"
+       style="display: inline-block; background: #2c5282; color: white; 
+              padding: 12px 25px; text-decoration: none; border-radius: 5px; 
+              font-weight: bold;"&gt;
+        RD$1,000
+    &lt;/a&gt;
+    &lt;a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&amp;currency_code=DOP&amp;item_name=Donation&amp;amount=2500" 
+       target="_blank"
+       style="display: inline-block; background: #2c5282; color: white; 
+              padding: 12px 25px; text-decoration: none; border-radius: 5px; 
+              font-weight: bold;"&gt;
+        RD$2,500
+    &lt;/a&gt;
+    &lt;a href="https://www.paypal.com/donate/?business=amorporelcalvario@gmail.com&amp;currency_code=DOP&amp;item_name=Donation&amp;amount=5000" 
+       target="_blank"
+       style="display: inline-block; background: #2c5282; color: white; 
+              padding: 12px 25px; text-decoration: none; border-radius: 5px; 
+              font-weight: bold;"&gt;
+        RD$5,000
+    &lt;/a&gt;
+&lt;/div&gt;
+        </div>
+    </div>
+
+    <div class="note">
+        <h3>💡 Tips for Using These Buttons</h3>
+        <ul>
+            <li><strong>Test First:</strong> After adding to your website, test the button to make sure it works</li>
+            <li><strong>Mobile Friendly:</strong> All buttons work on mobile devices</li>
+            <li><strong>Customize Colors:</strong> Change the "background" color in the custom buttons to match your website</li>
+            <li><strong>Track Categories:</strong> Use different buttons for different funds (Building, Missions, etc.) so you know where donations are meant to go</li>
+            <li><strong>Record Manually:</strong> When you receive a PayPal notification, record it in your admin panel</li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <h3>⚠️ Important Reminders</h3>
+        <ul>
+            <li><strong>Do NOT change the email address</strong> in the code - it must be: amorporelcalvario@gmail.com</li>
+            <li><strong>Do NOT change the currency</strong> - it's set to DOP</li>
+            <li><strong>Always record donations</strong> in your admin panel when you receive them</li>
+            <li><strong>Save Transaction IDs</strong> from PayPal notifications</li>
+            <li><strong>Test buttons</strong> before announcing to your congregation</li>
+        </ul>
+    </div>
+
+    <div class="instructions">
+        <h3>📖 Additional Resources</h3>
+        <p><strong>Need help?</strong></p>
+        <ul>
+            <li>See <code>PAYPAL-INTEGRATION-GUIDE.md</code> for complete instructions</li>
+            <li>See <code>DONATION-SYSTEM-GUIDE.md</code> for admin panel usage</li>
+            <li>Visit <a href="https://www.paypal.com/do/help" target="_blank">PayPal Help Center</a></li>
+        </ul>
+    </div>
+
+    <div style="background: #2c5282; color: white; padding: 20px; border-radius: 10px; margin-top: 40px; text-align: center;">
+        <p><strong>Created for: Tabernacle Amour Pour Le Calvaire</strong></p>
+        <p>PayPal Account: amorporelcalvario@gmail.com | Currency: DOP</p>
+        <p>Last Updated: June 16, 2026</p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+First Name,Last Name,Email,Phone,Ministry/Service Area,Availability,Skills,Status,Start Date,Photo URL,Notes
+Jean,Dupont,jean.dupont@email.com,829-777-8888,Worship Team,"Sundays, Wednesdays",Music - Guitar,Active,2025-01-15,,"Plays guitar and bass"
+Lisa,Martinez,lisa.martinez@email.com,829-999-0000,Children's Ministry,Sundays,Teaching,Active,2024-06-20,,"Great with kids"
+Roberto,Santos,roberto.santos@email.com,829-111-3333,Tech Team,"Sundays, Special Events",Audio/Visual,Active,2023-09-10,,"Sound engineer"
+Anna,Johnson,anna.johnson@email.com,829-444-5555,Hospitality,Sundays,Customer Service,Active,2025-03-01,,"Friendly and welcoming"
+
+Instructions:
+- Fill in all required fields: First Name, Last Name, Email, Phone, Ministry/Service Area, Status
+- Start Date format: YYYY-MM-DD (e.g., 2025-01-15)
+- Ministry/Service Area options: Worship Team, Children's Ministry, Youth Ministry, Tech Team, Hospitality, Parking, Ushers, Greeters, Prayer Team, Outreach, Administration
+- Availability: When volunteer is available (e.g., "Sundays", "Wednesdays", "Weekends", "Flexible")
+- Skills: Relevant skills or talents (e.g., "Music - Guitar", "Teaching", "Audio/Visual", "Customer Service")
+- Status options: Active, Inactive, On Leave
+- Photo URL: Leave blank for now (will be added manually after upload)
+- Notes: Any additional information about the volunteer
+- Keep the header row (first line) exactly as shown
+- Remove the sample rows and add your own volunteers
+- Save as CSV (Comma delimited) format

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Request - Tabernacle Amour Pour Le Calvaire</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/finance-request.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Simple Header -->
+    <header class="request-header">
+        <div class="container">
+            <div class="header-content">
+                <img src="images/main logo withe BG.png" alt="Church Logo" class="header-logo">
+                <div class="header-text">
+                    <h1>Finance Request Portal</h1>
+                    <p>Tabernacle Amour Pour Le Calvaire - Assemblée De Dieu</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="request-main">
+        <div class="container">
+            <!-- Instructions -->
+            <section class="instructions-section">
+                <div class="instructions-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="instruction-content">
+                        <h2>How to Submit a Finance Request</h2>
+                        <ol>
+                            <li><strong>Fill out the form completely</strong> - Provide all required information</li>
+                            <li><strong>Attach supporting documents</strong> - Include quotes, invoices, or receipts if available</li>
+                            <li><strong>Submit your request</strong> - Your request will be automatically routed for approval</li>
+                            <li><strong>Track your request</strong> - You'll receive notifications at each stage</li>
+                            <li><strong>Receive payment</strong> - Approved payments will be sent to your Billet account</li>
+                        </ol>
+                        <p class="note"><i class="fas fa-clock"></i> <strong>Average approval time:</strong> 2-5 business days</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Indicator -->
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Personal Info</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Request Details</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Payment Info</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Review & Submit</div>
+                </div>
+            </div>
+
+            <!-- Finance Request Form -->
+            <form id="financeRequestForm" class="finance-request-form">
+                
+                <!-- STEP 1: Requestor Information -->
+                <div class="form-section active" data-section="1">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user"></i> Requestor Information</h2>
+                        <p>Tell us who you are</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">
+                                Full Name <span class="required">*</span>
+                            </label>
+                            <input type="text" id="fullName" name="fullName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">
+                                Phone Number <span class="required">*</span>
+                            </label>
+                            <input type="tel" id="phone" name="phone" required placeholder="829-XXX-XXXX">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">
+                                Email Address <span class="required">*</span>
+                            </label>
+                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="department">
+                                Department/Ministry <span class="required">*</span>
+                            </label>
+                            <select id="department" name="department" required>
+                                <option value="">Select your department</option>
+                                <option value="worship">Worship Team</option>
+                                <option value="childrens">Children's Ministry</option>
+                                <option value="youth">Youth Ministry</option>
+                                <option value="womens">Women's Ministry</option>
+                                <option value="mens">Men's Ministry</option>
+                                <option value="hospitality">Hospitality</option>
+                                <option value="tech">Tech Team</option>
+                                <option value="facilities">Facilities</option>
+                                <option value="administration">Administration</option>
+                                <option value="outreach">Outreach</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">
+                                Position/Role <span class="required">*</span>
+                            </label>
+                            <input type="text" id="position" name="position" required placeholder="e.g., Ministry Leader, Volunteer">
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-next" onclick="nextStep()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Financial Request Details -->
+                <div class="form-section" data-section="2">
+                    <div class="section-header">
+                        <h2><i class="fas fa-dollar-sign"></i> Financial Request Details</h2>
+                        <p>What do you need and why?</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group amount-group">
+                            <label for="amount">
+                                Amount Requested (RD$) <span class="required">*</span>
+                            </label>
+                            <div class="amount-input">
+                                <span class="currency-symbol">RD$</span>
+                                <input type="number" id="amount" name="amount" required min="1" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="budgetCategory">
+                                Budget Category <span class="required">*</span>
+                            </label>
+                            <select id="budgetCategory" name="budgetCategory" required>
+                                <option value="">Select category</option>
+                                <option value="ministry-supplies">Ministry Supplies</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="maintenance">Maintenance & Repairs</option>
+                                <option value="utilities">Utilities</option>
+                                <option value="transportation">Transportation</option>
+                                <option value="events">Events & Programs</option>
+                                <option value="outreach">Outreach & Missions</option>
+                                <option value="technology">Technology</option>
+                                <option value="salaries">Salaries & Wages</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">
+                            Purpose of Request <span class="required">*</span>
+                        </label>
+                        <input type="text" id="purpose" name="purpose" required placeholder="Brief summary (e.g., Sound equipment for worship service)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="explanation">
+                            Detailed Explanation <span class="required">*</span>
+                        </label>
+                        <textarea id="explanation" name="explanation" rows="5" required placeholder="Provide a detailed explanation of why these funds are needed and how they will be used..."></textarea>
+                        <small>Be specific and thorough - this helps approvers make informed decisions</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateNeeded">
+                                Date Funds Are Needed <span class="required">*</span>
+                            </label>
+                            <input type="date" id="dateNeeded" name="dateNeeded" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">
+                                Priority Level <span class="required">*</span>
+                            </label>
+                            <select id="priority" name="priority" required>
+                                <option value="">Select priority</option>
+                                <option value="low">Low - Can wait 2+ weeks</option>
+                                <option value="normal">Normal - Needed within 1-2 weeks</option>
+                                <option value="high">High - Needed within a few days</option>
+                                <option value="urgent">Urgent - Needed immediately</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attachments">
+                            Supporting Documents
+                        </label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <input type="file" id="attachments" name="attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            <div class="upload-prompt">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload or drag and drop</p>
+                                <small>Quotes, invoices, receipts, or other supporting documents (Max 10MB per file)</small>
+                            </div>
+                        </div>
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button type="button" class="btn-next" onclick="nextStep()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Payment Information -->
+                <div class="form-section" data-section="3">
+                    <div class="section-header">
+                        <h2><i class="fas fa-wallet"></i> Payment Information</h2>
+                        <p>How should we send the payment?</p>
+                    </div>
+
+                    <div class="payment-method-info">
+                        <div class="info-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Billet Payment (Primary Method)</h3>
+                            <p>Payments are primarily processed through Billet digital wallet. Please ensure your Billet account information is accurate.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="billetAccountName">
+                                Billet Account Holder Name <span class="required">*</span>
+                            </label>
+                            <input type="text" id="billetAccountName" name="billetAccountName" required placeholder="Full name as registered on Billet">
+                        </div>
+                        <div class="form-group">
+                            <label for="billetPhone">
+                                Billet Registered Phone <span class="required">*</span>
+                            </label>
+                            <input type="tel" id="billetPhone" name="billetPhone" required placeholder="829-XXX-XXXX">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="billetAccountDetails">
+                            Billet Account Details/ID
+                        </label>
+                        <input type="text" id="billetAccountDetails" name="billetAccountDetails" placeholder="Additional account information if applicable">
+                    </div>
+
+                    <div class="divider">
+                        <span>Alternative Payment Method (Optional)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alternativePayment">
+                            Alternative Payment Method
+                        </label>
+                        <select id="alternativePayment" name="alternativePayment">
+                            <option value="">Not needed</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                            <option value="check">Check</option>
+                            <option value="cash">Cash</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="alternativeDetailsGroup" style="display: none;">
+                        <label for="alternativeDetails">
+                            Alternative Payment Details
+                        </label>
+                        <textarea id="alternativeDetails" name="alternativeDetails" rows="3" placeholder="Provide bank account, check delivery address, or other payment details..."></textarea>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button type="button" class="btn-next" onclick="nextStep()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Review & Submit -->
+                <div class="form-section" data-section="4">
+                    <div class="section-header">
+                        <h2><i class="fas fa-check-circle"></i> Review & Submit</h2>
+                        <p>Please review your request before submitting</p>
+                    </div>
+
+                    <div class="review-summary" id="reviewSummary">
+                        <!-- Summary will be generated by JavaScript -->
+                    </div>
+
+                    <div class="form-group agreement">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <span>I confirm that all information provided is accurate and complete. I understand that this request will be reviewed and may require additional documentation. <span class="required">*</span></span>
+                        </label>
+                    </div>
+
+                    <div class="submission-info">
+                        <p><i class="fas fa-info-circle"></i> <strong>What happens next?</strong></p>
+                        <ul>
+                            <li>Your request will be automatically routed to the appropriate approvers</li>
+                            <li>You'll receive email and SMS notifications at each stage</li>
+                            <li>You can track your request status using the request number provided</li>
+                            <li>Once approved, payment will be processed to your Billet account</li>
+                            <li>You'll be notified when payment is complete</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Submit Request
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Success Message (Hidden by default) -->
+            <div id="successMessage" class="success-message" style="display: none;">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Request Submitted Successfully!</h2>
+                <p>Your finance request has been received and will be reviewed shortly.</p>
+                <div class="request-details">
+                    <div class="detail-item">
+                        <strong>Request Number:</strong>
+                        <span id="requestNumber"></span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Submission Date:</strong>
+                        <span id="submissionDate"></span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Amount:</strong>
+                        <span id="requestAmount"></span>
+                    </div>
+                </div>
+                <p class="next-steps">
+                    <i class="fas fa-info-circle"></i> You will receive a confirmation email with your request details and tracking information.
+                </p>
+                <div class="success-actions">
+                    <button class="btn-primary" onclick="window.location.href='finance-request.html'">
+                        Submit Another Request
+                    </button>
+                    <button class="btn-secondary" onclick="window.location.href='index.html'">
+                        Return to Homepage
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="request-footer">
+        <div class="container">
+            <p>&copy; 2026 Tabernacle Amour Pour Le Calvaire - Assemblée De Dieu. All rights reserved.</p>
+            <p>For assistance with finance requests, contact: 829-377-1099 or 829-303-0241</p>
+        </div>
+    </footer>
+
+    <script src="js/finance-request.js"></script>
+</body>
+</html>
