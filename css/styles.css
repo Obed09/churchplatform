@@ -50,6 +50,21 @@
 }
 
 /* ============================================ */
+/* HIDE BROWSER ACCESSIBILITY FEATURES */
+/* ============================================ */
+a[href^="#main"],
+a[href="#main-content"],
+.skip-link,
+[aria-label*="skip" i],
+[aria-label*="Skip" i] {
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+}
+
+/* ============================================ */
 /* RESET & BASE STYLES */
 /* ============================================ */
 * {

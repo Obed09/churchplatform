@@ -127,6 +127,18 @@ function switchTab(tabName) {
     
     // Add active class to clicked button
     event.target.closest('.tab-btn').classList.add('active');
+    
+    // Render content for specific tabs
+    if (tabName === 'staff' && typeof renderStaffGrid === 'function') {
+        renderStaffGrid();
+    } else if (tabName === 'members' && typeof renderMembersTable === 'function') {
+        renderMembersTable();
+    } else if (tabName === 'donations' && typeof renderDonationsTable === 'function') {
+        renderDonationsTable();
+        if (typeof updateDonationStats === 'function') {
+            updateDonationStats();
+        }
+    }
 }
 
 // Export data function (placeholder)
