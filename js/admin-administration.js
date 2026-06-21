@@ -117,8 +117,16 @@ const sampleStaff = [
 function getStaffData() {
     const stored = localStorage.getItem('churchStaff');
     if (stored) {
-        return JSON.parse(stored);
+        try {
+            const data = JSON.parse(stored);
+            console.log('✅ Loaded staff from localStorage:', data.length, 'staff members');
+            return data;
+        } catch (e) {
+            console.error('❌ Error parsing staff data:', e);
+            return sampleStaff;
+        }
     } else {
+        console.log('⚠️ No staff in localStorage, using sample data');
         localStorage.setItem('churchStaff', JSON.stringify(sampleStaff));
         return sampleStaff;
     }
@@ -126,7 +134,14 @@ function getStaffData() {
 
 // Save staff to localStorage
 function saveStaffData(staffData) {
-    localStorage.setItem('churchStaff', JSON.stringify(staffData));
+    try {
+        localStorage.setItem('churchStaff', JSON.stringify(staffData));
+        console.log('✅ Saved staff to localStorage:', staffData.length, 'staff members');
+        console.log('Staff data:', staffData);
+    } catch (e) {
+        console.error('❌ Error saving staff:', e);
+        alert('Error saving staff member. Please try again.');
+    }
 }
 
 // Get members from localStorage or use sample data
@@ -300,10 +315,12 @@ function initializeStaffForm() {
         } else {
             // Add new staff
             staffData.push(staffMember);
+            console.log('➕ Adding new staff member:', staffMember);
             showNotification(`${staffMember.name} added successfully!`, 'success');
         }
         
         saveStaffData(staffData);
+        console.log('📊 Total staff after save:', staffData.length);
         closeModal('staffModal');
         form.reset();
         document.getElementById('staffPhotoData').value = '';
@@ -1575,3 +1592,49 @@ function generateTaxReceipt(id) {
 /* ============================================ */
 /* END DONATION MANAGEMENT */
 /* ============================================ */
+
+/* ============================================ */
+/* DEBUGGING HELPERS */
+/* ============================================ */
+
+// Helper function to check localStorage data from browser console
+function debugLocalStorage() {
+    console.log('=== CHURCH PLATFORM LOCALSTORAGE DEBUG ===');
+    
+    const staff = localStorage.getItem('churchStaff');
+    const members = localStorage.getItem('churchMembers');
+    const donations = localStorage.getItem('churchDonations');
+    
+    console.log('\n📊 STAFF DATA:');
+    if (staff) {
+        const staffData = JSON.parse(staff);
+        console.log(`Total Staff: ${staffData.length}`);
+        console.table(staffData);
+    } else {
+        console.log('❌ No staff data in localStorage');
+    }
+    
+    console.log('\n👥 MEMBERS DATA:');
+    if (members) {
+        const membersData = JSON.parse(members);
+        console.log(`Total Members: ${membersData.length}`);
+        console.table(membersData);
+    } else {
+        console.log('❌ No members data in localStorage');
+    }
+    
+    console.log('\n💰 DONATIONS DATA:');
+    if (donations) {
+        const donationsData = JSON.parse(donations);
+        console.log(`Total Donations: ${donationsData.length}`);
+        console.table(donationsData);
+    } else {
+        console.log('❌ No donations data in localStorage');
+    }
+    
+    console.log('\n=== END DEBUG ===');
+}
+
+// Make it globally accessible
+window.debugLocalStorage = debugLocalStorage;
+console.log('💡 TIP: Type debugLocalStorage() in console to check your data anytime!');
