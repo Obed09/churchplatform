@@ -121,7 +121,7 @@ function getStaffData() {
             const data = JSON.parse(stored);
             console.log('✅ Loaded staff from localStorage:', data.length, 'staff members');
             return data;
-        } catch (e) {
+        } catch (ite) {
             console.error('❌ Error parsing staff data:', e);
             return sampleStaff;
         }
@@ -168,76 +168,114 @@ function saveMembersData(membersData) {
 }
 
 // Initialize administration page
-document.addEventListener('DOMContentLoaded', function() {
-    // Load members from localStorage
-    getMembersData();
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 Initializing admin page with Supabase...');
     
-    loadAdminStats();
-    renderMembersTable();
-    renderStaffGrid();
-    renderDonationsTable();
+    // Load all data
+    await loadAdminStats();
+    await renderMembersTable();
+    await renderStaffGrid();
+    await renderDonationsTable();
+    
+    // Initialize forms
     initializeMemberForm();
     initializeStaffForm();
     initializeDonationForm();
+    
+    console.log('✅ Admin page initialized');
 });
 
 // Load admin statistics
-function loadAdminStats() {
-    const members = getMembersData();
-    const totalMembers = members.length;
-    const activeMembers = members.filter(m => m.status === 'Active').length;
-    const staffCount = getStaffData().length;
-    const volunteerCount = 45; // Sample count
-    
-    document.getElementById('totalMembers').textContent = totalMembers;
-    document.getElementById('activeMembers').textContent = activeMembers;
-    document.getElementById('staffCount').textContent = staffCount;
-    document.getElementById('volunteerCount').textContent = volunteerCount;
+async function loadAdminStats() {
+    try {
+        const members = await getMembersData();
+        const staff = await getStaffData();
+        
+        const totalMembers = members.length;
+        const activeMembers = members.filter(m => m.status === 'Active').length;
+        const staffCount = staff.length;
+        const volunteerCount = 45; // Sample count
+        
+        document.getElementById('totalMembers').textContent = totalMembers;
+        document.getElementById('activeMembers').textContent = activeMembers;
+        document.getElementById('staffCount').textContent = staffCount;
+        document.getElementById('volunteerCount').textContent = volunteerCount;
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
 }
 
 // Render members table
-function renderMembersTable() {
+async function renderMembersTable() {
     const tbody = document.getElementById('membersTableBody');
     if (!tbody) return;
     
-    tbody.innerHTML = sampleMembers.map(member => {
-        const photoDisplay = member.photo 
-            ? `<img src="${member.photo}" alt="${member.firstName}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`
-            : `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${member.firstName.charAt(0)}${member.lastName.charAt(0)}</div>`;
+    try {
+        const dbMembers = await getMembersData();
+        const members = dbMembers.map(m => convertMemberFromDB(m));
         
-        return `
+        if (members.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 3rem; color: #718096;">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+                        <p>No members yet. Click "Add Member" to get started!</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = members.map(member => {
+            const photoDisplay = member.photo 
+                ? `<img src="${member.photo}" alt="${member.firstName}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`
+                : `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${member.firstName.charAt(0)}${member.lastName.charAt(0)}</div>`;
+            
+            return `
+                <tr>
+                    <td>${photoDisplay}</td>
+                    <td><strong>${member.firstName} ${member.lastName}</strong></td>
+                    <td>${member.email}</td>
+                    <td>${member.phone || '-'}</td>
+                    <td>${formatDate(member.joinDate)}</td>
+                    <td><span class="badge badge-info">${member.ministry || '-'}</span></td>
+                    <td><span class="badge badge-${member.status === 'Active' ? 'success' : 'secondary'}">${member.status}</span></td>
+                    <td class="table-actions">
+                        <button class="action-btn" onclick="viewMember('${member.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn" onclick="editMember('${member.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="confirmDeleteMember('${member.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error rendering members table:', error);
+        tbody.innerHTML = `
             <tr>
-                <td>${photoDisplay}</td>
-                <td><strong>${member.firstName} ${member.lastName}</strong></td>
-                <td>${member.email}</td>
-                <td>${member.phone}</td>
-                <td>${formatDate(member.joinDate)}</td>
-                <td><span class="badge badge-info">${member.ministry}</span></td>
-                <td><span class="badge badge-${member.status === 'Active' ? 'success' : 'secondary'}">${member.status}</span></td>
-                <td class="table-actions">
-                    <button class="action-btn" onclick="viewMember(${member.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn" onclick="editMember(${member.id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteMember(${member.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <td colspan="8" style="text-align: center; padding: 2rem; color: #e53e3e;">
+                    <i class="fas fa-exclamation-triangle"></i> Error loading members
                 </td>
             </tr>
         `;
-    }).join('');
+    }
 }
 
 // Render staff grid
-function renderStaffGrid() {
+async function renderStaffGrid() {
     const staffGrid = document.getElementById('staffGrid');
     if (!staffGrid) return;
     
-    const staffData = getStaffData();
-    
-    if (staffData.length === 0) {
+    try {
+        const dbStaff = await getStaffData();
+        const staffData = dbStaff.map(s => convertStaffFromDB(s));
+        
+        if (staffData.length === 0) {
         staffGrid.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-user-tie"></i>
@@ -263,22 +301,32 @@ function renderStaffGrid() {
                 <p class="staff-department"><i class="fas fa-building"></i> ${staff.department}</p>
                 <div class="staff-contact">
                     <p><i class="fas fa-envelope"></i> ${staff.email}</p>
-                    <p><i class="fas fa-phone"></i> ${staff.phone}</p>
+                    <p><i class="fas fa-phone"></i> ${staff.phone || '-'}</p>
                 </div>
                 <div class="staff-actions">
                     <button class="btn-secondary btn-sm" onclick="contactStaff('${staff.email}')" title="Contact">
                         <i class="fas fa-envelope"></i> Contact
                     </button>
-                    <button class="btn-primary btn-sm" onclick="editStaff(${staff.id})" title="Edit">
+                    <button class="btn-primary btn-sm" onclick="editStaff('${staff.id}')" title="Edit">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="btn-danger btn-sm" onclick="deleteStaff(${staff.id})" title="Delete">
+                    <button class="btn-danger btn-sm" onclick="confirmDeleteStaff('${staff.id}')" title="Delete">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
             </div>
         `;
     }).join('');
+    } catch (error) {
+        console.error('Error rendering staff grid:', error);
+        staffGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle" style="color: #e53e3e;"></i>
+                <h3>Error Loading Staff</h3>
+                <p>Please refresh the page</p>
+            </div>
+        `;
+    }
 }
 
 // Initialize staff form
@@ -286,14 +334,13 @@ function initializeStaffForm() {
     const form = document.getElementById('staffForm');
     if (!form) return;
     
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const staffId = document.getElementById('staffId').value;
-        const staffData = getStaffData();
         
         const staffMember = {
-            id: staffId ? parseInt(staffId) : Date.now(),
+            id: staffId || null,
             name: document.getElementById('staffName').value,
             email: document.getElementById('staffEmail').value,
             phone: document.getElementById('staffPhone').value,
@@ -305,21 +352,65 @@ function initializeStaffForm() {
             photo: document.getElementById('staffPhotoData').value || null
         };
         
-        if (staffId) {
-            // Update existing staff
-            const index = staffData.findIndex(s => s.id === parseInt(staffId));
-            if (index !== -1) {
-                staffData[index] = staffMember;
-                showNotification('Staff member updated successfully!', 'success');
-            }
-        } else {
-            // Add new staff
-            staffData.push(staffMember);
-            console.log('➕ Adding new staff member:', staffMember);
-            showNotification(`${staffMember.name} added successfully!`, 'success');
+        try {
+            await saveStaff(staffMember);
+            showNotification(`${staffMember.name} ${staffId ? 'updated' : 'added'} successfully!`, 'success');
+            
+            closeModal('staffModal');
+            form.reset();
+            document.getElementById('staffPhotoData').value = '';
+            resetStaffPhotoPreview();
+            await renderStaffGrid();
+            await loadAdminStats();
+        } catch (error) {
+            console.error('Error saving staff:', error);
         }
-        
-        saveStaffData(staffData);
+    });
+}
+
+// Confirm delete staff
+async function confirmDeleteStaff(id) {
+    if (!confirm('Are you sure you want to delete this staff member?')) return;
+    
+    try {
+        await deleteStaff(id);
+        showNotification('Staff member deleted successfully!', 'success');
+        await renderStaffGrid();
+        await loadAdminStats();
+    } catch (error) {
+        console.error('Error deleting staff:', error);
+    }
+}
+
+// Edit staff member
+async function editStaff(id) {
+    const dbStaff = await getStaffData();
+    const staff = dbStaff.find(s => s.id === id);
+    
+    if (!staff) return;
+    
+    const staffData = convertStaffFromDB(staff);
+    
+    document.getElementById('staffId').value = staffData.id;
+    document.getElementById('staffName').value = staffData.name;
+    document.getElementById('staffEmail').value = staffData.email;
+    document.getElementById('staffPhone').value = staffData.phone || '';
+    document.getElementById('staffRole').value = staffData.role;
+    document.getElementById('staffDepartment').value = staffData.department;
+    document.getElementById('staffStartDate').value = staffData.startDate;
+    document.getElementById('staffEmploymentType').value = staffData.employmentType;
+    document.getElementById('staffBio').value = staffData.bio || '';
+    document.getElementById('staffPhotoData').value = staffData.photo || '';
+    
+    if (staffData.photo) {
+        document.getElementById('staffPhotoPreview').innerHTML = `<img src="${staffData.photo}" alt="Preview">`;
+    }
+    
+    openModal('staffModal');
+}
+
+// Keep the old saveStaffData and getStaffData as backup (for now)
+function saveStaffData(staffData) {}
         console.log('📊 Total staff after save:', staffData.length);
         closeModal('staffModal');
         form.reset();
@@ -402,7 +493,10 @@ function openStaffModal() {
 
 // Staff Photo Functions
 function handleStaffPhotoUpload(event) {
-    const file = event.target.files[0];
+    const     SUPABASE_URL=https://xxxxx.supabase.co
+    SUPABASE_ANON_KEY=eyJhbGc... (paste your anon key)
+    SUPABASE_SERVICE_ROLE_KEY=eyJhbGc... (paste your service role key)
+    SUPABASE_DB_PASSWORD=your_password_you_createdfile = event.target.files[0];
     if (!file) return;
     
     // Validate file size (max 2MB)
@@ -650,21 +744,37 @@ function viewMember(id) {
     }
 }
 
-function editMember(id) {
-    const members = getMembersData();
-    const member = members.find(m => m.id === id);
-    if (!member) return;
+// Confirm delete member
+async function confirmDeleteMember(id) {
+    if (!confirm('Are you sure you want to delete this member?')) return;
+    
+    try {
+        await deleteMember(id);
+        showNotification('Member deleted successfully!', 'success');
+        await renderMembersTable();
+        await loadAdminStats();
+    } catch (error) {
+        console.error('Error deleting member:', error);
+    }
+}
+
+async function editMember(id) {
+    const dbMembers = await getMembersData();
+    const dbMember = dbMembers.find(m => m.id === id);
+    if (!dbMember) return;
+    
+    const member = convertMemberFromDB(dbMember);
     
     // Populate form with member data
     document.getElementById('memberFirstName').value = member.firstName;
     document.getElementById('memberLastName').value = member.lastName;
     document.getElementById('memberEmail').value = member.email;
-    document.getElementById('memberPhone').value = member.phone;
+    document.getElementById('memberPhone').value = member.phone || '';
     document.getElementById('memberBirthdate').value = member.birthDate || '';
     document.getElementById('memberGender').value = member.gender || '';
     document.getElementById('memberAddress').value = member.address || '';
     document.getElementById('memberJoinDate').value = member.joinDate;
-    document.getElementById('memberMinistry').value = member.ministry;
+    document.getElementById('memberMinistry').value = member.ministry || '';
     document.getElementById('memberNotes').value = member.notes || '';
     
     // Load photo if exists
@@ -1827,3 +1937,9 @@ window.exportMembers = exportMembers;
 window.exportStaff = exportStaff;
 window.exportDonations = exportDonations;
 window.handleImportFile = handleImportFile;
+
+// Make Supabase functions globally accessible
+window.editStaff = editStaff;
+window.confirmDeleteStaff = confirmDeleteStaff;
+window.editMember = editMember;
+window.confirmDeleteMember = confirmDeleteMember;
