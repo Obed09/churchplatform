@@ -656,52 +656,44 @@ function initializeMemberForm() {
     const form = document.getElementById('memberForm');
     if (!form) return;
     
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        const members = getMembersData();
-        const editId = form.dataset.editId;
-        
-        const memberData = {
-            firstName: document.getElementById('memberFirstName').value,
-            lastName: document.getElementById('memberLastName').value,
-            email: document.getElementById('memberEmail').value,
-            phone: document.getElementById('memberPhone').value,
-            birthDate: document.getElementById('memberBirthdate').value || null,
-            gender: document.getElementById('memberGender').value || null,
-            address: document.getElementById('memberAddress').value || null,
-            joinDate: document.getElementById('memberJoinDate').value,
-            ministry: document.getElementById('memberMinistry').value,
-            status: 'Active',
-            notes: document.getElementById('memberNotes').value || null,
-            photo: document.getElementById('memberPhotoData').value || null
-        };
-        
-        if (editId) {
-            // Update existing member
-            const index = members.findIndex(m => m.id == editId);
-            if (index !== -1) {
-                members[index] = { ...members[index], ...memberData };
-                showNotification(`Member ${memberData.firstName} ${memberData.lastName} updated successfully!`, 'success');
+        try {
+            const editId = form.dataset.editId;
+            
+            const memberData = {
+                id: editId || undefined,
+                firstName: document.getElementById('memberFirstName').value,
+                lastName: document.getElementById('memberLastName').value,
+                email: document.getElementById('memberEmail').value,
+                phone: document.getElementById('memberPhone').value,
+                joinDate: document.getElementById('memberJoinDate').value,
+                ministry: document.getElementById('memberMinistry').value,
+                status: 'Active',
+                photo: document.getElementById('memberPhotoData').value || null
+            };
+            
+            await saveMember(memberData);
+            
+            const actionText = editId ? 'updated' : 'added';
+            showNotification(`Member ${memberData.firstName} ${memberData.lastName} ${actionText} successfully!`, 'success');
+            
+            if (editId) {
+                delete form.dataset.editId;
             }
-            delete form.dataset.editId;
-        } else {
-            // Add new member
-            const maxId = members.reduce((max, m) => Math.max(max, m.id || 0), 0);
-            memberData.id = maxId + 1;
-            members.push(memberData);
-            showNotification(`Member ${memberData.firstName} ${memberData.lastName} added successfully!`, 'success');
+            
+            closeModal('memberModal');
+            form.reset();
+            resetMemberPhotoPreview();
+            
+            // Update display
+            await renderMembersTable();
+            await loadAdminStats();
+        } catch (error) {
+            console.error('Error saving member:', error);
+            showNotification('Error saving member. Please try again.', 'error');
         }
-        
-        saveMembersData(members);
-        
-        closeModal('memberModal');
-        form.reset();
-        resetMemberPhotoPreview();
-        
-        // Update display
-        renderMembersTable();
-        loadAdminStats();
     });
 }
 
@@ -1943,3 +1935,5 @@ window.editStaff = editStaff;
 window.confirmDeleteStaff = confirmDeleteStaff;
 window.editMember = editMember;
 window.confirmDeleteMember = confirmDeleteMember;
+window.openMemberModal = openMemberModal;
+window.openStaffModal = openStaffModal;
