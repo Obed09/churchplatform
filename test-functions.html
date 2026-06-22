@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function Test</title>
+</head>
+<body>
+    <h1>Testing Functions</h1>
+    <button onclick="alert('Basic onclick works!')">Test Basic Click</button>
+    <button onclick="testFunction()">Test Function Call</button>
+    
+    <script>
+        function testFunction() {
+            alert('Function testFunction() works!');
+        }
+        
+        // Log all window functions for debugging
+        setTimeout(() => {
+            console.log('=== CHECKING FUNCTIONS ===');
+            console.log('typeof window.openMemberModal:', typeof window.openMemberModal);
+            console.log('typeof window.openStaffModal:', typeof window.openStaffModal);
+            console.log('typeof window.openModal:', typeof window.openModal);
+            console.log('typeof window.closeModal:', typeof window.closeModal);
+            console.log('typeof window.supabase:', typeof window.supabase);
+        }, 1000);
+    </script>
+</body>
+</html>
