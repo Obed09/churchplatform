@@ -1638,3 +1638,192 @@ function debugLocalStorage() {
 // Make it globally accessible
 window.debugLocalStorage = debugLocalStorage;
 console.log('💡 TIP: Type debugLocalStorage() in console to check your data anytime!');
+
+/* ============================================ */
+/* DATA IMPORT/EXPORT MANAGER */
+/* ============================================ */
+
+// Open data manager modal
+function openDataManager() {
+    // Update data counts
+    const members = getMembersData();
+    const staff = getStaffData();
+    const donations = getDonationsData();
+    
+    document.getElementById('dataCountMembers').textContent = members.length;
+    document.getElementById('dataCountStaff').textContent = staff.length;
+    document.getElementById('dataCountDonations').textContent = donations.length;
+    
+    openModal('dataManagerModal');
+}
+
+// Export all data
+function exportAllData() {
+    const data = {
+        exportDate: new Date().toISOString(),
+        version: '1.0',
+        churchName: 'Tabernacle Amour Pour Le Calvaire',
+        members: getMembersData(),
+        staff: getStaffData(),
+        donations: getDonationsData()
+    };
+    
+    downloadJSON(data, `church-backup-all-${formatDateForFilename()}.json`);
+    showNotification('✅ All data exported successfully!', 'success');
+}
+
+// Export members only
+function exportMembers() {
+    const data = {
+        exportDate: new Date().toISOString(),
+        version: '1.0',
+        dataType: 'members',
+        members: getMembersData()
+    };
+    
+    downloadJSON(data, `church-backup-members-${formatDateForFilename()}.json`);
+    showNotification('✅ Members exported successfully!', 'success');
+}
+
+// Export staff only
+function exportStaff() {
+    const data = {
+        exportDate: new Date().toISOString(),
+        version: '1.0',
+        dataType: 'staff',
+        staff: getStaffData()
+    };
+    
+    downloadJSON(data, `church-backup-staff-${formatDateForFilename()}.json`);
+    showNotification('✅ Staff exported successfully!', 'success');
+}
+
+// Export donations only
+function exportDonations() {
+    const data = {
+        exportDate: new Date().toISOString(),
+        version: '1.0',
+        dataType: 'donations',
+        donations: getDonationsData()
+    };
+    
+    downloadJSON(data, `church-backup-donations-${formatDateForFilename()}.json`);
+    showNotification('✅ Donations exported successfully!', 'success');
+}
+
+// Handle import file selection
+function handleImportFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.name.endsWith('.json')) {
+        showNotification('❌ Please select a valid .json backup file', 'error');
+        return;
+    }
+    
+    // Confirm before importing
+    if (!confirm('⚠️ WARNING: This will REPLACE all existing data!\n\nMake sure you have exported your current data first.\n\nContinue with import?')) {
+        event.target.value = ''; // Reset file input
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            importData(data);
+        } catch (error) {
+            console.error('Import error:', error);
+            showNotification('❌ Invalid backup file format', 'error');
+        }
+    };
+    reader.readAsText(file);
+    
+    // Reset file input
+    event.target.value = '';
+}
+
+// Import data from backup
+function importData(data) {
+    console.log('📥 Importing data:', data);
+    
+    let importedCount = 0;
+    
+    // Import members
+    if (data.members && Array.isArray(data.members)) {
+        saveMembersData(data.members);
+        importedCount += data.members.length;
+        console.log(`✅ Imported ${data.members.length} members`);
+    }
+    
+    // Import staff
+    if (data.staff && Array.isArray(data.staff)) {
+        saveStaffData(data.staff);
+        importedCount += data.staff.length;
+        console.log(`✅ Imported ${data.staff.length} staff`);
+    }
+    
+    // Import donations
+    if (data.donations && Array.isArray(data.donations)) {
+        saveDonationsData(data.donations);
+        importedCount += data.donations.length;
+        console.log(`✅ Imported ${data.donations.length} donations`);
+    }
+    
+    if (importedCount === 0) {
+        showNotification('⚠️ No data found in backup file', 'warning');
+        return;
+    }
+    
+    // Refresh UI
+    renderMembersTable();
+    renderStaffGrid();
+    if (typeof renderDonationsTable === 'function') {
+        renderDonationsTable();
+        updateDonationStats();
+    }
+    loadAdminStats();
+    
+    // Update modal counts
+    openDataManager();
+    
+    showNotification(`✅ Successfully imported ${importedCount} items!`, 'success');
+    
+    // Show detailed success message
+    setTimeout(() => {
+        alert(`Import Complete!\n\n✅ Members: ${data.members?.length || 0}\n✅ Staff: ${data.staff?.length || 0}\n✅ Donations: ${data.donations?.length || 0}\n\nAll data has been restored successfully!`);
+    }, 500);
+}
+
+// Helper: Download JSON file
+function downloadJSON(data, filename) {
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Helper: Format date for filename
+function formatDateForFilename() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}${month}${day}-${hours}${minutes}`;
+}
+
+// Make functions globally accessible
+window.openDataManager = openDataManager;
+window.exportAllData = exportAllData;
+window.exportMembers = exportMembers;
+window.exportStaff = exportStaff;
+window.exportDonations = exportDonations;
+window.handleImportFile = handleImportFile;

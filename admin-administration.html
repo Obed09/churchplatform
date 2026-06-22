@@ -71,8 +71,9 @@
                 </button>
                 <h1><i class="fas fa-users-cog"></i> Administration</h1>
             </div>
-            <div class="header-right">
-                <button class="btn-primary" onclick="openMemberModal()">
+            <div class="header-right">                <button class="btn-secondary" onclick="openDataManager()" style="margin-right: 1rem;">
+                    <i class="fas fa-database"></i> Backup/Restore
+                </button>                <button class="btn-primary" onclick="openMemberModal()">
                     <i class="fas fa-user-plus"></i> Add Member
                 </button>
             </div>
@@ -930,6 +931,82 @@
                         <button class="btn-secondary" onclick="printReport()">
                             <i class="fas fa-print"></i> Print Report
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Manager Modal -->
+    <div id="dataManagerModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-database"></i> Backup & Restore Data</h2>
+                <span class="close" onclick="closeModal('dataManagerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #2196f3;">
+                    <p style="margin: 0; color: #1565c0;">
+                        <i class="fas fa-info-circle"></i> <strong>Important:</strong> Use this tool to backup your data or restore data from another system.
+                    </p>
+                </div>
+
+                <!-- Export Section -->
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin-top: 0; color: #2c5282;"><i class="fas fa-download"></i> Export Data (Backup)</h3>
+                    <p style="color: #718096; margin-bottom: 1rem;">Download all your church data as a backup file.</p>
+                    
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn-primary" onclick="exportAllData()">
+                            <i class="fas fa-download"></i> Export All Data
+                        </button>
+                        <button class="btn-secondary" onclick="exportMembers()">
+                            <i class="fas fa-users"></i> Members Only
+                        </button>
+                        <button class="btn-secondary" onclick="exportStaff()">
+                            <i class="fas fa-user-tie"></i> Staff Only
+                        </button>
+                        <button class="btn-secondary" onclick="exportDonations()">
+                            <i class="fas fa-donate"></i> Donations Only
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Import Section -->
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin-top: 0; color: #2c5282;"><i class="fas fa-upload"></i> Import Data (Restore)</h3>
+                    <p style="color: #718096; margin-bottom: 1rem;">Restore data from a backup file.</p>
+                    
+                    <div style="border: 2px dashed #cbd5e0; border-radius: 8px; padding: 2rem; text-align: center; background: #f7fafc; margin-bottom: 1rem;">
+                        <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="handleImportFile(event)">
+                        <button class="btn-primary" onclick="document.getElementById('importFileInput').click()">
+                            <i class="fas fa-file-upload"></i> Choose Backup File
+                        </button>
+                        <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">
+                            Select a .json backup file
+                        </p>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> Importing will replace ALL existing data. Make sure to export current data first!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Current Data Info -->
+                <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
+                    <h4 style="margin-top: 0; color: #2d3748; font-size: 0.95rem;">Current Data Summary:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
+                        <div style="padding: 0.5rem; background: white; border-radius: 5px;">
+                            <strong id="dataCountMembers">0</strong> Members
+                        </div>
+                        <div style="padding: 0.5rem; background: white; border-radius: 5px;">
+                            <strong id="dataCountStaff">0</strong> Staff
+                        </div>
+                        <div style="padding: 0.5rem; background: white; border-radius: 5px;">
+                            <strong id="dataCountDonations">0</strong> Donations
+                        </div>
                     </div>
                 </div>
             </div>
