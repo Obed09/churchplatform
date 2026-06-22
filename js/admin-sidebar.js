@@ -211,3 +211,11 @@ function showNotification(message, type = 'info') {
         }, 300);
     }, 3000);
 }
+
+// Make functions globally accessible
+window.toggleSidebar = toggleSidebar;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.switchTab = switchTab;
+window.showNotification = showNotification;
+window.formatCurrency = formatCurrency;
