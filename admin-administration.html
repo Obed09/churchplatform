@@ -1013,9 +1013,20 @@
         </div>
     </div>
 
-    <!-- Supabase Client - Load first -->
+    <!-- Load scripts in order -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
+    <script>
+        // Initialize Supabase inline to ensure it's available
+        const SUPABASE_URL = 'https://ypfignmkwoesqcelckma.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZmlnbm1rd29lc3FjZWxja21hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNTg1MzEsImV4cCI6MjA5NzczNDUzMX0.3_IfTV1Bx4-8rZgre8fRMg0U8yLItFNnfUmhpBag55w';
+        
+        if (!window.supabase) {
+            alert('ERROR: Supabase library failed to load!');
+        }
+        
+        var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase initialized');
+    </script>
     <script src="js/supabase-data.js"></script>
     <script src="js/admin-sidebar.js"></script>
     <script src="js/admin-administration.js"></script>
