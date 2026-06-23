@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     renderTemplatesGrid();
     initializeMessageForm();
     initializeAnnouncementForm();
+    initializeAnnouncementImageInput();
 });
 
 // ── Statistics ─────────────────────────────────────────────
@@ -242,6 +243,7 @@ function initializeAnnouncementForm() {
             document.getElementById('announcementModalTitle').textContent = 'Create Announcement';
             closeModal('announcementModal');
             form.reset();
+            updateAnnouncementImagePreview();
             await renderAnnouncementsGrid();
             await loadCommunicationsStats();
         } catch (err) {
@@ -259,6 +261,7 @@ async function openEditAnnouncementModal(id) {
     document.getElementById('announcementContent').value  = a.content;
     if (document.getElementById('announcementImageUrl')) {
         document.getElementById('announcementImageUrl').value = a.imageUrl || '';
+        updateAnnouncementImagePreview();
     }
     document.getElementById('announcementStartDate').value = a.startDate || '';
     document.getElementById('announcementEndDate').value   = a.endDate   || '';
@@ -308,6 +311,7 @@ function setDefaultAnnouncementImage() {
     const input = document.getElementById('announcementImageUrl');
     if (!input) return;
     input.value = CHURCH_ANNOUNCEMENT_TEMPLATE.imageUrl;
+    updateAnnouncementImagePreview();
 }
 
 function useChurchAnnouncementTemplate() {
@@ -320,6 +324,7 @@ function useChurchAnnouncementTemplate() {
     document.getElementById('announcementPriority').value = CHURCH_ANNOUNCEMENT_TEMPLATE.priority;
     if (document.getElementById('announcementImageUrl')) {
         document.getElementById('announcementImageUrl').value = CHURCH_ANNOUNCEMENT_TEMPLATE.imageUrl;
+        updateAnnouncementImagePreview();
     }
     document.getElementById('announcementStartDate').value = today.toISOString().split('T')[0];
     document.getElementById('announcementEndDate').value = end.toISOString().split('T')[0];
@@ -328,6 +333,50 @@ function useChurchAnnouncementTemplate() {
     delete form.dataset.editId;
     document.getElementById('announcementModalTitle').textContent = 'New Church Template Announcement';
     openModal('announcementModal');
+}
+
+function initializeAnnouncementImageInput() {
+    updateAnnouncementImagePreview();
+}
+
+function updateAnnouncementImagePreview() {
+    const input = document.getElementById('announcementImageUrl');
+    const preview = document.getElementById('announcementTemplatePreview');
+    const img = document.getElementById('announcementTemplatePreviewImg');
+    if (!input || !preview || !img) return;
+
+    const value = (input.value || '').trim();
+    if (!value) {
+        preview.style.display = 'none';
+        img.removeAttribute('src');
+        return;
+    }
+
+    img.src = value;
+    preview.style.display = 'block';
+}
+
+function handleAnnouncementTemplateUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        showNotification('Please upload a valid image file', 'error');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(loadEvent) {
+        const imageData = loadEvent.target.result;
+        const input = document.getElementById('announcementImageUrl');
+        if (input) {
+            input.value = imageData;
+        }
+        updateAnnouncementImagePreview();
+        showNotification('Template image loaded. Publish to save it to this announcement.', 'success');
+    };
+    reader.readAsDataURL(file);
 }
 
 // ── Utilities ──────────────────────────────────────────────
@@ -383,5 +432,7 @@ window.saveAsDraft                  = saveAsDraft;
 window.useTemplate                  = useTemplate;
 window.useChurchAnnouncementTemplate = useChurchAnnouncementTemplate;
 window.setDefaultAnnouncementImage = setDefaultAnnouncementImage;
+window.handleAnnouncementTemplateUpload = handleAnnouncementTemplateUpload;
+window.updateAnnouncementImagePreview = updateAnnouncementImagePreview;
 window.openEditAnnouncementModal    = openEditAnnouncementModal;
 window.confirmDeleteAnnouncement    = confirmDeleteAnnouncement;
