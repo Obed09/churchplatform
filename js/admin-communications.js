@@ -16,6 +16,8 @@ const CHURCH_ANNOUNCEMENT_TEMPLATE = {
     imageUrl: 'images/church building1.png'
 };
 
+const REUSABLE_ANNOUNCEMENT_TEMPLATE_KEY = 'churchReusableAnnouncementTemplateV1';
+
 document.addEventListener('DOMContentLoaded', async function() {
     await loadCommunicationsStats();
     await renderMessagesList();
@@ -345,6 +347,70 @@ function useChurchAnnouncementTemplate() {
     openModal('announcementModal');
 }
 
+function getAnnouncementFormState() {
+    const title = document.getElementById('announcementTitle')?.value || '';
+    const content = document.getElementById('announcementContent')?.value || '';
+    const priority = document.getElementById('announcementPriority')?.value || 'normal';
+    const imageUrl = document.getElementById('announcementImageUrl')?.value || '';
+    const assetName = document.getElementById('announcementAssetName')?.value || '';
+    const assetType = document.getElementById('announcementAssetType')?.value || '';
+    const startDate = document.getElementById('announcementStartDate')?.value || '';
+    const endDate = document.getElementById('announcementEndDate')?.value || '';
+    return { title, content, priority, imageUrl, assetName, assetType, startDate, endDate };
+}
+
+function saveCurrentAnnouncementAsTemplate() {
+    const state = getAnnouncementFormState();
+    if (!state.title.trim() || !state.content.trim()) {
+        showNotification('Add at least title and content before saving reusable template.', 'warning');
+        return;
+    }
+
+    const payload = {
+        ...state,
+        savedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem(REUSABLE_ANNOUNCEMENT_TEMPLATE_KEY, JSON.stringify(payload));
+    showNotification('Reusable announcement template saved. Use "Use Saved Template" anytime.', 'success');
+}
+
+function applyReusableAnnouncementTemplate() {
+    const raw = localStorage.getItem(REUSABLE_ANNOUNCEMENT_TEMPLATE_KEY);
+    if (!raw) {
+        showNotification('No reusable template saved yet. Open announcement modal and click "Save As Reusable Template".', 'warning');
+        return;
+    }
+
+    let tpl;
+    try {
+        tpl = JSON.parse(raw);
+    } catch (error) {
+        console.error('Invalid saved template payload:', error);
+        showNotification('Saved template is invalid. Please save it again.', 'error');
+        return;
+    }
+
+    const today = new Date();
+    const end = new Date(today);
+    end.setDate(end.getDate() + 7);
+
+    document.getElementById('announcementTitle').value = tpl.title || '';
+    document.getElementById('announcementContent').value = tpl.content || '';
+    document.getElementById('announcementPriority').value = tpl.priority || 'normal';
+    if (document.getElementById('announcementImageUrl')) document.getElementById('announcementImageUrl').value = tpl.imageUrl || '';
+    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = tpl.assetName || '';
+    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = tpl.assetType || '';
+    document.getElementById('announcementStartDate').value = today.toISOString().split('T')[0];
+    document.getElementById('announcementEndDate').value = end.toISOString().split('T')[0];
+
+    const form = document.getElementById('announcementForm');
+    delete form.dataset.editId;
+    document.getElementById('announcementModalTitle').textContent = 'Reusable Template Announcement';
+    updateAnnouncementImagePreview();
+    openModal('announcementModal');
+}
+
 function initializeAnnouncementImageInput() {
     updateAnnouncementImagePreview();
 }
@@ -469,7 +535,7 @@ styleEl.textContent = `
 .announcements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
 .announcement-card{background:var(--bg-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:1.5rem;border-left:4px solid var(--primary);transition:var(--transition);}
 .announcement-media{margin:-1.5rem -1.5rem 1rem -1.5rem;border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;max-height:170px;}
-.announcement-media img{width:100%;height:170px;object-fit:cover;display:block;}
+.announcement-media img{width:100%;height:230px;object-fit:contain;display:block;background:#0f172a;}
 .announcement-attachment{margin-bottom:1rem;padding:0.75rem;border:1px solid #dbe3f0;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
 .attachment-info{display:flex;align-items:center;gap:0.6rem;color:#334155;min-width:0;}
 .attachment-info i{color:var(--primary);}
@@ -505,6 +571,8 @@ window.confirmDeleteMessage         = confirmDeleteMessage;
 window.saveAsDraft                  = saveAsDraft;
 window.useTemplate                  = useTemplate;
 window.useChurchAnnouncementTemplate = useChurchAnnouncementTemplate;
+window.applyReusableAnnouncementTemplate = applyReusableAnnouncementTemplate;
+window.saveCurrentAnnouncementAsTemplate = saveCurrentAnnouncementAsTemplate;
 window.setDefaultAnnouncementImage = setDefaultAnnouncementImage;
 window.handleAnnouncementTemplateUpload = handleAnnouncementTemplateUpload;
 window.updateAnnouncementImagePreview = updateAnnouncementImagePreview;

@@ -131,6 +131,9 @@ async function saveAnnouncement(ann) {
             ))
         ) {
             console.warn('announcements asset columns missing, saving without template asset fields');
+            if (typeof showNotification === 'function') {
+                showNotification('Announcement saved without template asset. Run add-announcement-image-column.sql in Supabase to persist template files.', 'warning');
+            }
             return await doSave(basic);
         }
         console.error('Error saving announcement:', e);

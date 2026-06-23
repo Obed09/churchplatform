@@ -173,6 +173,9 @@
                 <div class="content-header">
                     <h2>Church Announcements</h2>
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn-secondary" onclick="applyReusableAnnouncementTemplate()">
+                            <i class="fas fa-clone"></i> Use Saved Template
+                        </button>
                         <button class="btn-secondary" onclick="useChurchAnnouncementTemplate()">
                             <i class="fas fa-image"></i> Use Church Template
                         </button>
@@ -348,6 +351,9 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('announcementModal')">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="saveCurrentAnnouncementAsTemplate()">
+                        <i class="fas fa-bookmark"></i> Save As Reusable Template
+                    </button>
                     <button type="submit" class="btn-primary">
                         <i class="fas fa-save"></i> Publish Announcement
                     </button>
