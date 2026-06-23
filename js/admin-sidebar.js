@@ -79,8 +79,11 @@ function loadUserInfo() {
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        // Small delay to prevent click event from immediately closing modal
+        setTimeout(() => {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }, 10);
     }
 }
 
