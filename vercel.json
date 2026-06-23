@@ -29,7 +29,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.paypal.com https://www.paypalobjects.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://www.paypal.com https://*.supabase.co; frame-src 'self' https://www.paypal.com; form-action 'self' https://www.paypal.com; upgrade-insecure-requests; block-all-mixed-content;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.paypal.com https://www.paypalobjects.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self' https://www.paypal.com https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://www.paypal.com; form-action 'self' https://www.paypal.com; upgrade-insecure-requests; block-all-mixed-content;"
         }
       ]
     }
