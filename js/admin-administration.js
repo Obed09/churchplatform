@@ -1845,6 +1845,20 @@ function handleImportFile(event) {
     event.target.value = '';
 }
 
+// Make functions globally accessible for HTML onclick handlers
+window.openMemberModal = openMemberModal;
+window.openStaffModal = openStaffModal;
+window.editStaff = editStaff;
+window.confirmDeleteStaff = confirmDeleteStaff;
+window.editMember = editMember;
+window.confirmDeleteMember = confirmDeleteMember;
+window.openDataManager = openDataManager;
+window.exportAllData = exportAllData;
+window.exportMembers = exportMembers;
+window.exportStaff = exportStaff;
+window.exportDonations = exportDonations;
+window.handleImportFile = handleImportFile;
+
 // Import data from backup
 function importData(data) {
     console.log('📥 Importing data:', data);
