@@ -19,7 +19,7 @@ function togglePassword() {
 }
 
 // Handle login form submission
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const username = document.getElementById('username').value;
@@ -33,30 +33,83 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
     submitBtn.disabled = true;
     
-    // DEMO MODE: Accept any credentials
-    setTimeout(() => {
-        // Store user info in session/local storage
+    try {
+        let authenticatedUser = null;
+
+        // Preferred path: validate against Supabase authorized users table
+        if (typeof validateAuthorizedUser === 'function') {
+            authenticatedUser = await validateAuthorizedUser(username, password, department);
+        }
+
+        // Fallback path: if table not set yet, keep legacy demo login behavior
+        if (!authenticatedUser && await isLikelyBootstrapState()) {
+            authenticatedUser = {
+                username: username,
+                full_name: username,
+                role: 'Demo Access',
+                department: department,
+                access_level: 'manager',
+                id: null
+            };
+            showMessage('Authorized users table not configured yet. Logged in with temporary fallback.', 'warning');
+        }
+
+        if (!authenticatedUser) {
+            showMessage('Invalid credentials or department access denied.', 'error');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            return;
+        }
+
         const userInfo = {
-            username: username,
-            department: department,
+            id: authenticatedUser.id || null,
+            username: authenticatedUser.username,
+            fullName: authenticatedUser.full_name || authenticatedUser.fullName || authenticatedUser.username,
+            role: authenticatedUser.role,
+            department: authenticatedUser.department,
+            accessLevel: authenticatedUser.access_level || authenticatedUser.accessLevel,
             loginTime: new Date().toISOString()
         };
-        
+
         if (remember) {
             localStorage.setItem('churchAdminUser', JSON.stringify(userInfo));
         } else {
             sessionStorage.setItem('churchAdminUser', JSON.stringify(userInfo));
         }
-        
-        // Show success message
+
+        if (authenticatedUser.id && typeof updateAuthorizedUserLastLogin === 'function') {
+            try {
+                await updateAuthorizedUserLastLogin(authenticatedUser.id);
+            } catch (updateError) {
+                console.warn('Could not update last login timestamp:', updateError);
+            }
+        }
+
         showMessage('Login successful! Redirecting to dashboard...', 'success');
-        
-        // Redirect to dashboard after short delay
         setTimeout(() => {
             window.location.href = 'admin-dashboard.html';
-        }, 1000);
-    }, 1500);
+        }, 900);
+    } catch (error) {
+        console.error('Login error:', error);
+        showMessage('Login failed. Check authorized users setup and try again.', 'error');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
 });
+
+async function isLikelyBootstrapState() {
+    if (typeof validateAuthorizedUser !== 'function') return true;
+    if (typeof getAuthorizedUsers !== 'function') return true;
+
+    try {
+        const users = await getAuthorizedUsers();
+        return !users || users.length === 0;
+    } catch (error) {
+        console.warn('Could not check authorized users table; enabling temporary fallback.', error);
+        return true;
+    }
+}
 
 // Show message function
 function showMessage(message, type) {

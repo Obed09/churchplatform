@@ -957,6 +957,114 @@ function generateTaxReceipt(id) {
     showNotification('Tax receipt generated!', 'success');
 }
 
+function openSmokeTestModal() {
+    openModal('smokeTestModal');
+}
+
+function resetSmokeChecks() {
+    document.querySelectorAll('.smoke-check').forEach(input => {
+        input.checked = false;
+    });
+    const results = document.getElementById('donationCrudResults');
+    if (results) results.textContent = 'Ready.';
+}
+
+function appendDonationCrudLog(message) {
+    const output = document.getElementById('donationCrudResults');
+    if (!output) return;
+    output.textContent += `\n${message}`;
+    output.scrollTop = output.scrollHeight;
+}
+
+async function runDonationCrudVerification() {
+    const output = document.getElementById('donationCrudResults');
+    if (output) output.textContent = 'Running verification...';
+
+    let createdId = null;
+    const marker = `SMOKE-${Date.now()}`;
+
+    try {
+        appendDonationCrudLog('1) READ baseline donations...');
+        const before = await getDonationsData();
+        appendDonationCrudLog(`   OK: baseline count = ${before.length}`);
+
+        appendDonationCrudLog('2) CREATE temporary donation...');
+        const created = await saveDonation({
+            date: new Date().toISOString().split('T')[0],
+            amount: 99.99,
+            currency: 'DOP',
+            category: 'General Fund/Tithes',
+            paymentMethod: 'PayPal',
+            donationType: 'one-time',
+            recurringFrequency: null,
+            isAnonymous: true,
+            donorName: 'Anonymous',
+            donorEmail: null,
+            donorPhone: null,
+            memberId: null,
+            transactionId: marker,
+            status: 'pending',
+            notes: `Smoke test donation ${marker}`
+        });
+        createdId = created?.id;
+        if (!createdId) throw new Error('Create step did not return an ID');
+        appendDonationCrudLog(`   OK: created ID = ${createdId}`);
+
+        appendDonationCrudLog('3) UPDATE temporary donation...');
+        await saveDonation({
+            id: createdId,
+            date: new Date().toISOString().split('T')[0],
+            amount: 149.99,
+            currency: 'DOP',
+            category: 'General Fund/Tithes',
+            paymentMethod: 'PayPal',
+            donationType: 'one-time',
+            recurringFrequency: null,
+            isAnonymous: true,
+            donorName: 'Anonymous',
+            donorEmail: null,
+            donorPhone: null,
+            memberId: null,
+            transactionId: marker,
+            status: 'completed',
+            notes: `Smoke test donation updated ${marker}`
+        });
+
+        const afterUpdateRows = await getDonationsData();
+        const updated = afterUpdateRows.find(d => d.id === createdId);
+        if (!updated) throw new Error('Updated row not found');
+        if (Number(updated.amount) !== 149.99 || updated.status !== 'completed') {
+            throw new Error('Update verification mismatch');
+        }
+        appendDonationCrudLog('   OK: update verified via read-back');
+
+        appendDonationCrudLog('4) DELETE temporary donation...');
+        await deleteDonation(createdId);
+
+        const afterDeleteRows = await getDonationsData();
+        const stillExists = afterDeleteRows.some(d => d.id === createdId);
+        if (stillExists) throw new Error('Delete verification failed - row still exists');
+        appendDonationCrudLog('   OK: delete verified');
+
+        appendDonationCrudLog('RESULT: PASS - Donations CRUD is healthy end-to-end on Supabase.');
+        showNotification('Donations CRUD verification passed', 'success');
+        await renderDonationsTable();
+    } catch (error) {
+        appendDonationCrudLog(`RESULT: FAIL - ${error.message}`);
+        showNotification(`Donations CRUD verification failed: ${error.message}`, 'error');
+
+        // Cleanup best-effort if create succeeded
+        if (createdId) {
+            try {
+                await deleteDonation(createdId);
+                appendDonationCrudLog('Cleanup: temporary row removed.');
+            } catch (cleanupError) {
+                appendDonationCrudLog(`Cleanup warning: ${cleanupError.message}`);
+            }
+        }
+    }
+}
+
 // ============================================
 // BACKUP / RESTORE
 // ============================================
@@ -1083,5 +1191,8 @@ window.viewDonation          = viewDonation;
 window.editDonation          = editDonation;
 window.confirmDeleteDonation = confirmDeleteDonation;
 window.generateTaxReceipt    = generateTaxReceipt;
+window.openSmokeTestModal    = openSmokeTestModal;
+window.resetSmokeChecks      = resetSmokeChecks;
+window.runDonationCrudVerification = runDonationCrudVerification;
 window.importCSVData         = importCSVData;
 window.resetCSVImport        = resetCSVImport;

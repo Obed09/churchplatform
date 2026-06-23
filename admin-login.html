@@ -80,6 +80,9 @@
                     <a href="#" onclick="forgotPassword()">
                         <i class="fas fa-question-circle"></i> Forgot password?
                     </a>
+                    <a href="admin-auth-users.html" style="margin-left: 1rem;">
+                        <i class="fas fa-user-shield"></i> Manage Authorized Users
+                    </a>
                 </div>
             </form>
 
@@ -89,11 +92,14 @@
         <div class="login-footer">
             <p>&copy; 2026 Tabernacle Amour Pour Le Calvaire. All rights reserved.</p>
             <p class="demo-info">
-                <i class="fas fa-info-circle"></i> Demo Mode: Use any username/password to login
+                <i class="fas fa-info-circle"></i> Login uses Authorized Users from Supabase. If none are configured yet, legacy demo fallback is allowed.
             </p>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-auth-users.js"></script>
     <script src="js/admin-auth.js"></script>
 </body>
 </html>

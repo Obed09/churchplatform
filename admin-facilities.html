@@ -8,217 +8,513 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="admin-body">
-    <!-- Sidebar Navigation -->
     <aside class="admin-sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="images/main logo withe BG.png" alt="Church Logo" class="sidebar-logo">
             <h3>Church Admin</h3>
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
+            <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
         </div>
-
         <nav class="sidebar-nav">
-            <a href="admin-dashboard.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="admin-finance.html" class="nav-item">
-                <i class="fas fa-dollar-sign"></i>
-                <span>Finance</span>
-            </a>
-            <a href="admin-administration.html" class="nav-item">
-                <i class="fas fa-users-cog"></i>
-                <span>Administration</span>
-            </a>
-            <a href="admin-events.html" class="nav-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Events</span>
-            </a>
-            <a href="admin-communications.html" class="nav-item">
-                <i class="fas fa-bullhorn"></i>
-                <span>Communications</span>
-            </a>
-            <a href="admin-facilities.html" class="nav-item active">
-                <i class="fas fa-building"></i>
-                <span>Facilities</span>
-            </a>
-            <a href="admin-ministries.html" class="nav-item">
-                <i class="fas fa-hands-praying"></i>
-                <span>Ministries</span>
-            </a>
+            <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            <a href="admin-finance.html" class="nav-item"><i class="fas fa-dollar-sign"></i><span>Finance</span></a>
+            <a href="admin-administration.html" class="nav-item"><i class="fas fa-users-cog"></i><span>Administration</span></a>
+            <a href="admin-auth-users.html" class="nav-item"><i class="fas fa-user-shield"></i><span>Authorized Users</span></a>
+            <a href="admin-events.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
+            <a href="admin-communications.html" class="nav-item"><i class="fas fa-bullhorn"></i><span>Communications</span></a>
+            <a href="admin-facilities.html" class="nav-item active"><i class="fas fa-building"></i><span>Facilities</span></a>
+            <a href="admin-ministries.html" class="nav-item"><i class="fas fa-hands-praying"></i><span>Ministries</span></a>
         </nav>
-
         <div class="sidebar-footer">
-            <a href="index.html" class="nav-item" target="_blank">
-                <i class="fas fa-globe"></i>
-                <span>View Website</span>
-            </a>
-            <a href="admin-login.html" class="nav-item logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
+            <a href="index.html" class="nav-item" target="_blank"><i class="fas fa-globe"></i><span>View Website</span></a>
+            <a href="admin-login.html" class="nav-item logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="admin-main">
-        <!-- Top Header -->
         <header class="admin-header">
             <div class="header-left">
-                <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
                 <h1><i class="fas fa-building"></i> Facilities Management</h1>
             </div>
             <div class="header-right">
-                <button class="btn-primary">
-                    <i class="fas fa-plus"></i> Add Room/Space
+                <button class="btn-primary" id="headerAddBtn" onclick="openAddRoomModal()">
+                    <i class="fas fa-plus"></i> Add Room
                 </button>
             </div>
         </header>
 
-        <!-- Facilities Content -->
         <div class="admin-content">
             <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>12</h3>
-                        <p>Total Rooms</p>
-                        <span class="stat-change">All facilities</span>
-                    </div>
+                    <div class="stat-icon" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"><i class="fas fa-building"></i></div>
+                    <div class="stat-info"><h3 id="totalRooms">0</h3><p>Total Rooms</p><span class="stat-change">All facilities</span></div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>8</h3>
-                        <p>Bookings Today</p>
-                        <span class="stat-change">Active</span>
-                    </div>
+                    <div class="stat-icon" style="background:linear-gradient(135deg,#43e97b,#38f9d7)"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-info"><h3 id="todayBookings">0</h3><p>Bookings Today</p><span class="stat-change">Active</span></div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>3</h3>
-                        <p>Maintenance</p>
-                        <span class="stat-change">Pending</span>
-                    </div>
+                    <div class="stat-icon" style="background:linear-gradient(135deg,#f093fb,#f5576c)"><i class="fas fa-tools"></i></div>
+                    <div class="stat-info"><h3 id="pendingMaintenance">0</h3><p>Maintenance Pending</p><span class="stat-change">Open requests</span></div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <i class="fas fa-door-open"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>4</h3>
-                        <p>Available Now</p>
-                        <span class="stat-change">Ready to book</span>
-                    </div>
+                    <div class="stat-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-box"></i></div>
+                    <div class="stat-info"><h3 id="totalEquipment">0</h3><p>Equipment Items</p><span class="stat-change">In inventory</span></div>
                 </div>
             </div>
 
-            <!-- Facilities List -->
+            <!-- Tabs -->
             <div class="content-card">
-                <h2><i class="fas fa-building"></i> Church Facilities & Rooms</h2>
-                <p class="section-description">Manage church facilities, room bookings, and maintenance requests.</p>
-                
-                <div class="facilities-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-                    
-                    <!-- Sample Facility Cards -->
-                    <div class="facility-card" style="background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                                <i class="fas fa-church"></i>
-                            </div>
-                            <div>
-                                <h3 style="margin: 0; color: #2c5282;">Main Sanctuary</h3>
-                                <p style="margin: 0; color: #718096; font-size: 0.9rem;">Capacity: 500</p>
-                            </div>
-                        </div>
-                        <p style="color: #4a5568; margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #48bb78;"></i> Available</p>
-                        <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1rem;">Next booking: Tomorrow 10:00 AM</p>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn-secondary btn-sm">View Calendar</button>
-                            <button class="btn-primary btn-sm">Book</button>
-                        </div>
-                    </div>
-
-                    <div class="facility-card" style="background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div>
-                                <h3 style="margin: 0; color: #2c5282;">Fellowship Hall</h3>
-                                <p style="margin: 0; color: #718096; font-size: 0.9rem;">Capacity: 200</p>
-                            </div>
-                        </div>
-                        <p style="color: #4a5568; margin-bottom: 0.5rem;"><i class="fas fa-calendar-alt" style="color: #ed8936;"></i> In Use</p>
-                        <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1rem;">Youth group meeting - Until 8:00 PM</p>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn-secondary btn-sm">View Calendar</button>
-                            <button class="btn-primary btn-sm">Book</button>
-                        </div>
-                    </div>
-
-                    <div class="facility-card" style="background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                                <i class="fas fa-pray"></i>
-                            </div>
-                            <div>
-                                <h3 style="margin: 0; color: #2c5282;">Prayer Room</h3>
-                                <p style="margin: 0; color: #718096; font-size: 0.9rem;">Capacity: 30</p>
-                            </div>
-                        </div>
-                        <p style="color: #4a5568; margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #48bb78;"></i> Available</p>
-                        <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1rem;">Open for prayer anytime</p>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn-secondary btn-sm">View Calendar</button>
-                            <button class="btn-primary btn-sm">Book</button>
-                        </div>
-                    </div>
-
-                    <div class="facility-card" style="background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                                <i class="fas fa-chalkboard-teacher"></i>
-                            </div>
-                            <div>
-                                <h3 style="margin: 0; color: #2c5282;">Classroom A</h3>
-                                <p style="margin: 0; color: #718096; font-size: 0.9rem;">Capacity: 40</p>
-                            </div>
-                        </div>
-                        <p style="color: #4a5568; margin-bottom: 0.5rem;"><i class="fas fa-tools" style="color: #f56565;"></i> Maintenance</p>
-                        <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1rem;">HVAC repair scheduled</p>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn-secondary btn-sm">View Calendar</button>
-                            <button class="btn-danger btn-sm" disabled>Unavailable</button>
-                        </div>
-                    </div>
-
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="rooms-tab"      onclick="switchTab('rooms-tab', this)"><i class="fas fa-building"></i> Rooms & Bookings</button>
+                    <button class="tab-btn"         data-tab="maintenance-tab" onclick="switchTab('maintenance-tab', this)"><i class="fas fa-tools"></i> Maintenance</button>
+                    <button class="tab-btn"         data-tab="equipment-tab"  onclick="switchTab('equipment-tab', this)"><i class="fas fa-box"></i> Equipment</button>
+                    <button class="tab-btn"         data-tab="cleaning-tab"   onclick="switchTab('cleaning-tab', this)"><i class="fas fa-broom"></i> Cleaning Schedule</button>
                 </div>
 
-                <div class="empty-state" style="margin-top: 3rem; text-align: center; padding: 3rem; background: #f7fafc; border-radius: 10px;">
-                    <i class="fas fa-tools" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
-                    <h3 style="color: #2d3748;">Facilities Management Coming Soon</h3>
-                    <p style="color: #718096; max-width: 600px; margin: 1rem auto;">Full facilities management features including room booking calendar, maintenance tracking, equipment inventory, and facility usage reports will be available in a future update.</p>
+                <!-- ROOMS TAB -->
+                <div id="rooms-tab" class="tab-content active">
+                    <div class="content-header">
+                        <h2>Rooms & Bookings</h2>
+                        <div style="display:flex;gap:.5rem;">
+                            <button class="btn-secondary" onclick="openAddBookingModal()"><i class="fas fa-calendar-plus"></i> New Booking</button>
+                            <button class="btn-primary"   onclick="openAddRoomModal()"><i class="fas fa-plus"></i> Add Room</button>
+                        </div>
+                    </div>
+
+                    <h3 style="margin:.5rem 0 1rem;color:var(--text-dark)">Room Directory</h3>
+                    <div id="roomsGrid" class="rooms-grid">
+                        <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading rooms…</div>
+                    </div>
+
+                    <h3 style="margin:2rem 0 1rem;color:var(--text-dark)">Upcoming Bookings</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Room</th>
+                                <th>Event / Title</th>
+                                <th>Booked By</th>
+                                <th>Date & Time</th>
+                                <th>Attendees</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsTableBody">
+                            <tr><td colspan="7" style="text-align:center;padding:2rem">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- MAINTENANCE TAB -->
+                <div id="maintenance-tab" class="tab-content">
+                    <div class="content-header">
+                        <h2>Maintenance Requests</h2>
+                        <button class="btn-primary" onclick="openAddMaintenanceModal()"><i class="fas fa-plus"></i> New Request</button>
+                    </div>
+                    <div class="filter-bar">
+                        <select id="maintenanceFilter" onchange="filterMaintenance()">
+                            <option value="all">All Requests</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select id="maintenancePriorityFilter" onchange="filterMaintenance()">
+                            <option value="all">All Priorities</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div id="maintenanceGrid" class="maintenance-grid">
+                        <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading requests…</div>
+                    </div>
+                </div>
+
+                <!-- EQUIPMENT TAB -->
+                <div id="equipment-tab" class="tab-content">
+                    <div class="content-header">
+                        <h2>Equipment Inventory</h2>
+                        <button class="btn-primary" onclick="openAddEquipmentModal()"><i class="fas fa-plus"></i> Add Equipment</button>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="text" id="equipmentSearch" placeholder="Search equipment…" oninput="searchEquipment()" class="search-input">
+                        <select id="equipmentCategoryFilter" onchange="filterEquipment()">
+                            <option value="all">All Categories</option>
+                            <option value="Audio/Visual">Audio/Visual</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Kitchen">Kitchen</option>
+                            <option value="Cleaning">Cleaning</option>
+                            <option value="Office">Office</option>
+                            <option value="Outdoor">Outdoor</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Qty</th>
+                                <th>Condition</th>
+                                <th>Location</th>
+                                <th>Next Service</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equipmentTableBody">
+                            <tr><td colspan="8" style="text-align:center;padding:2rem">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CLEANING TAB -->
+                <div id="cleaning-tab" class="tab-content">
+                    <div class="content-header">
+                        <h2>Cleaning Schedule</h2>
+                        <button class="btn-primary" onclick="openAddCleaningTaskModal()"><i class="fas fa-plus"></i> Add Task</button>
+                    </div>
+                    <div class="filter-bar">
+                        <select id="cleaningFilter" onchange="filterCleaning()">
+                            <option value="all">All Tasks</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div id="cleaningGrid" class="cleaning-grid">
+                        <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading tasks…</div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </main>
 
+    <!-- ROOM MODAL -->
+    <div id="roomModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="roomModalTitle"><i class="fas fa-building"></i> Add Room</h2>
+                <button class="modal-close" onclick="closeModal('roomModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="roomForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Room Name *</label>
+                        <input type="text" id="roomName" required placeholder="e.g. Main Sanctuary">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="roomType">
+                            <option value="sanctuary">Sanctuary</option>
+                            <option value="fellowship_hall">Fellowship Hall</option>
+                            <option value="classroom">Classroom</option>
+                            <option value="office">Office</option>
+                            <option value="prayer_room">Prayer Room</option>
+                            <option value="storage">Storage</option>
+                            <option value="kitchen">Kitchen</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <input type="number" id="roomCapacity" min="1" placeholder="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Floor</label>
+                        <input type="text" id="roomLocation" placeholder="e.g. Ground Floor">
+                    </div>
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Features</label>
+                        <input type="text" id="roomFeatures" placeholder="e.g. Projector, Sound System, A/C">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="roomStatus">
+                            <option value="available">Available</option>
+                            <option value="in_use">In Use</option>
+                            <option value="maintenance">Under Maintenance</option>
+                            <option value="reserved">Reserved</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('roomModal')">Cancel</button>
+                    <button type="submit" id="roomSubmitBtn" class="btn-primary"><i class="fas fa-save"></i> Save Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BOOKING MODAL -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="bookingModalTitle"><i class="fas fa-calendar-plus"></i> New Booking</h2>
+                <button class="modal-close" onclick="closeModal('bookingModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="bookingForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Room *</label>
+                        <select id="bookingRoom" required>
+                            <option value="">Select room…</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Title *</label>
+                        <input type="text" id="bookingTitle" required placeholder="e.g. Sunday School">
+                    </div>
+                    <div class="form-group">
+                        <label>Booked By *</label>
+                        <input type="text" id="bookingBookedBy" required placeholder="Name or ministry">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time *</label>
+                        <input type="datetime-local" id="bookingStartTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time *</label>
+                        <input type="datetime-local" id="bookingEndTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Attendees</label>
+                        <input type="number" id="bookingAttendees" min="0" placeholder="0">
+                    </div>
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Purpose / Notes</label>
+                        <textarea id="bookingPurpose" rows="2" placeholder="Describe the event or purpose"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('bookingModal')">Cancel</button>
+                    <button type="submit" id="bookingSubmitBtn" class="btn-primary"><i class="fas fa-save"></i> Save Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAINTENANCE MODAL -->
+    <div id="maintenanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="maintenanceModalTitle"><i class="fas fa-tools"></i> New Maintenance Request</h2>
+                <button class="modal-close" onclick="closeModal('maintenanceModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="maintenanceForm">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Issue Title *</label>
+                        <input type="text" id="maintenanceTitle" required placeholder="Brief description of the issue">
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="maintenanceLocation" placeholder="e.g. Main Sanctuary">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="maintenanceCategory">
+                            <option value="electrical">Electrical</option>
+                            <option value="plumbing">Plumbing</option>
+                            <option value="hvac">HVAC</option>
+                            <option value="structural">Structural</option>
+                            <option value="cleaning">Cleaning</option>
+                            <option value="av_equipment">AV Equipment</option>
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="maintenancePriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reported By</label>
+                        <input type="text" id="maintenanceReportedBy" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned To</label>
+                        <input type="text" id="maintenanceAssignedTo" placeholder="Technician / volunteer name">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="maintenanceStatus">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Description</label>
+                        <textarea id="maintenanceDescription" rows="3" placeholder="Detailed description of the issue"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('maintenanceModal')">Cancel</button>
+                    <button type="submit" id="maintenanceSubmitBtn" class="btn-primary"><i class="fas fa-save"></i> Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EQUIPMENT MODAL -->
+    <div id="equipmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="equipmentModalTitle"><i class="fas fa-box"></i> Add Equipment</h2>
+                <button class="modal-close" onclick="closeModal('equipmentModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="equipmentForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" id="equipmentName" required placeholder="e.g. Projector">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="equipmentCategory">
+                            <option value="Audio/Visual">Audio/Visual</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Kitchen">Kitchen</option>
+                            <option value="Cleaning">Cleaning</option>
+                            <option value="Office">Office</option>
+                            <option value="Outdoor">Outdoor</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="equipmentQuantity" min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Condition</label>
+                        <select id="equipmentCondition">
+                            <option value="new">New</option>
+                            <option value="good" selected>Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                            <option value="needs_repair">Needs Repair</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="equipmentLocation" placeholder="e.g. Storage Room B">
+                    </div>
+                    <div class="form-group">
+                        <label>Serial Number</label>
+                        <input type="text" id="equipmentSerial" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label>Purchase Date</label>
+                        <input type="date" id="equipmentPurchaseDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Purchase Cost (RD$)</label>
+                        <input type="number" id="equipmentCost" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Next Service Date</label>
+                        <input type="date" id="equipmentNextService">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="equipmentStatus">
+                            <option value="available">Available</option>
+                            <option value="in_use">In Use</option>
+                            <option value="maintenance">Under Maintenance</option>
+                            <option value="retired">Retired</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Notes</label>
+                        <textarea id="equipmentNotes" rows="2" placeholder="Additional notes"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('equipmentModal')">Cancel</button>
+                    <button type="submit" id="equipmentSubmitBtn" class="btn-primary"><i class="fas fa-save"></i> Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CLEANING TASK MODAL -->
+    <div id="cleaningModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="cleaningModalTitle"><i class="fas fa-broom"></i> Add Cleaning Task</h2>
+                <button class="modal-close" onclick="closeModal('cleaningModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="cleaningForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Area / Room *</label>
+                        <input type="text" id="cleaningArea" required placeholder="e.g. Main Sanctuary">
+                    </div>
+                    <div class="form-group">
+                        <label>Task Type</label>
+                        <select id="cleaningTaskType">
+                            <option value="cleaning">General Cleaning</option>
+                            <option value="deep_cleaning">Deep Cleaning</option>
+                            <option value="disinfecting">Disinfecting</option>
+                            <option value="trash_removal">Trash Removal</option>
+                            <option value="floor_wax">Floor Waxing</option>
+                            <option value="window_cleaning">Window Cleaning</option>
+                            <option value="restroom">Restroom Cleaning</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Frequency</label>
+                        <select id="cleaningFrequency">
+                            <option value="daily">Daily</option>
+                            <option value="weekly" selected>Weekly</option>
+                            <option value="bi-weekly">Bi-Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="as_needed">As Needed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned To</label>
+                        <input type="text" id="cleaningAssignedTo" placeholder="Staff / volunteer name">
+                    </div>
+                    <div class="form-group">
+                        <label>Scheduled Date</label>
+                        <input type="date" id="cleaningScheduledDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="cleaningStatus">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Notes</label>
+                        <textarea id="cleaningNotes" rows="2" placeholder="Special instructions"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('cleaningModal')">Cancel</button>
+                    <button type="submit" id="cleaningSubmitBtn" class="btn-primary"><i class="fas fa-save"></i> Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-facilities.js"></script>
     <script src="js/admin-sidebar.js"></script>
+    <script src="js/admin-facilities.js"></script>
 </body>
 </html>
