@@ -76,14 +76,18 @@ function loadUserInfo() {
 }
 
 // Modal functions
+let isOpeningModal = false;
+
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        // Small delay to prevent click event from immediately closing modal
+        isOpeningModal = true;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // Reset flag after a short delay
         setTimeout(() => {
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }, 10);
+            isOpeningModal = false;
+        }, 100);
     }
 }
 
@@ -103,7 +107,7 @@ function closeModal(modalId) {
 
 // Close modal when clicking outside
 document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal')) {
+    if (!isOpeningModal && e.target.classList.contains('modal')) {
         closeModal(e.target.id);
     }
 });

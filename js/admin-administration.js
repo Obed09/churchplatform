@@ -304,13 +304,13 @@ async function renderStaffGrid() {
                     <p><i class="fas fa-phone"></i> ${staff.phone || '-'}</p>
                 </div>
                 <div class="staff-actions">
-                    <button type="button" class="btn-secondary btn-sm" onclick="event.stopPropagation(); contactStaff('${staff.email}')" title="Contact">
+                    <button type="button" class="btn-secondary btn-sm" onclick="contactStaff('${staff.email}')" title="Contact">
                         <i class="fas fa-envelope"></i> Contact
                     </button>
-                    <button type="button" class="btn-primary btn-sm" onclick="event.stopPropagation(); editStaff('${staff.id}')" title="Edit">
+                    <button type="button" class="btn-primary btn-sm" onclick="editStaff('${staff.id}'); return false;" title="Edit">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button type="button" class="btn-danger btn-sm" onclick="event.stopPropagation(); confirmDeleteStaff('${staff.id}')" title="Delete">
+                    <button type="button" class="btn-danger btn-sm" onclick="confirmDeleteStaff('${staff.id}')" title="Delete">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
