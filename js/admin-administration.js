@@ -182,8 +182,42 @@ document.addEventListener('DOMContentLoaded', async function() {
     initializeStaffForm();
     initializeDonationForm();
     
+    // Set up event delegation for staff action buttons
+    setupStaffButtonHandlers();
+    
     console.log('✅ Admin page initialized');
 });
+
+// Event delegation for staff action buttons
+function setupStaffButtonHandlers() {
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('[data-action]');
+        if (!button) return;
+        
+        // Stop event from bubbling
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const action = button.dataset.action;
+        const staffId = button.dataset.staffId;
+        const email = button.dataset.email;
+        
+        console.log('🔘 Button clicked:', action, staffId || email);
+        
+        switch(action) {
+            case 'edit':
+                console.log('🔵 Calling editStaff for:', staffId);
+                editStaff(staffId);
+                break;
+            case 'delete':
+                confirmDeleteStaff(staffId);
+                break;
+            case 'contact':
+                contactStaff(email);
+                break;
+        }
+    });
+}
 
 // Load admin statistics
 async function loadAdminStats() {
@@ -304,13 +338,13 @@ async function renderStaffGrid() {
                     <p><i class="fas fa-phone"></i> ${staff.phone || '-'}</p>
                 </div>
                 <div class="staff-actions">
-                    <button type="button" class="btn-secondary btn-sm" onclick="contactStaff('${staff.email}')" title="Contact">
+                    <button type="button" class="btn-secondary btn-sm" data-action="contact" data-email="${staff.email}" title="Contact">
                         <i class="fas fa-envelope"></i> Contact
                     </button>
-                    <button type="button" class="btn-primary btn-sm" onclick="editStaff('${staff.id}'); return false;" title="Edit">
+                    <button type="button" class="btn-primary btn-sm" data-action="edit" data-staff-id="${staff.id}" title="Edit">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button type="button" class="btn-danger btn-sm" onclick="confirmDeleteStaff('${staff.id}')" title="Delete">
+                    <button type="button" class="btn-danger btn-sm" data-action="delete" data-staff-id="${staff.id}" title="Delete">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
