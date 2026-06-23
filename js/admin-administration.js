@@ -409,42 +409,6 @@ async function editStaff(id) {
     openModal('staffModal');
 }
 
-// Edit staff member
-async function editStaff(id) {
-    const staffData = getStaffData();
-    const staff = staffData.find(s => s.id === id);
-    
-    if (!staff) {
-        showNotification('Staff member not found', 'error');
-        return;
-    }
-    
-    // Populate form with staff data
-    document.getElementById('staffId').value = staff.id;
-    document.getElementById('staffName').value = staff.name;
-    document.getElementById('staffEmail').value = staff.email;
-    document.getElementById('staffPhone').value = staff.phone;
-    document.getElementById('staffRole').value = staff.role;
-    document.getElementById('staffDepartment').value = staff.department;
-    document.getElementById('staffStartDate').value = staff.startDate || '';
-    document.getElementById('staffEmploymentType').value = staff.employmentType || 'full-time';
-    document.getElementById('staffBio').value = staff.bio || '';
-    
-    // Load photo if exists
-    if (staff.photo) {
-        document.getElementById('staffPhotoData').value = staff.photo;
-        displayStaffPhoto(staff.photo);
-    } else {
-        resetStaffPhotoPreview();
-    }
-    
-    // Update modal title
-    document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
-    document.getElementById('staffSubmitBtn').textContent = 'Update Staff';
-    
-    openModal('staffModal');
-}
-
 // Delete staff member
 function deleteStaff(id) {
     const staffData = getStaffData();
@@ -481,10 +445,7 @@ function openStaffModal() {
 
 // Staff Photo Functions
 function handleStaffPhotoUpload(event) {
-    const     SUPABASE_URL=https://xxxxx.supabase.co
-    SUPABASE_ANON_KEY=eyJhbGc... (paste your anon key)
-    SUPABASE_SERVICE_ROLE_KEY=eyJhbGc... (paste your service role key)
-    SUPABASE_DB_PASSWORD=your_password_you_createdfile = event.target.files[0];
+    const file = event.target.files[0];
     if (!file) return;
     
     // Validate file size (max 2MB)
