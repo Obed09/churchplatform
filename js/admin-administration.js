@@ -1,499 +1,388 @@
 // ============================================
 // ADMINISTRATION DEPARTMENT
+// All data operations use Supabase via supabase-data.js
 // ============================================
 
-// Sample members data
-const sampleMembers = [
-    {
-        id: 1,
-        firstName: 'Jean',
-        lastName: 'Baptiste',
-        email: 'jean.baptiste@email.com',
-        phone: '829-123-4567',
-        joinDate: '2024-01-15',
-        ministry: 'Worship Team',
-        status: 'Active',
-        photo: null
-    },
-    {
-        id: 2,
-        firstName: 'Marie',
-        lastName: 'Laurent',
-        email: 'marie.laurent@email.com',
-        phone: '829-234-5678',
-        joinDate: '2025-03-20',
-        ministry: 'Children\'s Ministry',
-        status: 'Active',
-        photo: null
-    },
-    {
-        id: 3,
-        firstName: 'Pierre',
-        lastName: 'Dubois',
-        email: 'pierre.dubois@email.com',
-        phone: '829-345-6789',
-        joinDate: '2023-06-10',
-        ministry: 'Youth Ministry',
-        status: 'Active',
-        photo: null
-    },
-    {
-        id: 4,
-        firstName: 'Sophie',
-        lastName: 'Martin',
-        email: 'sophie.martin@email.com',
-        phone: '829-456-7890',
-        joinDate: '2024-11-05',
-        ministry: 'Hospitality',
-        status: 'Active',
-        photo: null
-    },
-    {
-        id: 5,
-        firstName: 'Andre',
-        lastName: 'Joseph',
-        email: 'andre.joseph@email.com',
-        phone: '829-567-8901',
-        joinDate: '2022-08-22',
-        ministry: 'Tech Team',
-        status: 'Inactive',
-        photo: null
-    }
-];
-
-// Sample staff data
-const sampleStaff = [
-    {
-        id: 1,
-        name: 'Pastor Emmanuel Dieujuste',
-        role: 'Senior Pastor',
-        department: 'Pastoral Team',
-        email: 'pastor@tabernacle.church',
-        phone: '829-377-1099',
-        startDate: '2020-01-01',
-        employmentType: 'full-time',
-        bio: 'Leading the church with passion and dedication',
-        photo: null
-    },
-    {
-        id: 2,
-        name: 'Marie-Claire Joseph',
-        role: 'Finance Director',
-        department: 'Finance',
-        email: 'finance@tabernacle.church',
-        phone: '829-303-0241',
-        startDate: '2021-03-15',
-        employmentType: 'full-time',
-        bio: 'Managing church finances and budget planning',
-        photo: null
-    },
-    {
-        id: 3,
-        name: 'Jacques Laurent',
-        role: 'Worship Leader',
-        department: 'Worship',
-        email: 'worship@tabernacle.church',
-        phone: '829-123-4567',
-        startDate: '2019-06-01',
-        employmentType: 'part-time',
-        bio: 'Leading worship and music ministry',
-        photo: null
-    },
-    {
-        id: 4,
-        name: 'Sophie Martin',
-        role: 'Children\'s Director',
-        department: 'Children\'s Ministry',
-        email: 'children@tabernacle.church',
-        phone: '829-234-5678',
-        startDate: '2022-09-01',
-        employmentType: 'full-time',
-        bio: 'Nurturing the next generation',
-        photo: null
-    }
-];
-
-// Get staff from localStorage or use sample data
-function getStaffData() {
-    const stored = localStorage.getItem('churchStaff');
-    if (stored) {
-        try {
-            const data = JSON.parse(stored);
-            console.log('✅ Loaded staff from localStorage:', data.length, 'staff members');
-            return data;
-        } catch (ite) {
-            console.error('❌ Error parsing staff data:', e);
-            return sampleStaff;
-        }
-    } else {
-        console.log('⚠️ No staff in localStorage, using sample data');
-        localStorage.setItem('churchStaff', JSON.stringify(sampleStaff));
-        return sampleStaff;
-    }
-}
-
-// Save staff to localStorage
-function saveStaffData(staffData) {
-    try {
-        localStorage.setItem('churchStaff', JSON.stringify(staffData));
-        console.log('✅ Saved staff to localStorage:', staffData.length, 'staff members');
-        console.log('Staff data:', staffData);
-    } catch (e) {
-        console.error('❌ Error saving staff:', e);
-        alert('Error saving staff member. Please try again.');
-    }
-}
-
-// Get members from localStorage or use sample data
-function getMembersData() {
-    const stored = localStorage.getItem('churchMembers');
-    if (stored) {
-        const members = JSON.parse(stored);
-        // Sync with sampleMembers array
-        sampleMembers.length = 0;
-        sampleMembers.push(...members);
-        return members;
-    } else {
-        localStorage.setItem('churchMembers', JSON.stringify(sampleMembers));
-        return sampleMembers;
-    }
-}
-
-// Save members to localStorage
-function saveMembersData(membersData) {
-    localStorage.setItem('churchMembers', JSON.stringify(membersData));
-    // Sync with sampleMembers array
-    sampleMembers.length = 0;
-    sampleMembers.push(...membersData);
-}
+// Local caches so Edit buttons open instantly without a second network call
+let _cachedStaff   = [];
+let _cachedMembers = [];
 
 // Initialize administration page
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Initializing admin page with Supabase...');
-    
-    // Load all data
     await loadAdminStats();
     await renderMembersTable();
     await renderStaffGrid();
     await renderDonationsTable();
-    
-    // Initialize forms
+
     initializeMemberForm();
     initializeStaffForm();
     initializeDonationForm();
-    
-    console.log('✅ Admin page initialized');
 });
 
-// Load admin statistics
+// ============================================
+// STATISTICS
+// ============================================
+
 async function loadAdminStats() {
     try {
-        const members = await getMembersData();
-        const staff = await getStaffData();
-        
-        const totalMembers = members.length;
-        const activeMembers = members.filter(m => m.status === 'Active').length;
-        const staffCount = staff.length;
-        const volunteerCount = 45; // Sample count
-        
-        document.getElementById('totalMembers').textContent = totalMembers;
-        document.getElementById('activeMembers').textContent = activeMembers;
-        document.getElementById('staffCount').textContent = staffCount;
-        document.getElementById('volunteerCount').textContent = volunteerCount;
-    } catch (error) {
-        console.error('Error loading stats:', error);
+        const [members, staff] = await Promise.all([getMembersData(), getStaffData()]);
+        document.getElementById('totalMembers').textContent  = members.length;
+        document.getElementById('activeMembers').textContent = members.filter(m => m.status === 'Active').length;
+        document.getElementById('staffCount').textContent    = staff.length;
+        document.getElementById('volunteerCount').textContent = 45;
+    } catch (e) {
+        console.error('Error loading stats:', e);
     }
 }
 
-// Render members table
+// ============================================
+// MEMBERS
+// ============================================
+
 async function renderMembersTable() {
     const tbody = document.getElementById('membersTableBody');
     if (!tbody) return;
-    
+
     try {
-        const dbMembers = await getMembersData();
-        const members = dbMembers.map(m => convertMemberFromDB(m));
-        
-        if (members.length === 0) {
+        const dbRows  = await getMembersData();
+        _cachedMembers = dbRows;                      // cache for instant edit
+        const members = dbRows.map(convertMemberFromDB);
+
+        if (!members.length) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" style="text-align: center; padding: 3rem; color: #718096;">
-                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+                    <td colspan="8" style="text-align:center;padding:3rem;color:#718096;">
+                        <i class="fas fa-users" style="font-size:3rem;margin-bottom:1rem;display:block;opacity:.3;"></i>
                         <p>No members yet. Click "Add Member" to get started!</p>
                     </td>
-                </tr>
-            `;
+                </tr>`;
             return;
         }
-        
-        tbody.innerHTML = members.map(member => {
-            const photoDisplay = member.photo 
-                ? `<img src="${member.photo}" alt="${member.firstName}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`
-                : `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${member.firstName.charAt(0)}${member.lastName.charAt(0)}</div>`;
-            
+
+        tbody.innerHTML = members.map(m => {
+            const firstName = (m.firstName || '').trim();
+            const lastName = (m.lastName || '').trim();
+            const safeFirst = firstName || 'Member';
+            const safeLast = lastName || '';
+            const initials = `${safeFirst.charAt(0) || 'M'}${safeLast.charAt(0) || ''}`;
+            const photo = m.photo
+                ? `<img src="${m.photo}" alt="${safeFirst}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">`
+                : `<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;">${initials}</div>`;
             return `
                 <tr>
-                    <td>${photoDisplay}</td>
-                    <td><strong>${member.firstName} ${member.lastName}</strong></td>
-                    <td>${member.email}</td>
-                    <td>${member.phone || '-'}</td>
-                    <td>${formatDate(member.joinDate)}</td>
-                    <td><span class="badge badge-info">${member.ministry || '-'}</span></td>
-                    <td><span class="badge badge-${member.status === 'Active' ? 'success' : 'secondary'}">${member.status}</span></td>
+                    <td>${photo}</td>
+                    <td><strong>${safeFirst} ${safeLast}</strong></td>
+                    <td>${m.email}</td>
+                    <td>${m.phone || '-'}</td>
+                    <td>${formatDate(m.joinDate)}</td>
+                    <td><span class="badge badge-info">${m.ministry || '-'}</span></td>
+                    <td><span class="badge badge-${m.status === 'Active' ? 'success' : 'secondary'}">${m.status}</span></td>
                     <td class="table-actions">
-                        <button class="action-btn" onclick="viewMember('${member.id}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn" onclick="editMember('${member.id}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete" onclick="confirmDeleteMember('${member.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button class="action-btn" onclick="viewMember('${m.id}')"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn" onclick="editMember('${m.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="confirmDeleteMember('${m.id}')"><i class="fas fa-trash"></i></button>
                     </td>
-                </tr>
-            `;
+                </tr>`;
         }).join('');
-    } catch (error) {
-        console.error('Error rendering members table:', error);
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" style="text-align: center; padding: 2rem; color: #e53e3e;">
-                    <i class="fas fa-exclamation-triangle"></i> Error loading members
-                </td>
-            </tr>
-        `;
+    } catch (e) {
+        console.error('Error rendering members:', e);
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#e53e3e;"><i class="fas fa-exclamation-triangle"></i> Error loading members</td></tr>`;
     }
 }
 
-// Render staff grid
-async function renderStaffGrid() {
-    const staffGrid = document.getElementById('staffGrid');
-    if (!staffGrid) return;
-    
-    try {
-        const dbStaff = await getStaffData();
-        const staffData = dbStaff.map(s => convertStaffFromDB(s));
-        
-        if (staffData.length === 0) {
-        staffGrid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-user-tie"></i>
-                <h3>No Staff Members Yet</h3>
-                <p>Click "Add Staff" to add your first staff member</p>
-            </div>
-        `;
-        return;
+function openMemberModal() {
+    const form = document.getElementById('memberForm');
+    if (form) {
+        form.reset();
+        delete form.dataset.editId;
+        resetMemberPhotoPreview();
     }
-    
-    staffGrid.innerHTML = staffData.map(staff => {
-        const avatarContent = staff.photo 
-            ? `<img src="${staff.photo}" alt="${staff.name}">`
-            : `<i class="fas fa-user-tie"></i>`;
-        
-        return `
-            <div class="staff-card">
-                <div class="staff-avatar">
-                    ${avatarContent}
-                </div>
-                <h3>${staff.name}</h3>
-                <p class="staff-role">${staff.role}</p>
-                <p class="staff-department"><i class="fas fa-building"></i> ${staff.department}</p>
-                <div class="staff-contact">
-                    <p><i class="fas fa-envelope"></i> ${staff.email}</p>
-                    <p><i class="fas fa-phone"></i> ${staff.phone || '-'}</p>
-                </div>
-                <div class="staff-actions">
-                    <button type="button" class="btn-secondary btn-sm" onclick="contactStaff('${staff.email}')" title="Contact">
-                        <i class="fas fa-envelope"></i> Contact
-                    </button>
-                    <button type="button" class="btn-primary btn-sm" onclick="editStaff('${staff.id}'); return false;" title="Edit">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button type="button" class="btn-danger btn-sm" onclick="confirmDeleteStaff('${staff.id}')" title="Delete">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-    } catch (error) {
-        console.error('Error rendering staff grid:', error);
-        staffGrid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-triangle" style="color: #e53e3e;"></i>
-                <h3>Error Loading Staff</h3>
-                <p>Please refresh the page</p>
-            </div>
-        `;
-    }
+    const titleEl = document.getElementById('memberModalTitle');
+    if (titleEl) titleEl.textContent = 'Add New Member';
+    const submitEl = document.getElementById('memberSubmitBtn');
+    if (submitEl) submitEl.textContent = 'Add Member';
+    openModal('memberModal');
 }
 
-// Initialize staff form
-function initializeStaffForm() {
-    const form = document.getElementById('staffForm');
+function initializeMemberForm() {
+    const form = document.getElementById('memberForm');
     if (!form) return;
-    
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        const staffId = document.getElementById('staffId').value;
-        
-        const staffMember = {
-            id: staffId || null,
-            name: document.getElementById('staffName').value,
-            email: document.getElementById('staffEmail').value,
-            phone: document.getElementById('staffPhone').value,
-            role: document.getElementById('staffRole').value,
-            department: document.getElementById('staffDepartment').value,
-            startDate: document.getElementById('staffStartDate').value,
-            employmentType: document.getElementById('staffEmploymentType').value,
-            bio: document.getElementById('staffBio').value,
-            photo: document.getElementById('staffPhotoData').value || null
+        const editId = form.dataset.editId;
+        const memberData = {
+            id: editId || undefined,
+            firstName: document.getElementById('memberFirstName').value,
+            lastName:  document.getElementById('memberLastName').value,
+            email:     document.getElementById('memberEmail').value,
+            phone:     document.getElementById('memberPhone').value,
+            joinDate:  document.getElementById('memberJoinDate').value,
+            ministry:  document.getElementById('memberMinistry').value,
+            status:    'Active',
+            photo:     document.getElementById('memberPhotoData').value || null,
+            birthDate: document.getElementById('memberBirthdate')?.value || null,
+            gender:    document.getElementById('memberGender')?.value || null,
+            address:   document.getElementById('memberAddress')?.value || null,
+            notes:     document.getElementById('memberNotes')?.value || null
         };
-        
+
         try {
-            await saveStaff(staffMember);
-            showNotification(`${staffMember.name} ${staffId ? 'updated' : 'added'} successfully!`, 'success');
-            
-            closeModal('staffModal');
+            await saveMember(memberData);
+            showNotification(`${memberData.firstName} ${memberData.lastName} ${editId ? 'updated' : 'added'} successfully!`, 'success');
+            delete form.dataset.editId;
+            closeModal('memberModal');
             form.reset();
-            document.getElementById('staffPhotoData').value = '';
-            resetStaffPhotoPreview();
-            await renderStaffGrid();
+            resetMemberPhotoPreview();
+            await renderMembersTable();
             await loadAdminStats();
-        } catch (error) {
-            console.error('Error saving staff:', error);
+        } catch (err) {
+            console.error('Error saving member:', err);
+            showNotification('Error saving member. Please try again.', 'error');
         }
     });
 }
 
-// Confirm delete staff
-async function confirmDeleteStaff(id) {
-    if (!confirm('Are you sure you want to delete this staff member?')) return;
-    
+async function viewMember(id) {
+    const db = _cachedMembers.find(r => r.id === id);
+    if (!db) return;
+    alert(`Member Details:\n\nName: ${db.first_name} ${db.last_name}\nEmail: ${db.email}\nPhone: ${db.phone || '-'}\nJoined: ${formatDate(db.join_date)}\nMinistry: ${db.ministry || '-'}\nStatus: ${db.status}`);
+}
+
+function editMember(id) {
+    // Use cache for instant response — no network round-trip needed
+    const db = _cachedMembers.find(r => r.id === id);
+    if (!db) { showNotification('Member not found — try refreshing the page', 'error'); return; }
+    const m = convertMemberFromDB(db);
+
+    document.getElementById('memberFirstName').value = m.firstName;
+    document.getElementById('memberLastName').value  = m.lastName;
+    document.getElementById('memberEmail').value     = m.email;
+    document.getElementById('memberPhone').value     = m.phone    || '';
+    document.getElementById('memberJoinDate').value  = m.joinDate || '';
+    document.getElementById('memberMinistry').value  = m.ministry || '';
+    if (document.getElementById('memberBirthdate')) document.getElementById('memberBirthdate').value = m.birthDate || '';
+    if (document.getElementById('memberGender'))    document.getElementById('memberGender').value    = m.gender    || '';
+    if (document.getElementById('memberAddress'))   document.getElementById('memberAddress').value   = m.address   || '';
+    if (document.getElementById('memberNotes'))     document.getElementById('memberNotes').value     = m.notes     || '';
+
+    if (m.photo) {
+        document.getElementById('memberPhotoData').value = m.photo;
+        displayMemberPhoto(m.photo);
+    } else {
+        resetMemberPhotoPreview();
+    }
+
+    const form = document.getElementById('memberForm');
+    form.dataset.editId = id;
+    const titleEl = document.getElementById('memberModalTitle');
+    if (titleEl) titleEl.textContent = 'Edit Member';
+    const submitEl = document.getElementById('memberSubmitBtn');
+    if (submitEl) submitEl.textContent = 'Update Member';
+    openModal('memberModal');
+}
+
+async function confirmDeleteMember(id) {
+    if (!confirm('Are you sure you want to delete this member?')) return;
     try {
-        await deleteStaff(id);
-        showNotification('Staff member deleted successfully!', 'success');
-        await renderStaffGrid();
+        await deleteMember(id);
+        _cachedMembers = _cachedMembers.filter(m => m.id !== id);
+        showNotification('Member deleted successfully!', 'success');
+        await renderMembersTable();
         await loadAdminStats();
-    } catch (error) {
-        console.error('Error deleting staff:', error);
+    } catch (e) {
+        console.error('Error deleting member:', e);
+        showNotification('Error deleting member', 'error');
     }
 }
 
-// Edit staff member
-async function editStaff(id) {
-    console.log('🔍 Edit staff called with ID:', id);
-    
+function searchMembers() {
+    const term = document.getElementById('memberSearch').value.toLowerCase();
+    const rows = document.querySelectorAll('#membersTableBody tr');
+    rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+    });
+}
+
+function filterMembers() {
+    const filter = document.getElementById('memberFilter').value;
+    const rows   = document.querySelectorAll('#membersTableBody tr');
+    rows.forEach(row => {
+        const status = row.querySelector('.badge-success, .badge-secondary')?.textContent || '';
+        row.style.display = (filter === 'all' || status.toLowerCase() === filter.toLowerCase()) ? '' : 'none';
+    });
+}
+
+// ============================================
+// STAFF
+// ============================================
+
+async function renderStaffGrid() {
+    const grid = document.getElementById('staffGrid');
+    if (!grid) return;
+
     try {
-        const dbStaff = await getStaffData();
-        console.log('📊 Loaded staff data:', dbStaff);
-        
-        const staff = dbStaff.find(s => s.id === id);
-        console.log('👤 Found staff:', staff);
-        
-        if (!staff) {
-            showNotification('Staff member not found', 'error');
+        const dbRows = await getStaffData();
+        _cachedStaff = dbRows;                        // cache for instant edit
+        const staff  = dbRows.map(convertStaffFromDB);
+
+        if (!staff.length) {
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-user-tie"></i><h3>No Staff Members Yet</h3><p>Click "Add Staff" to add your first staff member</p></div>`;
             return;
         }
-        
-        const staffData = convertStaffFromDB(staff);
-        console.log('✅ Converted staff data:', staffData);
-        
-        // Fill form fields
-        document.getElementById('staffId').value = staffData.id;
-        document.getElementById('staffName').value = staffData.name;
-        document.getElementById('staffEmail').value = staffData.email;
-        document.getElementById('staffPhone').value = staffData.phone || '';
-        document.getElementById('staffRole').value = staffData.role;
-        document.getElementById('staffDepartment').value = staffData.department;
-        document.getElementById('staffStartDate').value = staffData.startDate;
-        document.getElementById('staffEmploymentType').value = staffData.employmentType;
-        document.getElementById('staffBio').value = staffData.bio || '';
-        document.getElementById('staffPhotoData').value = staffData.photo || '';
-        
-        console.log('📝 Form fields populated');
-        
-        if (staffData.photo) {
-            document.getElementById('staffPhotoPreview').innerHTML = `<img src="${staffData.photo}" alt="Preview">`;
-        } else {
-            resetStaffPhotoPreview();
-        }
-        
-        // Update modal title and button
-        document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
-        document.getElementById('staffSubmitBtn').textContent = 'Update Staff';
-        
-        console.log('🚪 Opening modal...');
-        openModal('staffModal');
-        console.log('✅ Edit staff completed');
-    } catch (error) {
-        console.error('❌ Error loading staff for edit:', error);
-        showNotification('Error loading staff member: ' + error.message, 'error');
+
+        grid.innerHTML = staff.map(s => {
+            const avatar = s.photo ? `<img src="${s.photo}" alt="${s.name}">` : `<i class="fas fa-user-tie"></i>`;
+            return `
+                <div class="staff-card">
+                    <div class="staff-avatar">${avatar}</div>
+                    <h3>${s.name}</h3>
+                    <p class="staff-role">${s.role}</p>
+                    <p class="staff-department"><i class="fas fa-building"></i> ${s.department}</p>
+                    <div class="staff-contact">
+                        <p><i class="fas fa-envelope"></i> ${s.email}</p>
+                        <p><i class="fas fa-phone"></i> ${s.phone || '-'}</p>
+                    </div>
+                    <div class="staff-actions">
+                        <button type="button" class="btn-secondary btn-sm" onclick="contactStaff('${s.email}')"><i class="fas fa-envelope"></i> Contact</button>
+                        <button type="button" class="btn-primary btn-sm" onclick="editStaff('${s.id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button type="button" class="btn-danger btn-sm" onclick="confirmDeleteStaff('${s.id}')"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                </div>`;
+        }).join('');
+    } catch (e) {
+        console.error('Error rendering staff grid:', e);
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:#e53e3e;"></i><h3>Error Loading Staff</h3><p>Please refresh the page</p></div>`;
     }
 }
 
-// Reset staff form when opening for new staff
 function openStaffModal() {
-    document.getElementById('staffForm').reset();
-    document.getElementById('staffId').value = '';
-    document.getElementById('staffPhotoData').value = '';
-    resetStaffPhotoPreview();
-    document.getElementById('staffModalTitle').textContent = 'Add New Staff';
-    document.getElementById('staffSubmitBtn').textContent = 'Add Staff';
+    const form = document.getElementById('staffForm');
+    if (form) {
+        form.reset();
+        document.getElementById('staffId').value = '';
+        document.getElementById('staffPhotoData').value = '';
+        resetStaffPhotoPreview();
+        document.getElementById('staffModalTitle').textContent = 'Add New Staff';
+        document.getElementById('staffSubmitBtn').textContent  = 'Add Staff';
+    }
     openModal('staffModal');
 }
 
-/* ============================================ */
-/* PHOTO UPLOAD FUNCTIONS */
-/* ============================================ */
+function initializeStaffForm() {
+    const form = document.getElementById('staffForm');
+    if (!form) return;
 
-// Staff Photo Functions
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const staffId = document.getElementById('staffId').value;
+        const staffMember = {
+            id:             staffId || null,
+            name:           document.getElementById('staffName').value,
+            email:          document.getElementById('staffEmail').value,
+            phone:          document.getElementById('staffPhone').value,
+            role:           document.getElementById('staffRole').value,
+            department:     document.getElementById('staffDepartment').value,
+            startDate:      document.getElementById('staffStartDate').value,
+            employmentType: document.getElementById('staffEmploymentType').value,
+            bio:            document.getElementById('staffBio').value,
+            photo:          document.getElementById('staffPhotoData').value || null
+        };
+
+        try {
+            await saveStaff(staffMember);
+            showNotification(`${staffMember.name} ${staffId ? 'updated' : 'added'} successfully!`, 'success');
+            closeModal('staffModal');
+            form.reset();
+            document.getElementById('staffPhotoData').value = '';
+            resetStaffPhotoPreview();
+            await renderStaffGrid();   // also refreshes _cachedStaff
+            await loadAdminStats();
+        } catch (err) {
+            console.error('Error saving staff:', err);
+            showNotification('Error saving staff — check the console for details', 'error');
+        }
+    });
+}
+
+function editStaff(id) {
+    // Use cache for instant response — modal opens immediately, no network call
+    const db = _cachedStaff.find(s => s.id === id);
+    if (!db) { showNotification('Staff member not found — try refreshing the page', 'error'); return; }
+    const s = convertStaffFromDB(db);
+
+    document.getElementById('staffId').value             = s.id;
+    document.getElementById('staffName').value           = s.name;
+    document.getElementById('staffEmail').value          = s.email;
+    document.getElementById('staffPhone').value          = s.phone || '';
+    document.getElementById('staffRole').value           = s.role;
+    document.getElementById('staffDepartment').value     = s.department;
+    document.getElementById('staffStartDate').value      = s.startDate || '';
+    document.getElementById('staffEmploymentType').value = s.employmentType || 'full-time';
+    document.getElementById('staffBio').value            = s.bio || '';
+    document.getElementById('staffPhotoData').value      = s.photo || '';
+
+    if (s.photo) {
+        const prev = document.getElementById('staffPhotoPreview');
+        if (prev) { prev.innerHTML = `<img src="${s.photo}" alt="Preview">`; prev.classList.add('has-image'); }
+        const btn = document.getElementById('removeStaffPhotoBtn');
+        if (btn) btn.style.display = 'inline-flex';
+    } else {
+        resetStaffPhotoPreview();
+    }
+
+    document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
+    document.getElementById('staffSubmitBtn').textContent  = 'Update Staff';
+    openModal('staffModal');
+}
+
+async function confirmDeleteStaff(id) {
+    if (!confirm('Are you sure you want to delete this staff member?')) return;
+    try {
+        await deleteStaff(id);
+        _cachedStaff = _cachedStaff.filter(s => s.id !== id);
+        showNotification('Staff member deleted successfully!', 'success');
+        await renderStaffGrid();
+        await loadAdminStats();
+    } catch (e) {
+        console.error('Error deleting staff:', e);
+    }
+}
+
+function contactStaff(email) {
+    window.location.href = `mailto:${email}`;
+}
+
+// ============================================
+// PHOTO UPLOAD FUNCTIONS
+// ============================================
+
 function handleStaffPhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('Image size must be less than 2MB', 'error');
-        event.target.value = '';
-        return;
-    }
-    
-    // Validate file type
-    if (!file.type.match('image.*')) {
-        showNotification('Please select a valid image file', 'error');
-        event.target.value = '';
-        return;
-    }
-    
-    // Read and convert to base64
+    if (file.size > 2 * 1024 * 1024) { showNotification('Image must be under 2MB', 'error'); event.target.value = ''; return; }
+    if (!file.type.match('image.*'))  { showNotification('Please select a valid image', 'error'); event.target.value = ''; return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-        const photoData = e.target.result;
-        document.getElementById('staffPhotoData').value = photoData;
-        displayStaffPhoto(photoData);
-    };
+    reader.onload = e => { document.getElementById('staffPhotoData').value = e.target.result; displayStaffPhoto(e.target.result); };
     reader.readAsDataURL(file);
 }
 
-function displayStaffPhoto(photoData) {
-    const preview = document.getElementById('staffPhotoPreview');
-    preview.innerHTML = `<img src="${photoData}" alt="Staff Photo">`;
-    preview.classList.add('has-image');
+function displayStaffPhoto(data) {
+    const p = document.getElementById('staffPhotoPreview');
+    p.innerHTML = `<img src="${data}" alt="Staff Photo">`;
+    p.classList.add('has-image');
     document.getElementById('removeStaffPhotoBtn').style.display = 'inline-flex';
 }
 
 function resetStaffPhotoPreview() {
-    const preview = document.getElementById('staffPhotoPreview');
-    preview.innerHTML = `
-        <i class="fas fa-user-tie"></i>
-        <span>Upload Photo</span>
-    `;
-    preview.classList.remove('has-image');
-    document.getElementById('staffPhotoInput').value = '';
-    document.getElementById('removeStaffPhotoBtn').style.display = 'none';
+    const p = document.getElementById('staffPhotoPreview');
+    if (!p) return;
+    p.innerHTML = `<i class="fas fa-user-tie"></i><span>Upload Photo</span>`;
+    p.classList.remove('has-image');
+    const inp = document.getElementById('staffPhotoInput');
+    if (inp) inp.value = '';
+    const btn = document.getElementById('removeStaffPhotoBtn');
+    if (btn) btn.style.display = 'none';
 }
 
 function removeStaffPhoto() {
@@ -502,48 +391,32 @@ function removeStaffPhoto() {
     showNotification('Photo removed', 'info');
 }
 
-// Member Photo Functions
 function handleMemberPhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('Image size must be less than 2MB', 'error');
-        event.target.value = '';
-        return;
-    }
-    
-    if (!file.type.match('image.*')) {
-        showNotification('Please select a valid image file', 'error');
-        event.target.value = '';
-        return;
-    }
-    
+    if (file.size > 2 * 1024 * 1024) { showNotification('Image must be under 2MB', 'error'); event.target.value = ''; return; }
+    if (!file.type.match('image.*'))  { showNotification('Please select a valid image', 'error'); event.target.value = ''; return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-        const photoData = e.target.result;
-        document.getElementById('memberPhotoData').value = photoData;
-        displayMemberPhoto(photoData);
-    };
+    reader.onload = e => { document.getElementById('memberPhotoData').value = e.target.result; displayMemberPhoto(e.target.result); };
     reader.readAsDataURL(file);
 }
 
-function displayMemberPhoto(photoData) {
-    const preview = document.getElementById('memberPhotoPreview');
-    preview.innerHTML = `<img src="${photoData}" alt="Member Photo">`;
-    preview.classList.add('has-image');
+function displayMemberPhoto(data) {
+    const p = document.getElementById('memberPhotoPreview');
+    p.innerHTML = `<img src="${data}" alt="Member Photo">`;
+    p.classList.add('has-image');
     document.getElementById('removeMemberPhotoBtn').style.display = 'inline-flex';
 }
 
 function resetMemberPhotoPreview() {
-    const preview = document.getElementById('memberPhotoPreview');
-    preview.innerHTML = `
-        <i class="fas fa-user"></i>
-        <span>Upload Photo</span>
-    `;
-    preview.classList.remove('has-image');
-    document.getElementById('memberPhotoInput').value = '';
-    document.getElementById('removeMemberPhotoBtn').style.display = 'none';
+    const p = document.getElementById('memberPhotoPreview');
+    if (!p) return;
+    p.innerHTML = `<i class="fas fa-user"></i><span>Upload Photo</span>`;
+    p.classList.remove('has-image');
+    const inp = document.getElementById('memberPhotoInput');
+    if (inp) inp.value = '';
+    const btn = document.getElementById('removeMemberPhotoBtn');
+    if (btn) btn.style.display = 'none';
 }
 
 function removeMemberPhoto() {
@@ -552,48 +425,32 @@ function removeMemberPhoto() {
     showNotification('Photo removed', 'info');
 }
 
-// Visitor Photo Functions
 function handleVisitorPhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('Image size must be less than 2MB', 'error');
-        event.target.value = '';
-        return;
-    }
-    
-    if (!file.type.match('image.*')) {
-        showNotification('Please select a valid image file', 'error');
-        event.target.value = '';
-        return;
-    }
-    
+    if (file.size > 2 * 1024 * 1024) { showNotification('Image must be under 2MB', 'error'); event.target.value = ''; return; }
+    if (!file.type.match('image.*'))  { showNotification('Please select a valid image', 'error'); event.target.value = ''; return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-        const photoData = e.target.result;
-        document.getElementById('visitorPhotoData').value = photoData;
-        displayVisitorPhoto(photoData);
-    };
+    reader.onload = e => { document.getElementById('visitorPhotoData').value = e.target.result; displayVisitorPhoto(e.target.result); };
     reader.readAsDataURL(file);
 }
 
-function displayVisitorPhoto(photoData) {
-    const preview = document.getElementById('visitorPhotoPreview');
-    preview.innerHTML = `<img src="${photoData}" alt="Visitor Photo">`;
-    preview.classList.add('has-image');
+function displayVisitorPhoto(data) {
+    const p = document.getElementById('visitorPhotoPreview');
+    p.innerHTML = `<img src="${data}" alt="Visitor Photo">`;
+    p.classList.add('has-image');
     document.getElementById('removeVisitorPhotoBtn').style.display = 'inline-flex';
 }
 
 function resetVisitorPhotoPreview() {
-    const preview = document.getElementById('visitorPhotoPreview');
-    preview.innerHTML = `
-        <i class="fas fa-user-friends"></i>
-        <span>Upload Photo</span>
-    `;
-    preview.classList.remove('has-image');
-    document.getElementById('visitorPhotoInput').value = '';
-    document.getElementById('removeVisitorPhotoBtn').style.display = 'none';
+    const p = document.getElementById('visitorPhotoPreview');
+    if (!p) return;
+    p.innerHTML = `<i class="fas fa-user-friends"></i><span>Upload Photo</span>`;
+    p.classList.remove('has-image');
+    const inp = document.getElementById('visitorPhotoInput');
+    if (inp) inp.value = '';
+    const btn = document.getElementById('removeVisitorPhotoBtn');
+    if (btn) btn.style.display = 'none';
 }
 
 function removeVisitorPhoto() {
@@ -602,434 +459,152 @@ function removeVisitorPhoto() {
     showNotification('Photo removed', 'info');
 }
 
-/* ============================================ */
-/* END PHOTO UPLOAD FUNCTIONS */
-/* ============================================ */
-
-// Initialize member form
-function initializeMemberForm() {
-    const form = document.getElementById('memberForm');
-    if (!form) return;
-    
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        try {
-            const editId = form.dataset.editId;
-            
-            const memberData = {
-                id: editId || undefined,
-                firstName: document.getElementById('memberFirstName').value,
-                lastName: document.getElementById('memberLastName').value,
-                email: document.getElementById('memberEmail').value,
-                phone: document.getElementById('memberPhone').value,
-                joinDate: document.getElementById('memberJoinDate').value,
-                ministry: document.getElementById('memberMinistry').value,
-                status: 'Active',
-                photo: document.getElementById('memberPhotoData').value || null
-            };
-            
-            await saveMember(memberData);
-            
-            const actionText = editId ? 'updated' : 'added';
-            showNotification(`Member ${memberData.firstName} ${memberData.lastName} ${actionText} successfully!`, 'success');
-            
-            if (editId) {
-                delete form.dataset.editId;
-            }
-            
-            closeModal('memberModal');
-            form.reset();
-            resetMemberPhotoPreview();
-            
-            // Update display
-            await renderMembersTable();
-            await loadAdminStats();
-        } catch (error) {
-            console.error('Error saving member:', error);
-            showNotification('Error saving member. Please try again.', 'error');
-        }
-    });
-}
-
-// Search and filter functions
-function searchMembers() {
-    const searchTerm = document.getElementById('memberSearch').value.toLowerCase();
-    console.log('Searching for:', searchTerm);
-    // Implement actual search logic
-}
-
-function filterMembers() {
-    const filter = document.getElementById('memberFilter').value;
-    console.log('Filtering by:', filter);
-    // Implement actual filtering logic
-}
-
 function filterVolunteers() {
-    const filter = document.getElementById('volunteerFilter').value;
+    const filter = document.getElementById('volunteerFilter')?.value;
     console.log('Filtering volunteers by:', filter);
-    // Implement actual filtering logic
 }
 
-// Open member modal for adding new member
-function openMemberModal() {
-    const form = document.getElementById('memberForm');
-    if (form) {
-        form.reset();
-        delete form.dataset.editId;
-        resetMemberPhotoPreview();
-    }
-    openModal('memberModal');
-}
-
-// Action functions
-function viewMember(id) {
-    const members = getMembersData();
-    const member = members.find(m => m.id === id);
-    if (member) {
-        alert(`Member Details:\n\nName: ${member.firstName} ${member.lastName}\nEmail: ${member.email}\nPhone: ${member.phone}\nJoined: ${formatDate(member.joinDate)}\nMinistry: ${member.ministry}\nStatus: ${member.status}`);
-    }
-}
-
-// Confirm delete member
-async function confirmDeleteMember(id) {
-    if (!confirm('Are you sure you want to delete this member?')) return;
-    
-    try {
-        await deleteMember(id);
-        showNotification('Member deleted successfully!', 'success');
-        await renderMembersTable();
-        await loadAdminStats();
-    } catch (error) {
-        console.error('Error deleting member:', error);
-    }
-}
-
-async function editMember(id) {
-    const dbMembers = await getMembersData();
-    const dbMember = dbMembers.find(m => m.id === id);
-    if (!dbMember) return;
-    
-    const member = convertMemberFromDB(dbMember);
-    
-    // Populate form with member data
-    document.getElementById('memberFirstName').value = member.firstName;
-    document.getElementById('memberLastName').value = member.lastName;
-    document.getElementById('memberEmail').value = member.email;
-    document.getElementById('memberPhone').value = member.phone || '';
-    document.getElementById('memberBirthdate').value = member.birthDate || '';
-    document.getElementById('memberGender').value = member.gender || '';
-    document.getElementById('memberAddress').value = member.address || '';
-    document.getElementById('memberJoinDate').value = member.joinDate;
-    document.getElementById('memberMinistry').value = member.ministry || '';
-    document.getElementById('memberNotes').value = member.notes || '';
-    
-    // Load photo if exists
-    if (member.photo) {
-        document.getElementById('memberPhotoData').value = member.photo;
-        displayMemberPhoto(member.photo);
-    }
-    
-    // Store the ID for update
-    document.getElementById('memberForm').dataset.editId = id;
-    
-    // Open modal
-    openModal('memberModal');
-}
-
-function deleteMember(id) {
-    if (confirm('Are you sure you want to remove this member?')) {
-        const members = getMembersData();
-        const updatedMembers = members.filter(m => m.id !== id);
-        saveMembersData(updatedMembers);
-        
-        showNotification('Member removed successfully!', 'success');
-        renderMembersTable();
-        loadAdminStats();
-    }
-}
-
-function contactStaff(email) {
-    window.location.href = `mailto:${email}`;
-}
-
-// Utility functions
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
-
-/* ============================================ */
-/* CSV IMPORT FUNCTIONALITY */
-/* ============================================ */
+// ============================================
+// CSV IMPORT
+// ============================================
 
 let csvParsedData = [];
 
 function handleCSVUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    // Validate file type
-    if (!file.name.endsWith('.csv')) {
-        showNotification('Please select a valid CSV file', 'error');
-        event.target.value = '';
-        return;
-    }
-    
-    // Update file name display
+    if (!file.name.endsWith('.csv')) { showNotification('Please select a valid CSV file', 'error'); event.target.value = ''; return; }
     document.getElementById('csvFileName').textContent = file.name;
-    
-    // Read and parse CSV
     const reader = new FileReader();
-    reader.onload = function(e) {
-        const csvText = e.target.result;
-        parseCSV(csvText);
-    };
+    reader.onload = e => parseCSV(e.target.result);
     reader.readAsText(file);
 }
 
 function parseCSV(csvText) {
-    const lines = csvText.split('\n').filter(line => line.trim());
-    
-    if (lines.length < 2) {
-        showNotification('CSV file is empty or invalid', 'error');
-        return;
-    }
-    
-    // Parse header
-    const headers = parseCSVLine(lines[0]);
-    
-    // Validate headers
-    const requiredHeaders = ['First Name', 'Last Name', 'Email', 'Phone', 'Join Date', 'Ministry', 'Status'];
-    const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
-    
-    if (missingHeaders.length > 0) {
-        showNotification(`Missing required columns: ${missingHeaders.join(', ')}`, 'error');
-        return;
-    }
-    
-    // Parse data rows
+    const lines = csvText.split('\n').filter(l => l.trim());
+    if (lines.length < 2) { showNotification('CSV file is empty or invalid', 'error'); return; }
+    const headers  = parseCSVLine(lines[0]);
+    const required = ['First Name','Last Name','Email','Phone','Join Date','Ministry','Status'];
+    const missing  = required.filter(h => !headers.includes(h));
+    if (missing.length) { showNotification(`Missing columns: ${missing.join(', ')}`, 'error'); return; }
+
     csvParsedData = [];
     const errors = [];
-    
     for (let i = 1; i < lines.length; i++) {
         const values = parseCSVLine(lines[i]);
-        if (values.length === 0) continue;
-        
+        if (!values.length) continue;
         const record = {};
-        headers.forEach((header, index) => {
-            record[header] = values[index] || '';
-        });
-        
-        // Validate record
-        const validation = validateMemberRecord(record, i + 1);
-        if (validation.valid) {
-            csvParsedData.push(record);
-        } else {
-            errors.push(...validation.errors);
-        }
+        headers.forEach((h, idx) => { record[h] = values[idx] || ''; });
+        const v = validateMemberRecord(record, i + 1);
+        if (v.valid) csvParsedData.push(record);
+        else errors.push(...v.errors);
     }
-    
-    // Display preview
-    if (csvParsedData.length > 0) {
+
+    if (csvParsedData.length) {
         displayCSVPreview(headers, csvParsedData);
-        if (errors.length > 0) {
-            displayValidationErrors(errors);
-        }
+        if (errors.length) displayValidationErrors(errors);
     } else {
-        showNotification('No valid records found in CSV file', 'error');
+        showNotification('No valid records found in CSV', 'error');
     }
 }
 
 function parseCSVLine(line) {
     const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-            result.push(current.trim());
-            current = '';
-        } else {
-            current += char;
-        }
+    let cur = '', inQ = false;
+    for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+        else cur += ch;
     }
-    result.push(current.trim());
-    
+    result.push(cur.trim());
     return result;
 }
 
-function validateMemberRecord(record, lineNumber) {
+function validateMemberRecord(record, lineNo) {
     const errors = [];
-    
-    // Required fields validation
-    if (!record['First Name']) errors.push(`Line ${lineNumber}: First Name is required`);
-    if (!record['Last Name']) errors.push(`Line ${lineNumber}: Last Name is required`);
-    if (!record['Email']) errors.push(`Line ${lineNumber}: Email is required`);
-    if (!record['Phone']) errors.push(`Line ${lineNumber}: Phone is required`);
-    if (!record['Join Date']) errors.push(`Line ${lineNumber}: Join Date is required`);
-    if (!record['Ministry']) errors.push(`Line ${lineNumber}: Ministry is required`);
-    if (!record['Status']) errors.push(`Line ${lineNumber}: Status is required`);
-    
-    // Email validation
-    if (record['Email'] && !record['Email'].includes('@')) {
-        errors.push(`Line ${lineNumber}: Invalid email format`);
-    }
-    
-    // Date validation
-    if (record['Join Date'] && !isValidDate(record['Join Date'])) {
-        errors.push(`Line ${lineNumber}: Invalid Join Date format (use YYYY-MM-DD)`);
-    }
-    
-    // Status validation
-    const validStatuses = ['Active', 'Inactive', 'New'];
-    if (record['Status'] && !validStatuses.includes(record['Status'])) {
-        errors.push(`Line ${lineNumber}: Status must be Active, Inactive, or New`);
-    }
-    
-    return {
-        valid: errors.length === 0,
-        errors: errors
-    };
+    ['First Name','Last Name','Email','Phone','Join Date','Ministry','Status'].forEach(f => {
+        if (!record[f]) errors.push(`Line ${lineNo}: ${f} is required`);
+    });
+    if (record['Email'] && !record['Email'].includes('@')) errors.push(`Line ${lineNo}: Invalid email`);
+    if (record['Join Date'] && !isValidDate(record['Join Date'])) errors.push(`Line ${lineNo}: Invalid Join Date (use YYYY-MM-DD)`);
+    if (record['Status'] && !['Active','Inactive','New'].includes(record['Status'])) errors.push(`Line ${lineNo}: Status must be Active, Inactive, or New`);
+    return { valid: errors.length === 0, errors };
 }
 
-function isValidDate(dateString) {
-    const regex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!regex.test(dateString)) return false;
-    
-    const date = new Date(dateString);
-    return date instanceof Date && !isNaN(date);
+function isValidDate(s) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(new Date(s));
 }
 
 function displayCSVPreview(headers, data) {
-    // Show preview section
     document.getElementById('csvPreviewSection').style.display = 'block';
-    document.getElementById('csvImportActions').style.display = 'flex';
-    
-    // Update record count
+    document.getElementById('csvImportActions').style.display  = 'flex';
     document.getElementById('csvRecordCount').textContent = `${data.length} records`;
     document.getElementById('importCount').textContent = data.length;
-    
-    // Build preview table
+
+    const displayH = ['First Name','Last Name','Email','Phone','Join Date','Ministry','Status'];
     const thead = document.getElementById('csvPreviewHead');
     const tbody = document.getElementById('csvPreviewBody');
-    
-    // Create header row
-    const headerRow = document.createElement('tr');
-    const displayHeaders = ['First Name', 'Last Name', 'Email', 'Phone', 'Join Date', 'Ministry', 'Status'];
-    displayHeaders.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
-    });
+
+    const hRow = document.createElement('tr');
+    displayH.forEach(h => { const th = document.createElement('th'); th.textContent = h; hRow.appendChild(th); });
     thead.innerHTML = '';
-    thead.appendChild(headerRow);
-    
-    // Create data rows (show first 10 for preview)
+    thead.appendChild(hRow);
+
     tbody.innerHTML = '';
-    const previewData = data.slice(0, 10);
-    previewData.forEach(record => {
+    data.slice(0, 10).forEach(rec => {
         const row = document.createElement('tr');
-        displayHeaders.forEach(header => {
-            const td = document.createElement('td');
-            td.textContent = record[header] || '';
-            row.appendChild(td);
-        });
+        displayH.forEach(h => { const td = document.createElement('td'); td.textContent = rec[h] || ''; row.appendChild(td); });
         tbody.appendChild(row);
     });
-    
-    // Add "and X more" message if there are more records
     if (data.length > 10) {
-        const moreRow = document.createElement('tr');
-        const moreTd = document.createElement('td');
-        moreTd.colSpan = displayHeaders.length;
-        moreTd.style.textAlign = 'center';
-        moreTd.style.fontStyle = 'italic';
-        moreTd.style.color = 'var(--text-light)';
-        moreTd.textContent = `... and ${data.length - 10} more records`;
-        moreRow.appendChild(moreTd);
-        tbody.appendChild(moreRow);
+        const more = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = displayH.length;
+        td.style.cssText = 'text-align:center;font-style:italic;color:var(--text-light)';
+        td.textContent = `... and ${data.length - 10} more records`;
+        more.appendChild(td);
+        tbody.appendChild(more);
     }
 }
 
 function displayValidationErrors(errors) {
-    const errorSection = document.getElementById('csvValidationErrors');
-    errorSection.style.display = 'block';
-    
-    errorSection.innerHTML = `
-        <h4><i class="fas fa-exclamation-triangle"></i> Validation Errors (${errors.length})</h4>
-        <ul>
-            ${errors.map(error => `<li>${error}</li>`).join('')}
-        </ul>
-        <p><strong>Note:</strong> Records with errors will be skipped. Only valid records will be imported.</p>
-    `;
+    const sec = document.getElementById('csvValidationErrors');
+    sec.style.display = 'block';
+    sec.innerHTML = `<h4><i class="fas fa-exclamation-triangle"></i> Validation Errors (${errors.length})</h4><ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul><p><strong>Note:</strong> Records with errors will be skipped.</p>`;
 }
 
-function importCSVData() {
-    if (csvParsedData.length === 0) {
-        showNotification('No data to import', 'warning');
-        return;
+async function importCSVData() {
+    if (!csvParsedData.length) { showNotification('No data to import', 'warning'); return; }
+
+    let success = 0, failed = 0;
+    for (const record of csvParsedData) {
+        try {
+            await saveMember({
+                firstName: record['First Name'],
+                lastName:  record['Last Name'],
+                email:     record['Email'],
+                phone:     record['Phone'],
+                joinDate:  record['Join Date'],
+                ministry:  record['Ministry'],
+                status:    record['Status'],
+                birthDate: record['Birth Date'] || null,
+                gender:    record['Gender']     || null,
+                address:   record['Address']    || null,
+                notes:     record['Notes']      || null,
+                photo:     null
+            });
+            success++;
+        } catch (e) {
+            failed++;
+            console.error('Failed to import row:', record, e);
+        }
     }
-    
-    // Get existing members from localStorage
-    let existingMembers = JSON.parse(localStorage.getItem('churchMembers') || '[]');
-    
-    // If no existing members, use sample data
-    if (existingMembers.length === 0) {
-        existingMembers = sampleMembers;
-    }
-    
-    // Find the highest existing ID
-    let maxId = existingMembers.reduce((max, member) => Math.max(max, member.id || 0), 0);
-    
-    // Convert CSV records to member objects
-    const newMembers = csvParsedData.map(record => {
-        maxId++;
-        return {
-            id: maxId,
-            firstName: record['First Name'],
-            lastName: record['Last Name'],
-            email: record['Email'],
-            phone: record['Phone'],
-            joinDate: record['Join Date'],
-            ministry: record['Ministry'],
-            status: record['Status'],
-            birthDate: record['Birth Date'] || null,
-            gender: record['Gender'] || null,
-            address: record['Address'] || null,
-            notes: record['Notes'] || null,
-            photo: null
-        };
-    });
-    
-    // Add new members to existing members
-    const updatedMembers = [...existingMembers, ...newMembers];
-    
-    // Save to localStorage
-    localStorage.setItem('churchMembers', JSON.stringify(updatedMembers));
-    
-    // Update the global sampleMembers array
-    sampleMembers.length = 0;
-    sampleMembers.push(...updatedMembers);
-    
-    // Show success message
-    showNotification(`Successfully imported ${newMembers.length} members!`, 'success');
-    
-    // Close modal and reset
+
+    showNotification(`Imported ${success} members${failed ? ` (${failed} failed)` : ''}!`, failed ? 'warning' : 'success');
     closeModal('csvImportModal');
     resetCSVImport();
-    
-    // Refresh the members table
-    renderMembersTable();
-    loadAdminStats();
+    await renderMembersTable();
+    await loadAdminStats();
 }
 
 function resetCSVImport() {
@@ -1037,872 +612,476 @@ function resetCSVImport() {
     document.getElementById('csvFileInput').value = '';
     document.getElementById('csvFileName').textContent = 'No file selected';
     document.getElementById('csvPreviewSection').style.display = 'none';
-    document.getElementById('csvImportActions').style.display = 'none';
+    document.getElementById('csvImportActions').style.display  = 'none';
     document.getElementById('csvValidationErrors').style.display = 'none';
 }
 
-/* ============================================ */
-/* END CSV IMPORT FUNCTIONALITY */
-/* ============================================ */
+// ============================================
+// DONATIONS
+// ============================================
 
-/* ============================================ */
-/* DONATION MANAGEMENT */
-/* ============================================ */
-
-// PayPal Configuration
 const PAYPAL_CONFIG = {
     email: 'amorporelcalvario@gmail.com',
     currency: 'DOP',
-    currencySymbol: 'RD$',
-    environment: 'live'
+    currencySymbol: 'RD$'
 };
 
-// Sample donation data
-const sampleDonations = [
-    {
-        id: 1,
-        date: '2026-06-01',
-        donorName: 'Jean Baptiste',
-        donorEmail: 'jean.baptiste@email.com',
-        donorPhone: '829-123-4567',
-        donorAddress: '123 Main St, Santo Domingo',
-        memberId: 1,
-        category: 'General Fund/Tithes',
-        amount: 15000.00,
-        method: 'PayPal',
-        type: 'recurring',
-        frequency: 'monthly',
-        status: 'completed',
-        transactionId: 'PP-2026060112345',
-        isAnonymous: false,
-        notes: 'Monthly tithe'
-    },
-    {
-        id: 2,
-        date: '2026-06-05',
-        donorName: 'Anonymous',
-        category: 'Building Fund',
-        amount: 30000.00,
-        method: 'Cash',
-        type: 'one-time',
-        status: 'completed',
-        isAnonymous: true,
-        notes: 'For new sanctuary construction'
-    },
-    {
-        id: 3,
-        date: '2026-06-10',
-        donorName: 'Marie Laurent',
-        donorEmail: 'marie.laurent@email.com',
-        donorPhone: '829-234-5678',
-        memberId: 2,
-        category: 'Missions',
-        amount: 7500.00,
-        method: 'Bank Transfer',
-        type: 'one-time',
-        status: 'completed',
-        notes: 'Haiti mission trip support'
-    },
-    {
-        id: 4,
-        date: '2026-06-12',
-        donorName: 'Pierre Dubois',
-        donorEmail: 'pierre.dubois@email.com',
-        memberId: 3,
-        category: 'Youth Ministry',
-        amount: 4500.00,
-        method: 'PayPal',
-        type: 'recurring',
-        frequency: 'monthly',
-        status: 'completed',
-        transactionId: 'PP-2026061212345'
-    },
-    {
-        id: 5,
-        date: '2026-06-15',
-        donorName: 'Sophie Martin',
-        donorEmail: 'sophie.martin@email.com',
-        memberId: 4,
-        category: 'Special Events',
-        amount: 2250.00,
-        method: 'Check',
-        type: 'one-time',
-        status: 'completed',
-        notes: 'Summer camp sponsorship'
-    }
-];
-
-// Get donations from localStorage
-function getDonationsData() {
-    const stored = localStorage.getItem('churchDonations');
-    if (stored) {
-        return JSON.parse(stored);
-    } else {
-        localStorage.setItem('churchDonations', JSON.stringify(sampleDonations));
-        return sampleDonations;
-    }
-}
-
-// Save donations to localStorage
-function saveDonationsData(donations) {
-    localStorage.setItem('churchDonations', JSON.stringify(donations));
-}
-
-// Render donations table
-function renderDonationsTable(donations = null) {
+async function renderDonationsTable(donations = null) {
     const tbody = document.getElementById('donationsTableBody');
     if (!tbody) return;
-    
-    const donationsData = donations || getDonationsData();
-    
-    tbody.innerHTML = donationsData.map(donation => {
-        const statusClass = donation.status === 'completed' ? 'success' : 
-                           donation.status === 'pending' ? 'warning' : 'danger';
-        const typeIcon = donation.type === 'recurring' ? '<i class="fas fa-repeat"></i>' : '<i class="fas fa-hand-holding-usd"></i>';
-        
-        return `
-            <tr>
-                <td>${formatDate(donation.date)}</td>
-                <td>
-                    ${donation.isAnonymous ? '<i class="fas fa-user-secret"></i> Anonymous' : donation.donorName}
-                    ${donation.memberId ? '<span class="badge badge-info" style="margin-left: 0.5rem;">Member</span>' : ''}
-                </td>
-                <td><span class="badge badge-primary">${donation.category}</span></td>
-                <td><strong>${PAYPAL_CONFIG.currencySymbol}${donation.amount.toLocaleString('es-DO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
-                <td>${donation.method}</td>
-                <td>${typeIcon} ${donation.type === 'recurring' ? `${donation.frequency}` : 'One-time'}</td>
-                <td><span class="badge badge-${statusClass}">${donation.status}</span></td>
-                <td class="table-actions">
-                    <button class="action-btn" onclick="viewDonation(${donation.id})" title="View Details">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn" onclick="editDonation(${donation.id})" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteDonation(${donation.id})" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    ${!donation.isAnonymous ? `<button class="action-btn" onclick="generateTaxReceipt(${donation.id})" title="Tax Receipt">
-                        <i class="fas fa-file-invoice"></i>
-                    </button>` : ''}
-                </td>
-            </tr>
-        `;
-    }).join('');
-    
-    updateDonationStats();
+
+    try {
+        const data = donations || (await getDonationsData()).map(convertDonationFromDB);
+
+        tbody.innerHTML = data.map(d => {
+            const statusClass = d.status === 'completed' ? 'success' : d.status === 'pending' ? 'warning' : 'danger';
+            const typeIcon = d.donationType === 'recurring'
+                ? '<i class="fas fa-repeat"></i>'
+                : '<i class="fas fa-hand-holding-usd"></i>';
+            const amtFmt = d.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+            return `
+                <tr>
+                    <td>${formatDate(d.date)}</td>
+                    <td>
+                        ${d.isAnonymous ? '<i class="fas fa-user-secret"></i> Anonymous' : (d.donorName || '-')}
+                        ${d.memberId ? '<span class="badge badge-info" style="margin-left:.5rem;">Member</span>' : ''}
+                    </td>
+                    <td><span class="badge badge-primary">${d.category || '-'}</span></td>
+                    <td><strong>${PAYPAL_CONFIG.currencySymbol}${amtFmt}</strong></td>
+                    <td>${d.paymentMethod || '-'}</td>
+                    <td>${typeIcon} ${d.donationType === 'recurring' ? (d.recurringFrequency || '') : 'One-time'}</td>
+                    <td><span class="badge badge-${statusClass}">${d.status || '-'}</span></td>
+                    <td class="table-actions">
+                        <button class="action-btn" onclick="viewDonation('${d.id}')" title="View"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn" onclick="editDonation('${d.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="confirmDeleteDonation('${d.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                        ${!d.isAnonymous ? `<button class="action-btn" onclick="generateTaxReceipt('${d.id}')" title="Receipt"><i class="fas fa-file-invoice"></i></button>` : ''}
+                    </td>
+                </tr>`;
+        }).join('');
+
+        await updateDonationStats(data);
+    } catch (e) {
+        console.error('Error rendering donations:', e);
+    }
 }
 
-// Update donation statistics
-function updateDonationStats() {
-    const donations = getDonationsData();
-    
-    // Total donations (all time)
-    const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);
-    document.getElementById('totalDonationsAmount').textContent = `${PAYPAL_CONFIG.currencySymbol}${totalAmount.toLocaleString('es-DO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    
-    // This month donations
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    const monthDonations = donations.filter(d => {
-        const donationDate = new Date(d.date);
-        return donationDate.getMonth() === currentMonth && donationDate.getFullYear() === currentYear;
-    });
-    const monthAmount = monthDonations.reduce((sum, d) => sum + d.amount, 0);
-    document.getElementById('monthDonationsAmount').textContent = `${PAYPAL_CONFIG.currencySymbol}${monthAmount.toLocaleString('es-DO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    
-    // Unique donors
-    const uniqueDonors = new Set(donations.map(d => d.donorName));
-    document.getElementById('totalDonors').textContent = uniqueDonors.size;
-    
-    // Active recurring donations
-    const recurringCount = donations.filter(d => d.type === 'recurring' && d.status === 'completed').length;
-    document.getElementById('recurringDonations').textContent = recurringCount;
+async function updateDonationStats(data = null) {
+    try {
+        const donations = data || (await getDonationsData()).map(convertDonationFromDB);
+        const now = new Date();
+
+        const totalAmount = donations.reduce((s, d) => s + d.amount, 0);
+        const monthDons   = donations.filter(d => {
+            const dt = new Date(d.date);
+            return dt.getMonth() === now.getMonth() && dt.getFullYear() === now.getFullYear();
+        });
+        const monthAmount = monthDons.reduce((s, d) => s + d.amount, 0);
+        const uniqueDonors = new Set(donations.map(d => d.donorName)).size;
+        const recurring    = donations.filter(d => d.donationType === 'recurring' && d.status === 'completed').length;
+
+        const fmt = n => `${PAYPAL_CONFIG.currencySymbol}${n.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+        const el  = id => document.getElementById(id);
+        if (el('totalDonationsAmount'))  el('totalDonationsAmount').textContent  = fmt(totalAmount);
+        if (el('monthDonationsAmount'))  el('monthDonationsAmount').textContent  = fmt(monthAmount);
+        if (el('totalDonors'))           el('totalDonors').textContent           = uniqueDonors;
+        if (el('recurringDonations'))    el('recurringDonations').textContent    = recurring;
+    } catch (e) {
+        console.error('Error updating donation stats:', e);
+    }
 }
 
-// Initialize donation form
-function initializeDonationForm() {
-    const form = document.getElementById('donationForm');
-    if (!form) return;
-    
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const donations = getDonationsData();
-        const editId = form.dataset.editId;
-        
-        const isAnonymous = document.getElementById('anonymousDonation').checked;
-        const donationType = document.getElementById('donationType').value;
-        
-        const donationData = {
-            date: document.getElementById('donationDate').value,
-            amount: parseFloat(document.getElementById('donationAmount').value),
-            category: document.getElementById('donationCategory').value,
-            method: document.getElementById('donationMethod').value,
-            type: donationType,
-            frequency: donationType === 'recurring' ? document.getElementById('recurringFrequency').value : null,
-            isAnonymous: isAnonymous,
-            donorName: isAnonymous ? 'Anonymous' : document.getElementById('donorName').value,
-            donorEmail: isAnonymous ? null : document.getElementById('donorEmail').value || null,
-            donorPhone: isAnonymous ? null : document.getElementById('donorPhone').value || null,
-            donorAddress: isAnonymous ? null : document.getElementById('donorAddress').value || null,
-            memberId: document.getElementById('donorMember').value ? parseInt(document.getElementById('donorMember').value) : null,
-            transactionId: document.getElementById('transactionId').value || null,
-            status: document.getElementById('donationStatus').value,
-            notes: document.getElementById('donationNotes').value || null
-        };
-        
-        if (editId) {
-            // Update existing donation
-            const index = donations.findIndex(d => d.id == editId);
-            if (index !== -1) {
-                donations[index] = { ...donations[index], ...donationData };
-                showNotification('Donation updated successfully!', 'success');
-            }
-            delete form.dataset.editId;
-        } else {
-            // Add new donation
-            const maxId = donations.reduce((max, d) => Math.max(max, d.id || 0), 0);
-            donationData.id = maxId + 1;
-            donations.push(donationData);
-            showNotification('Donation added successfully!', 'success');
-        }
-        
-        saveDonationsData(donations);
-        
-        closeModal('donationModal');
-        form.reset();
-        renderDonationsTable();
-    });
-}
-
-// Open donation modal for new donation
 function openDonationModal() {
     const form = document.getElementById('donationForm');
     if (form) {
         form.reset();
         delete form.dataset.editId;
         document.getElementById('donationModalTitle').textContent = 'Add New Donation';
-        
-        // Set default date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('donationDate').value = today;
-        
-        // Show donor fields by default
+        document.getElementById('donationDate').value = new Date().toISOString().split('T')[0];
         document.getElementById('anonymousDonation').checked = false;
         document.getElementById('donorFieldsGroup').style.display = 'block';
-        
-        // Hide recurring options by default
         document.getElementById('donationType').value = 'one-time';
         document.getElementById('recurringFrequencyGroup').style.display = 'none';
-        
-        // Populate member dropdown
         populateMemberDropdown();
     }
     openModal('donationModal');
 }
 
-// Populate member dropdown
-function populateMemberDropdown() {
+async function populateMemberDropdown() {
     const select = document.getElementById('donorMember');
     if (!select) return;
-    
-    const members = getMembersData();
-    
-    // Clear existing options except the first one
-    select.innerHTML = '<option value="">-- Select Member --</option>';
-    
-    members.forEach(member => {
-        const option = document.createElement('option');
-        option.value = member.id;
-        option.textContent = `${member.firstName} ${member.lastName}`;
-        option.dataset.email = member.email;
-        option.dataset.phone = member.phone;
-        select.appendChild(option);
-    });
-}
-
-// Load member info when member selected
-function loadMemberInfo() {
-    const select = document.getElementById('donorMember');
-    const selectedOption = select.options[select.selectedIndex];
-    
-    if (selectedOption.value) {
-        const members = getMembersData();
-        const member = members.find(m => m.id == selectedOption.value);
-        
-        if (member) {
-            document.getElementById('donorName').value = `${member.firstName} ${member.lastName}`;
-            document.getElementById('donorEmail').value = member.email || '';
-            document.getElementById('donorPhone').value = member.phone || '';
-            document.getElementById('donorAddress').value = member.address || '';
-        }
-    }
-}
-
-// Toggle donor fields when anonymous checkbox changes
-function toggleDonorFields() {
-    const isAnonymous = document.getElementById('anonymousDonation').checked;
-    const donorFields = document.getElementById('donorFieldsGroup');
-    
-    if (isAnonymous) {
-        donorFields.style.display = 'none';
-    } else {
-        donorFields.style.display = 'block';
-    }
-}
-
-// Toggle recurring options
-function toggleRecurringOptions() {
-    const donationType = document.getElementById('donationType').value;
-    const recurringGroup = document.getElementById('recurringFrequencyGroup');
-    
-    if (donationType === 'recurring') {
-        recurringGroup.style.display = 'block';
-    } else {
-        recurringGroup.style.display = 'none';
-    }
-}
-
-// View donation details
-function viewDonation(id) {
-    const donations = getDonationsData();
-    const donation = donations.find(d => d.id === id);
-    
-    if (donation) {
-        let details = `Donation Details:\n\n`;
-        details += `Date: ${formatDate(donation.date)}\n`;
-        details += `Amount: ${PAYPAL_CONFIG.currencySymbol}${donation.amount.toLocaleString('es-DO', {minimumFractionDigits: 2})}\n`;
-        details += `Category: ${donation.category}\n`;
-        details += `Method: ${donation.method}\n`;
-        details += `Type: ${donation.type}\n`;
-        if (donation.frequency) details += `Frequency: ${donation.frequency}\n`;
-        details += `Status: ${donation.status}\n\n`;
-        
-        if (!donation.isAnonymous) {
-            details += `Donor: ${donation.donorName}\n`;
-            if (donation.donorEmail) details += `Email: ${donation.donorEmail}\n`;
-            if (donation.donorPhone) details += `Phone: ${donation.donorPhone}\n`;
-            if (donation.donorAddress) details += `Address: ${donation.donorAddress}\n`;
-        } else {
-            details += `Donor: Anonymous\n`;
-        }
-        
-        if (donation.transactionId) details += `\nTransaction ID: ${donation.transactionId}\n`;
-        if (donation.notes) details += `\nNotes: ${donation.notes}`;
-        
-        alert(details);
-    }
-}
-
-// Edit donation
-function editDonation(id) {
-    const donations = getDonationsData();
-    const donation = donations.find(d => d.id === id);
-    
-    if (!donation) return;
-    
-    // Populate form
-    document.getElementById('donationDate').value = donation.date;
-    document.getElementById('donationAmount').value = donation.amount;
-    document.getElementById('donationCategory').value = donation.category;
-    document.getElementById('donationMethod').value = donation.method;
-    document.getElementById('donationType').value = donation.type;
-    document.getElementById('donationStatus').value = donation.status;
-    document.getElementById('transactionId').value = donation.transactionId || '';
-    document.getElementById('donationNotes').value = donation.notes || '';
-    
-    // Handle recurring
-    if (donation.type === 'recurring') {
-        document.getElementById('recurringFrequencyGroup').style.display = 'block';
-        document.getElementById('recurringFrequency').value = donation.frequency;
-    }
-    
-    // Handle anonymous
-    document.getElementById('anonymousDonation').checked = donation.isAnonymous;
-    if (donation.isAnonymous) {
-        document.getElementById('donorFieldsGroup').style.display = 'none';
-    } else {
-        document.getElementById('donorFieldsGroup').style.display = 'block';
-        document.getElementById('donorMember').value = donation.memberId || '';
-        document.getElementById('donorName').value = donation.donorName || '';
-        document.getElementById('donorEmail').value = donation.donorEmail || '';
-        document.getElementById('donorPhone').value = donation.donorPhone || '';
-        document.getElementById('donorAddress').value = donation.donorAddress || '';
-    }
-    
-    // Set edit mode
-    document.getElementById('donationModalTitle').textContent = 'Edit Donation';
-    document.getElementById('donationForm').dataset.editId = id;
-    
-    populateMemberDropdown();
-    openModal('donationModal');
-}
-
-// Delete donation
-function deleteDonation(id) {
-    if (confirm('Are you sure you want to delete this donation record?')) {
-        const donations = getDonationsData();
-        const updatedDonations = donations.filter(d => d.id !== id);
-        saveDonationsData(updatedDonations);
-        
-        showNotification('Donation deleted successfully!', 'success');
-        renderDonationsTable();
-    }
-}
-
-// Search donations
-function searchDonations() {
-    const searchTerm = document.getElementById('donationSearch').value.toLowerCase();
-    const donations = getDonationsData();
-    
-    const filtered = donations.filter(d => 
-        d.donorName.toLowerCase().includes(searchTerm) ||
-        d.category.toLowerCase().includes(searchTerm) ||
-        d.method.toLowerCase().includes(searchTerm) ||
-        d.amount.toString().includes(searchTerm) ||
-        (d.transactionId && d.transactionId.toLowerCase().includes(searchTerm))
-    );
-    
-    renderDonationsTable(filtered);
-}
-
-// Filter donations
-function filterDonations() {
-    const categoryFilter = document.getElementById('donationCategoryFilter').value;
-    const dateFilter = document.getElementById('donationDateFilter').value;
-    const donations = getDonationsData();
-    
-    let filtered = donations;
-    
-    // Category filter
-    if (categoryFilter !== 'all') {
-        filtered = filtered.filter(d => d.category === categoryFilter);
-    }
-    
-    // Date filter
-    if (dateFilter !== 'all') {
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        
-        filtered = filtered.filter(d => {
-            const donationDate = new Date(d.date);
-            
-            switch(dateFilter) {
-                case 'today':
-                    return donationDate >= today;
-                case 'week':
-                    const weekAgo = new Date(today);
-                    weekAgo.setDate(weekAgo.getDate() - 7);
-                    return donationDate >= weekAgo;
-                case 'month':
-                    return donationDate.getMonth() === now.getMonth() && 
-                           donationDate.getFullYear() === now.getFullYear();
-                case 'year':
-                    return donationDate.getFullYear() === now.getFullYear();
-                default:
-                    return true;
-            }
+    try {
+        const rows = await getMembersData();
+        select.innerHTML = '<option value="">-- Select Member --</option>';
+        rows.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = `${r.first_name} ${r.last_name}`;
+            opt.dataset.email = r.email;
+            opt.dataset.phone = r.phone;
+            select.appendChild(opt);
         });
-    }
-    
-    renderDonationsTable(filtered);
+    } catch (e) { console.error(e); }
 }
 
-// Export donations to CSV
-function exportDonations() {
-    const donations = getDonationsData();
-    
-    const headers = ['Date', 'Donor', 'Email', 'Phone', 'Category', 'Amount', 'Method', 'Type', 'Frequency', 'Status', 'Transaction ID', 'Notes'];
-    const rows = donations.map(d => [
-        d.date,
-        d.donorName,
-        d.donorEmail || '',
-        d.donorPhone || '',
-        d.category,
-        d.amount,
-        d.method,
-        d.type,
-        d.frequency || '',
-        d.status,
-        d.transactionId || '',
-        d.notes || ''
-    ]);
-    
-    let csv = headers.join(',') + '\n';
-    rows.forEach(row => {
-        csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-    });
-    
-    // Download
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `donations_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    
-    showNotification('Donations exported successfully!', 'success');
+function loadMemberInfo() {
+    const sel = document.getElementById('donorMember');
+    const opt = sel.options[sel.selectedIndex];
+    if (opt.value) {
+        document.getElementById('donorName').value  = opt.text;
+        document.getElementById('donorEmail').value = opt.dataset.email || '';
+        document.getElementById('donorPhone').value = opt.dataset.phone || '';
+    }
 }
 
-// Generate report
-function generateReport() {
-    const startDate = document.getElementById('reportStartDate').value;
-    const endDate = document.getElementById('reportEndDate').value;
-    const category = document.getElementById('reportCategory').value;
-    
-    let donations = getDonationsData();
-    
-    // Filter by date range
-    if (startDate) {
-        donations = donations.filter(d => d.date >= startDate);
-    }
-    if (endDate) {
-        donations = donations.filter(d => d.date <= endDate);
-    }
-    
-    // Filter by category
-    if (category !== 'all') {
-        donations = donations.filter(d => d.category === category);
-    }
-    
-    // Calculate statistics
-    const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);
-    const totalDonations = donations.length;
-    const avgDonation = totalDonations > 0 ? totalAmount / totalDonations : 0;
-    const uniqueDonors = new Set(donations.map(d => d.donorName)).size;
-    
-    // Update report display
-    document.getElementById('reportTotalAmount').textContent = `${PAYPAL_CONFIG.currencySymbol}${totalAmount.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
-    document.getElementById('reportTotalDonations').textContent = totalDonations;
-    document.getElementById('reportAvgDonation').textContent = `${PAYPAL_CONFIG.currencySymbol}${avgDonation.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
-    document.getElementById('reportUniqueDonors').textContent = uniqueDonors;
-    
-    // Category breakdown
-    const categoryTotals = {};
-    donations.forEach(d => {
-        categoryTotals[d.category] = (categoryTotals[d.category] || 0) + d.amount;
-    });
-    
-    const categoryHTML = Object.entries(categoryTotals)
-        .sort((a, b) => b[1] - a[1])
-        .map(([cat, amount]) => `
-            <div class="category-item">
-                <span class="category-name">${cat}</span>
-                <span class="category-amount">${PAYPAL_CONFIG.currencySymbol}${amount.toLocaleString('es-DO', {minimumFractionDigits: 2})}</span>
-            </div>
-        `).join('');
-    document.getElementById('categoryBreakdown').innerHTML = categoryHTML;
-    
-    // Top donors
-    const donorTotals = {};
-    donations.forEach(d => {
-        if (!d.isAnonymous) {
-            donorTotals[d.donorName] = (donorTotals[d.donorName] || 0) + d.amount;
+function toggleDonorFields() {
+    const anon = document.getElementById('anonymousDonation').checked;
+    document.getElementById('donorFieldsGroup').style.display = anon ? 'none' : 'block';
+}
+
+function toggleRecurringOptions() {
+    const type = document.getElementById('donationType').value;
+    document.getElementById('recurringFrequencyGroup').style.display = type === 'recurring' ? 'block' : 'none';
+}
+
+function initializeDonationForm() {
+    const form = document.getElementById('donationForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const editId   = form.dataset.editId;
+        const isAnon   = document.getElementById('anonymousDonation').checked;
+        const donType  = document.getElementById('donationType').value;
+
+        const donation = {
+            id:                 editId || undefined,
+            date:               document.getElementById('donationDate').value,
+            amount:             parseFloat(document.getElementById('donationAmount').value),
+            category:           document.getElementById('donationCategory').value,
+            paymentMethod:      document.getElementById('donationMethod').value,
+            donationType:       donType,
+            recurringFrequency: donType === 'recurring' ? document.getElementById('recurringFrequency').value : null,
+            isAnonymous:        isAnon,
+            donorName:          isAnon ? 'Anonymous' : document.getElementById('donorName').value,
+            donorEmail:         isAnon ? null : (document.getElementById('donorEmail').value || null),
+            donorPhone:         isAnon ? null : (document.getElementById('donorPhone').value || null),
+            donorAddress:       isAnon ? null : (document.getElementById('donorAddress')?.value || null),
+            memberId:           document.getElementById('donorMember').value || null,
+            transactionId:      document.getElementById('transactionId').value || null,
+            status:             document.getElementById('donationStatus').value,
+            notes:              document.getElementById('donationNotes').value || null,
+            currency:           'DOP'
+        };
+
+        try {
+            await saveDonation(donation);
+            showNotification(`Donation ${editId ? 'updated' : 'added'} successfully!`, 'success');
+            delete form.dataset.editId;
+            closeModal('donationModal');
+            form.reset();
+            await renderDonationsTable();
+        } catch (err) {
+            console.error('Error saving donation:', err);
+            showNotification('Error saving donation', 'error');
         }
     });
-    
-    const topDonorsHTML = Object.entries(donorTotals)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10)
-        .map(([donor, amount], index) => `
-            <div class="donor-item">
-                <span class="donor-rank">#${index + 1}</span>
-                <span class="donor-name">${donor}</span>
-                <span class="donor-amount">${PAYPAL_CONFIG.currencySymbol}${amount.toLocaleString('es-DO', {minimumFractionDigits: 2})}</span>
-            </div>
-        `).join('');
-    document.getElementById('topDonorsList').innerHTML = topDonorsHTML;
-    
-    // Show results
-    document.getElementById('reportResults').style.display = 'block';
-    
-    showNotification('Report generated successfully!', 'success');
 }
 
-// Export report
-function exportReport() {
-    showNotification('Exporting report to Excel...', 'info');
-    // Implementation would generate Excel file
+async function viewDonation(id) {
+    try {
+        const rows = await getDonationsData();
+        const db = rows.find(r => r.id === id);
+        if (!db) return;
+        const d = convertDonationFromDB(db);
+        const fmt = n => `${PAYPAL_CONFIG.currencySymbol}${n.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+        let msg = `Donation Details:\n\nDate: ${formatDate(d.date)}\nAmount: ${fmt(d.amount)}\nCategory: ${d.category}\nMethod: ${d.paymentMethod}\nType: ${d.donationType}\nStatus: ${d.status}\n\n`;
+        if (!d.isAnonymous) {
+            msg += `Donor: ${d.donorName}\n`;
+            if (d.donorEmail) msg += `Email: ${d.donorEmail}\n`;
+            if (d.donorPhone) msg += `Phone: ${d.donorPhone}\n`;
+        } else { msg += 'Donor: Anonymous\n'; }
+        if (d.transactionId) msg += `\nTransaction ID: ${d.transactionId}`;
+        if (d.notes)         msg += `\nNotes: ${d.notes}`;
+        alert(msg);
+    } catch (e) { console.error(e); }
 }
 
-// Print report
-function printReport() {
-    window.print();
+async function editDonation(id) {
+    try {
+        const rows = await getDonationsData();
+        const db = rows.find(r => r.id === id);
+        if (!db) return;
+        const d = convertDonationFromDB(db);
+
+        document.getElementById('donationDate').value     = d.date;
+        document.getElementById('donationAmount').value   = d.amount;
+        document.getElementById('donationCategory').value = d.category || '';
+        document.getElementById('donationMethod').value   = d.paymentMethod || '';
+        document.getElementById('donationType').value     = d.donationType || 'one-time';
+        document.getElementById('donationStatus').value   = d.status || 'completed';
+        document.getElementById('transactionId').value    = d.transactionId || '';
+        document.getElementById('donationNotes').value    = d.notes || '';
+
+        if (d.donationType === 'recurring') {
+            document.getElementById('recurringFrequencyGroup').style.display = 'block';
+            document.getElementById('recurringFrequency').value = d.recurringFrequency || '';
+        }
+        document.getElementById('anonymousDonation').checked = d.isAnonymous;
+        document.getElementById('donorFieldsGroup').style.display = d.isAnonymous ? 'none' : 'block';
+        if (!d.isAnonymous) {
+            document.getElementById('donorName').value    = d.donorName || '';
+            document.getElementById('donorEmail').value   = d.donorEmail || '';
+            document.getElementById('donorPhone').value   = d.donorPhone || '';
+            if (document.getElementById('donorAddress')) document.getElementById('donorAddress').value = d.donorAddress || '';
+        }
+
+        document.getElementById('donationModalTitle').textContent = 'Edit Donation';
+        document.getElementById('donationForm').dataset.editId = id;
+        await populateMemberDropdown();
+        if (d.memberId) document.getElementById('donorMember').value = d.memberId;
+        openModal('donationModal');
+    } catch (e) { console.error(e); }
 }
 
-// Generate tax receipt
+async function confirmDeleteDonation(id) {
+    if (!confirm('Are you sure you want to delete this donation record?')) return;
+    try {
+        await deleteDonation(id);
+        showNotification('Donation deleted successfully!', 'success');
+        await renderDonationsTable();
+    } catch (e) { console.error(e); }
+}
+
+async function searchDonations() {
+    const term = document.getElementById('donationSearch').value.toLowerCase();
+    try {
+        const data = (await getDonationsData()).map(convertDonationFromDB);
+        const filtered = data.filter(d =>
+            (d.donorName || '').toLowerCase().includes(term) ||
+            (d.category  || '').toLowerCase().includes(term) ||
+            (d.paymentMethod || '').toLowerCase().includes(term) ||
+            String(d.amount).includes(term)
+        );
+        await renderDonationsTable(filtered);
+    } catch (e) { console.error(e); }
+}
+
+async function filterDonations() {
+    const cat  = document.getElementById('donationCategoryFilter')?.value || 'all';
+    const date = document.getElementById('donationDateFilter')?.value    || 'all';
+    try {
+        let data = (await getDonationsData()).map(convertDonationFromDB);
+        if (cat !== 'all')  data = data.filter(d => d.category === cat);
+        if (date !== 'all') {
+            const now   = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            data = data.filter(d => {
+                const dt = new Date(d.date);
+                if (date === 'today') return dt >= today;
+                if (date === 'week')  { const w = new Date(today); w.setDate(w.getDate()-7); return dt >= w; }
+                if (date === 'month') return dt.getMonth() === now.getMonth() && dt.getFullYear() === now.getFullYear();
+                if (date === 'year')  return dt.getFullYear() === now.getFullYear();
+                return true;
+            });
+        }
+        await renderDonationsTable(data);
+    } catch (e) { console.error(e); }
+}
+
+async function exportDonations() {
+    try {
+        const data = (await getDonationsData()).map(convertDonationFromDB);
+        const headers = ['Date','Donor','Email','Phone','Category','Amount','Method','Type','Frequency','Status','Transaction ID','Notes'];
+        const rows = data.map(d => [
+            d.date, d.donorName, d.donorEmail||'', d.donorPhone||'',
+            d.category, d.amount, d.paymentMethod, d.donationType,
+            d.recurringFrequency||'', d.status, d.transactionId||'', d.notes||''
+        ]);
+        let csv = headers.join(',') + '\n';
+        rows.forEach(r => { csv += r.map(c => `"${c}"`).join(',') + '\n'; });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url  = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `donations_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        showNotification('Donations exported!', 'success');
+    } catch (e) { console.error(e); }
+}
+
+async function generateReport() {
+    const startDate = document.getElementById('reportStartDate')?.value;
+    const endDate   = document.getElementById('reportEndDate')?.value;
+    const category  = document.getElementById('reportCategory')?.value || 'all';
+
+    try {
+        let data = (await getDonationsData()).map(convertDonationFromDB);
+        if (startDate) data = data.filter(d => d.date >= startDate);
+        if (endDate)   data = data.filter(d => d.date <= endDate);
+        if (category !== 'all') data = data.filter(d => d.category === category);
+
+        const total = data.reduce((s, d) => s + d.amount, 0);
+        const avg   = data.length ? total / data.length : 0;
+        const uniq  = new Set(data.map(d => d.donorName)).size;
+        const fmt   = n => `${PAYPAL_CONFIG.currencySymbol}${n.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+
+        document.getElementById('reportTotalAmount').textContent    = fmt(total);
+        document.getElementById('reportTotalDonations').textContent = data.length;
+        document.getElementById('reportAvgDonation').textContent    = fmt(avg);
+        document.getElementById('reportUniqueDonors').textContent   = uniq;
+
+        const catTotals = {};
+        data.forEach(d => { catTotals[d.category] = (catTotals[d.category]||0) + d.amount; });
+        document.getElementById('categoryBreakdown').innerHTML = Object.entries(catTotals)
+            .sort((a,b) => b[1]-a[1])
+            .map(([c,a]) => `<div class="category-item"><span class="category-name">${c}</span><span class="category-amount">${fmt(a)}</span></div>`)
+            .join('');
+
+        const donorTotals = {};
+        data.filter(d => !d.isAnonymous).forEach(d => { donorTotals[d.donorName] = (donorTotals[d.donorName]||0) + d.amount; });
+        document.getElementById('topDonorsList').innerHTML = Object.entries(donorTotals)
+            .sort((a,b) => b[1]-a[1]).slice(0,10)
+            .map(([n,a],i) => `<div class="donor-item"><span class="donor-rank">#${i+1}</span><span class="donor-name">${n}</span><span class="donor-amount">${fmt(a)}</span></div>`)
+            .join('');
+
+        document.getElementById('reportResults').style.display = 'block';
+        showNotification('Report generated!', 'success');
+    } catch (e) { console.error(e); }
+}
+
+function exportReport() { showNotification('Exporting report...', 'info'); }
+function printReport()   { window.print(); }
+
 function generateTaxReceipt(id) {
-    const donations = getDonationsData();
-    const donation = donations.find(d => d.id === id);
-    
-    if (!donation || donation.isAnonymous) {
-        showNotification('Cannot generate tax receipt for anonymous donation', 'warning');
-        return;
-    }
-    
-    alert(`Tax Receipt Generation\n\nTax receipt will be generated for:\nDonor: ${donation.donorName}\nAmount: ${PAYPAL_CONFIG.currencySymbol}${donation.amount.toLocaleString('es-DO', {minimumFractionDigits: 2})}\nDate: ${formatDate(donation.date)}\nCategory: ${donation.category}\n\nThis feature will create a PDF receipt.`);
+    alert(`Tax receipt will be generated for donation ID: ${id}\n\nThis feature creates a PDF receipt.`);
     showNotification('Tax receipt generated!', 'success');
 }
 
-/* ============================================ */
-/* END DONATION MANAGEMENT */
-/* ============================================ */
+// ============================================
+// BACKUP / RESTORE
+// ============================================
 
-/* ============================================ */
-/* DEBUGGING HELPERS */
-/* ============================================ */
-
-// Helper function to check localStorage data from browser console
-function debugLocalStorage() {
-    console.log('=== CHURCH PLATFORM LOCALSTORAGE DEBUG ===');
-    
-    const staff = localStorage.getItem('churchStaff');
-    const members = localStorage.getItem('churchMembers');
-    const donations = localStorage.getItem('churchDonations');
-    
-    console.log('\n📊 STAFF DATA:');
-    if (staff) {
-        const staffData = JSON.parse(staff);
-        console.log(`Total Staff: ${staffData.length}`);
-        console.table(staffData);
-    } else {
-        console.log('❌ No staff data in localStorage');
-    }
-    
-    console.log('\n👥 MEMBERS DATA:');
-    if (members) {
-        const membersData = JSON.parse(members);
-        console.log(`Total Members: ${membersData.length}`);
-        console.table(membersData);
-    } else {
-        console.log('❌ No members data in localStorage');
-    }
-    
-    console.log('\n💰 DONATIONS DATA:');
-    if (donations) {
-        const donationsData = JSON.parse(donations);
-        console.log(`Total Donations: ${donationsData.length}`);
-        console.table(donationsData);
-    } else {
-        console.log('❌ No donations data in localStorage');
-    }
-    
-    console.log('\n=== END DEBUG ===');
-}
-
-// Make it globally accessible
-window.debugLocalStorage = debugLocalStorage;
-console.log('💡 TIP: Type debugLocalStorage() in console to check your data anytime!');
-
-/* ============================================ */
-/* DATA IMPORT/EXPORT MANAGER */
-/* ============================================ */
-
-// Open data manager modal
-function openDataManager() {
-    // Update data counts
-    const members = getMembersData();
-    const staff = getStaffData();
-    const donations = getDonationsData();
-    
-    document.getElementById('dataCountMembers').textContent = members.length;
-    document.getElementById('dataCountStaff').textContent = staff.length;
-    document.getElementById('dataCountDonations').textContent = donations.length;
-    
+async function openDataManager() {
+    try {
+        const [members, staff, donations] = await Promise.all([getMembersData(), getStaffData(), getDonationsData()]);
+        document.getElementById('dataCountMembers').textContent  = members.length;
+        document.getElementById('dataCountStaff').textContent    = staff.length;
+        document.getElementById('dataCountDonations').textContent = donations.length;
+    } catch (e) { console.error(e); }
     openModal('dataManagerModal');
 }
 
-// Export all data
-function exportAllData() {
-    const data = {
-        exportDate: new Date().toISOString(),
-        version: '1.0',
-        churchName: 'Tabernacle Amour Pour Le Calvaire',
-        members: getMembersData(),
-        staff: getStaffData(),
-        donations: getDonationsData()
-    };
-    
-    downloadJSON(data, `church-backup-all-${formatDateForFilename()}.json`);
-    showNotification('✅ All data exported successfully!', 'success');
+async function exportAllData() {
+    try {
+        const [members, staff, donations] = await Promise.all([getMembersData(), getStaffData(), getDonationsData()]);
+        downloadJSON({ exportDate: new Date().toISOString(), version:'1.0', churchName:'Tabernacle Amour Pour Le Calvaire', members, staff, donations },
+            `church-backup-all-${formatDateForFilename()}.json`);
+        showNotification('All data exported!', 'success');
+    } catch (e) { console.error(e); }
 }
 
-// Export members only
-function exportMembers() {
-    const data = {
-        exportDate: new Date().toISOString(),
-        version: '1.0',
-        dataType: 'members',
-        members: getMembersData()
-    };
-    
-    downloadJSON(data, `church-backup-members-${formatDateForFilename()}.json`);
-    showNotification('✅ Members exported successfully!', 'success');
+async function exportMembers() {
+    const members = await getMembersData();
+    downloadJSON({ exportDate: new Date().toISOString(), version:'1.0', dataType:'members', members }, `church-backup-members-${formatDateForFilename()}.json`);
+    showNotification('Members exported!', 'success');
 }
 
-// Export staff only
-function exportStaff() {
-    const data = {
-        exportDate: new Date().toISOString(),
-        version: '1.0',
-        dataType: 'staff',
-        staff: getStaffData()
-    };
-    
-    downloadJSON(data, `church-backup-staff-${formatDateForFilename()}.json`);
-    showNotification('✅ Staff exported successfully!', 'success');
+async function exportStaff() {
+    const staff = await getStaffData();
+    downloadJSON({ exportDate: new Date().toISOString(), version:'1.0', dataType:'staff', staff }, `church-backup-staff-${formatDateForFilename()}.json`);
+    showNotification('Staff exported!', 'success');
 }
 
-// Export donations only
-function exportDonations() {
-    const data = {
-        exportDate: new Date().toISOString(),
-        version: '1.0',
-        dataType: 'donations',
-        donations: getDonationsData()
-    };
-    
-    downloadJSON(data, `church-backup-donations-${formatDateForFilename()}.json`);
-    showNotification('✅ Donations exported successfully!', 'success');
+async function exportDonationsData() {
+    const donations = await getDonationsData();
+    downloadJSON({ exportDate: new Date().toISOString(), version:'1.0', dataType:'donations', donations }, `church-backup-donations-${formatDateForFilename()}.json`);
+    showNotification('Donations exported!', 'success');
 }
 
-// Handle import file selection
 function handleImportFile(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    if (!file.name.endsWith('.json')) {
-        showNotification('❌ Please select a valid .json backup file', 'error');
-        return;
-    }
-    
-    // Confirm before importing
-    if (!confirm('⚠️ WARNING: This will REPLACE all existing data!\n\nMake sure you have exported your current data first.\n\nContinue with import?')) {
-        event.target.value = ''; // Reset file input
-        return;
-    }
-    
+    if (!file.name.endsWith('.json')) { showNotification('Please select a valid .json backup file', 'error'); return; }
+    if (!confirm('WARNING: Review the backup before importing.\n\nContinue?')) { event.target.value = ''; return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            importData(data);
-        } catch (error) {
-            console.error('Import error:', error);
-            showNotification('❌ Invalid backup file format', 'error');
-        }
+    reader.onload = e => {
+        try { importData(JSON.parse(e.target.result)); }
+        catch (err) { console.error(err); showNotification('Invalid backup file format', 'error'); }
     };
     reader.readAsText(file);
-    
-    // Reset file input
     event.target.value = '';
 }
 
-// Make functions globally accessible for HTML onclick handlers
-window.openMemberModal = openMemberModal;
-window.openStaffModal = openStaffModal;
-window.editStaff = editStaff;
-window.confirmDeleteStaff = confirmDeleteStaff;
-window.editMember = editMember;
-window.confirmDeleteMember = confirmDeleteMember;
-window.openDataManager = openDataManager;
-window.exportAllData = exportAllData;
-window.exportMembers = exportMembers;
-window.exportStaff = exportStaff;
-window.exportDonations = exportDonations;
-window.handleImportFile = handleImportFile;
-
-// Import data from backup
-function importData(data) {
-    console.log('📥 Importing data:', data);
-    
-    let importedCount = 0;
-    
-    // Import members
-    if (data.members && Array.isArray(data.members)) {
-        saveMembersData(data.members);
-        importedCount += data.members.length;
-        console.log(`✅ Imported ${data.members.length} members`);
+async function importData(data) {
+    let count = 0;
+    if (data.members?.length) {
+        for (const m of data.members) {
+            await saveMember({
+                id: m.id, firstName: m.first_name || m.firstName, lastName: m.last_name || m.lastName,
+                email: m.email, phone: m.phone, joinDate: m.join_date || m.joinDate,
+                ministry: m.ministry, status: m.status, photo: m.photo
+            });
+            count++;
+        }
     }
-    
-    // Import staff
-    if (data.staff && Array.isArray(data.staff)) {
-        saveStaffData(data.staff);
-        importedCount += data.staff.length;
-        console.log(`✅ Imported ${data.staff.length} staff`);
+    if (data.staff?.length) {
+        for (const s of data.staff) {
+            await saveStaff({
+                id: s.id, name: s.name, email: s.email, phone: s.phone,
+                role: s.role, department: s.department, startDate: s.start_date || s.startDate,
+                employmentType: s.employment_type || s.employmentType, bio: s.bio, photo: s.photo
+            });
+            count++;
+        }
     }
-    
-    // Import donations
-    if (data.donations && Array.isArray(data.donations)) {
-        saveDonationsData(data.donations);
-        importedCount += data.donations.length;
-        console.log(`✅ Imported ${data.donations.length} donations`);
-    }
-    
-    if (importedCount === 0) {
-        showNotification('⚠️ No data found in backup file', 'warning');
-        return;
-    }
-    
-    // Refresh UI
-    renderMembersTable();
-    renderStaffGrid();
-    if (typeof renderDonationsTable === 'function') {
-        renderDonationsTable();
-        updateDonationStats();
-    }
-    loadAdminStats();
-    
-    // Update modal counts
+    if (!count) { showNotification('No data found in backup', 'warning'); return; }
+    await renderMembersTable();
+    await renderStaffGrid();
+    await loadAdminStats();
     openDataManager();
-    
-    showNotification(`✅ Successfully imported ${importedCount} items!`, 'success');
-    
-    // Show detailed success message
-    setTimeout(() => {
-        alert(`Import Complete!\n\n✅ Members: ${data.members?.length || 0}\n✅ Staff: ${data.staff?.length || 0}\n✅ Donations: ${data.donations?.length || 0}\n\nAll data has been restored successfully!`);
-    }, 500);
+    showNotification(`Imported ${count} records!`, 'success');
 }
 
-// Helper: Download JSON file
 function downloadJSON(data, filename) {
-    const jsonStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
-// Helper: Format date for filename
-function formatDateForFilename() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${year}${month}${day}-${hours}${minutes}`;
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
 }
 
-// Make functions globally accessible
-window.openDataManager = openDataManager;
-window.exportAllData = exportAllData;
-window.exportMembers = exportMembers;
-window.exportStaff = exportStaff;
-window.exportDonations = exportDonations;
-window.handleImportFile = handleImportFile;
+function formatDateForFilename() {
+    const n = new Date();
+    return `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}-${String(n.getHours()).padStart(2,'0')}${String(n.getMinutes()).padStart(2,'0')}`;
+}
 
-// Make Supabase functions globally accessible
-window.editStaff = editStaff;
-window.confirmDeleteStaff = confirmDeleteStaff;
-window.editMember = editMember;
-window.confirmDeleteMember = confirmDeleteMember;
-window.openMemberModal = openMemberModal;
-window.openStaffModal = openStaffModal;
+function debugLocalStorage() { console.log('Data is now stored in Supabase — use the Supabase dashboard to inspect.'); }
+window.debugLocalStorage = debugLocalStorage;
+
+// Make functions globally accessible
+window.openMemberModal       = openMemberModal;
+window.openStaffModal        = openStaffModal;
+window.editStaff             = editStaff;
+window.confirmDeleteStaff    = confirmDeleteStaff;
+window.viewMember            = viewMember;
+window.editMember            = editMember;
+window.confirmDeleteMember   = confirmDeleteMember;
+window.openDataManager       = openDataManager;
+window.exportAllData         = exportAllData;
+window.exportMembers         = exportMembers;
+window.exportStaff           = exportStaff;
+window.exportDonations       = exportDonationsData;
+window.handleImportFile      = handleImportFile;
+window.openDonationModal     = openDonationModal;
+window.viewDonation          = viewDonation;
+window.editDonation          = editDonation;
+window.confirmDeleteDonation = confirmDeleteDonation;
+window.generateTaxReceipt    = generateTaxReceipt;
+window.importCSVData         = importCSVData;
+window.resetCSVImport        = resetCSVImport;

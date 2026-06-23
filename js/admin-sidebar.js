@@ -113,7 +113,7 @@ document.addEventListener('click', function(e) {
 });
 
 // Tab switching function
-function switchTab(tabName) {
+function switchTab(tabName, evt) {
     // Hide all tab contents
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(content => {
@@ -132,8 +132,11 @@ function switchTab(tabName) {
         selectedTab.classList.add('active');
     }
     
-    // Add active class to clicked button
-    event.target.closest('.tab-btn').classList.add('active');
+    // Add active class to clicked button (works with or without inline event param)
+    const clickedBtn = evt?.target?.closest('.tab-btn') || document.querySelector(`.tab-btn[onclick*="'${tabName}'"]`);
+    if (clickedBtn) {
+        clickedBtn.classList.add('active');
+    }
     
     // Render content for specific tabs
     if (tabName === 'staff' && typeof renderStaffGrid === 'function') {
