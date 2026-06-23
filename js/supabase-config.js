@@ -17,7 +17,11 @@ if (typeof window.supabase === 'undefined') {
     throw new Error('Supabase library not available');
 }
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+// Initialize Supabase client (only if not already initialized)
+if (!window.supabaseClient) {
+    window.supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+    console.log('✅ Supabase client initialized:', window.supabaseClient);
+}
 
-console.log('✅ Supabase client initialized:', supabase);
+// Make client available as 'supabase' for compatibility
+var supabase = window.supabaseClient;

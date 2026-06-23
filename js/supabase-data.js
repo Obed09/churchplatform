@@ -3,6 +3,14 @@
 // All database CRUD operations for the church platform
 // ============================================
 
+// Ensure supabase client is available
+if (typeof supabase === 'undefined') {
+    console.error('❌ Supabase client not initialized! Make sure supabase-config.js loaded first.');
+    throw new Error('Supabase client not available');
+}
+
+console.log('✅ Supabase data operations loaded');
+
 /* ============================================ */
 /* MEMBERS DATA OPERATIONS */
 /* ============================================ */
