@@ -384,9 +384,14 @@ async function confirmDeleteStaff(id) {
 
 // Edit staff member
 async function editStaff(id) {
+    console.log('🔍 Edit staff called with ID:', id);
+    
     try {
         const dbStaff = await getStaffData();
+        console.log('📊 Loaded staff data:', dbStaff);
+        
         const staff = dbStaff.find(s => s.id === id);
+        console.log('👤 Found staff:', staff);
         
         if (!staff) {
             showNotification('Staff member not found', 'error');
@@ -394,7 +399,9 @@ async function editStaff(id) {
         }
         
         const staffData = convertStaffFromDB(staff);
+        console.log('✅ Converted staff data:', staffData);
         
+        // Fill form fields
         document.getElementById('staffId').value = staffData.id;
         document.getElementById('staffName').value = staffData.name;
         document.getElementById('staffEmail').value = staffData.email;
@@ -406,6 +413,8 @@ async function editStaff(id) {
         document.getElementById('staffBio').value = staffData.bio || '';
         document.getElementById('staffPhotoData').value = staffData.photo || '';
         
+        console.log('📝 Form fields populated');
+        
         if (staffData.photo) {
             document.getElementById('staffPhotoPreview').innerHTML = `<img src="${staffData.photo}" alt="Preview">`;
         } else {
@@ -416,10 +425,12 @@ async function editStaff(id) {
         document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
         document.getElementById('staffSubmitBtn').textContent = 'Update Staff';
         
+        console.log('🚪 Opening modal...');
         openModal('staffModal');
+        console.log('✅ Edit staff completed');
     } catch (error) {
-        console.error('Error loading staff for edit:', error);
-        showNotification('Error loading staff member', 'error');
+        console.error('❌ Error loading staff for edit:', error);
+        showNotification('Error loading staff member: ' + error.message, 'error');
     }
 }
 
