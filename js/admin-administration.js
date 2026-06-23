@@ -409,20 +409,8 @@ async function editStaff(id) {
     openModal('staffModal');
 }
 
-// Keep the old saveStaffData and getStaffData as backup (for now)
-function saveStaffData(staffData) {}
-        console.log('📊 Total staff after save:', staffData.length);
-        closeModal('staffModal');
-        form.reset();
-        document.getElementById('staffPhotoData').value = '';
-        resetStaffPhotoPreview();
-        renderStaffGrid();
-        loadAdminStats();
-    });
-}
-
 // Edit staff member
-function editStaff(id) {
+async function editStaff(id) {
     const staffData = getStaffData();
     const staff = staffData.find(s => s.id === id);
     
