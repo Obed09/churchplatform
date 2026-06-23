@@ -171,25 +171,62 @@ function saveMembersData(membersData) {
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Initializing admin page with Supabase...');
     
-    // Load all data
-    await loadAdminStats();
-    await renderMembersTable();
-    await renderStaffGrid();
-    await renderDonationsTable();
+    // Load all data with independent error handling
+    try {
+        await loadAdminStats();
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
     
-    // Initialize forms
-    initializeMemberForm();
-    initializeStaffForm();
-    initializeDonationForm();
+    try {
+        await renderMembersTable();
+    } catch (error) {
+        console.error('Error loading members:', error);
+    }
     
-    // Set up event delegation for staff action buttons
+    try {
+        await renderStaffGrid();
+    } catch (error) {
+        console.error('Error loading staff:', error);
+    }
+    
+    try {
+        await renderDonationsTable();
+    } catch (error) {
+        console.error('Error loading donations:', error);
+    }
+    
+    // Initialize forms with error handling
+    try {
+        initializeMemberForm();
+    } catch (error) {
+        console.error('Error initializing member form:', error);
+    }
+    
+    try {
+        initializeStaffForm();
+    } catch (error) {
+        console.error('Error initializing staff form:', error);
+    }
+    
+    try {
+        initializeDonationForm();
+    } catch (error) {
+        console.error('Error initializing donation form:', error);
+    }
+    
+    // CRITICAL: Set up event delegation for staff action buttons
+    // This MUST run even if other initializations fail
     setupStaffButtonHandlers();
+    console.log('✅ Staff button handlers initialized');
     
-    console.log('✅ Admin page initialized');
+    console.log('✅ Admin page initialization complete');
 });
 
 // Event delegation for staff action buttons
 function setupStaffButtonHandlers() {
+    console.log('🎯 Setting up staff button event handlers...');
+    
     document.addEventListener('click', function(e) {
         const button = e.target.closest('[data-action]');
         if (!button) return;
@@ -202,21 +239,31 @@ function setupStaffButtonHandlers() {
         const staffId = button.dataset.staffId;
         const email = button.dataset.email;
         
-        console.log('🔘 Button clicked:', action, staffId || email);
+        console.log('🔘 Button clicked! Action:', action, 'StaffId:', staffId, 'Email:', email);
         
         switch(action) {
             case 'edit':
-                console.log('🔵 Calling editStaff for:', staffId);
-                editStaff(staffId);
+                console.log('🔵 Calling editStaff for ID:', staffId);
+                if (typeof editStaff === 'function') {
+                    editStaff(staffId);
+                } else {
+                    console.error('❌ editStaff function not found!');
+                }
                 break;
             case 'delete':
+                console.log('🔴 Calling deleteStaff for ID:', staffId);
                 confirmDeleteStaff(staffId);
                 break;
             case 'contact':
+                console.log('📧 Calling contactStaff for:', email);
                 contactStaff(email);
                 break;
+            default:
+                console.warn('⚠️ Unknown action:', action);
         }
     });
+    
+    console.log('✅ Staff button handlers set up successfully');
 }
 
 // Load admin statistics
@@ -246,9 +293,9 @@ async function renderMembersTable() {
     
     try {
         const dbMembers = await getMembersData();
-        const members = dbMembers.map(m => convertMemberFromDB(m));
+        console.log('📊 Raw members data from DB:', dbMembers);
         
-        if (members.length === 0) {
+        if (!dbMembers || dbMembers.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 3rem; color: #718096;">
@@ -259,6 +306,12 @@ async function renderMembersTable() {
             `;
             return;
         }
+        
+        const members = dbMembers.map(m => {
+            const converted = convertMemberFromDB(m);
+            console.log('✅ Converted member:', converted);
+            return converted;
+        });
         
         tbody.innerHTML = members.map(member => {
             const photoDisplay = member.photo 
@@ -289,7 +342,8 @@ async function renderMembersTable() {
             `;
         }).join('');
     } catch (error) {
-        console.error('Error rendering members table:', error);
+        console.error('❌ Error rendering members table:', error);
+        console.error('Stack trace:', error.stack);
         tbody.innerHTML = `
             <tr>
                 <td colspan="8" style="text-align: center; padding: 2rem; color: #e53e3e;">
