@@ -172,9 +172,14 @@
             <div id="announcements-tab" class="tab-content">
                 <div class="content-header">
                     <h2>Church Announcements</h2>
-                    <button class="btn-primary" onclick="openModal('announcementModal')">
-                        <i class="fas fa-plus"></i> New Announcement
-                    </button>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn-secondary" onclick="useChurchAnnouncementTemplate()">
+                            <i class="fas fa-image"></i> Use Church Template
+                        </button>
+                        <button class="btn-primary" onclick="openModal('announcementModal')">
+                            <i class="fas fa-plus"></i> New Announcement
+                        </button>
+                    </div>
                 </div>
 
                 <div class="announcements-grid" id="announcementsGrid">
@@ -298,6 +303,17 @@
                 <div class="form-group">
                     <label for="announcementContent">Content *</label>
                     <textarea id="announcementContent" rows="5" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="announcementImageUrl">Template Image (optional)</label>
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <input type="text" id="announcementImageUrl" placeholder="images/church building1.png">
+                        <button type="button" class="btn-secondary" onclick="setDefaultAnnouncementImage()">
+                            <i class="fas fa-image"></i> Use Church Image
+                        </button>
+                    </div>
+                    <small>Use an image path (example: images/church building1.png) or full URL.</small>
                 </div>
 
                 <div class="form-row">
