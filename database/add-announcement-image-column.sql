@@ -18,6 +18,11 @@ CREATE TABLE IF NOT EXISTS public.announcements (
 ALTER TABLE public.announcements
 ADD COLUMN IF NOT EXISTS image_url TEXT;
 
+-- Optional metadata for non-image template files
+ALTER TABLE public.announcements
+ADD COLUMN IF NOT EXISTS asset_name TEXT,
+ADD COLUMN IF NOT EXISTS asset_type TEXT;
+
 -- Keep RLS aligned with current project mode (open anon access)
 ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
 

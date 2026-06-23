@@ -198,7 +198,7 @@ async function renderAnnouncementsGrid() {
 
         container.innerHTML = anns.map(a => `
             <div class="announcement-card priority-${a.priority}">
-                ${a.imageUrl ? `<div class="announcement-media"><img src="${a.imageUrl}" alt="Announcement image" loading="lazy"></div>` : ''}
+                ${renderAnnouncementAsset(a)}
                 <div class="announcement-header">
                     <span class="priority-badge ${a.priority}">${a.priority}</span>
                     <span class="status-badge ${a.status}">${a.status}</span>
@@ -230,6 +230,8 @@ function initializeAnnouncementForm() {
             title:     document.getElementById('announcementTitle').value,
             content:   document.getElementById('announcementContent').value,
             imageUrl:  document.getElementById('announcementImageUrl')?.value || null,
+            assetName: document.getElementById('announcementAssetName')?.value || null,
+            assetType: document.getElementById('announcementAssetType')?.value || null,
             startDate: document.getElementById('announcementStartDate').value,
             endDate:   document.getElementById('announcementEndDate').value,
             priority:  document.getElementById('announcementPriority').value,
@@ -243,6 +245,8 @@ function initializeAnnouncementForm() {
             document.getElementById('announcementModalTitle').textContent = 'Create Announcement';
             closeModal('announcementModal');
             form.reset();
+            if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = '';
+            if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = '';
             updateAnnouncementImagePreview();
             await renderAnnouncementsGrid();
             await loadCommunicationsStats();
@@ -261,8 +265,10 @@ async function openEditAnnouncementModal(id) {
     document.getElementById('announcementContent').value  = a.content;
     if (document.getElementById('announcementImageUrl')) {
         document.getElementById('announcementImageUrl').value = a.imageUrl || '';
-        updateAnnouncementImagePreview();
     }
+    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = a.assetName || '';
+    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = a.assetType || '';
+    updateAnnouncementImagePreview();
     document.getElementById('announcementStartDate').value = a.startDate || '';
     document.getElementById('announcementEndDate').value   = a.endDate   || '';
     document.getElementById('announcementPriority').value  = a.priority;
@@ -311,6 +317,8 @@ function setDefaultAnnouncementImage() {
     const input = document.getElementById('announcementImageUrl');
     if (!input) return;
     input.value = CHURCH_ANNOUNCEMENT_TEMPLATE.imageUrl;
+    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = 'church building1.png';
+    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = 'image/png';
     updateAnnouncementImagePreview();
 }
 
@@ -324,8 +332,10 @@ function useChurchAnnouncementTemplate() {
     document.getElementById('announcementPriority').value = CHURCH_ANNOUNCEMENT_TEMPLATE.priority;
     if (document.getElementById('announcementImageUrl')) {
         document.getElementById('announcementImageUrl').value = CHURCH_ANNOUNCEMENT_TEMPLATE.imageUrl;
-        updateAnnouncementImagePreview();
     }
+    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = 'church building1.png';
+    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = 'image/png';
+    updateAnnouncementImagePreview();
     document.getElementById('announcementStartDate').value = today.toISOString().split('T')[0];
     document.getElementById('announcementEndDate').value = end.toISOString().split('T')[0];
 
@@ -343,16 +353,30 @@ function updateAnnouncementImagePreview() {
     const input = document.getElementById('announcementImageUrl');
     const preview = document.getElementById('announcementTemplatePreview');
     const img = document.getElementById('announcementTemplatePreviewImg');
-    if (!input || !preview || !img) return;
+    const fileInfo = document.getElementById('announcementTemplateFileInfo');
+    const assetType = document.getElementById('announcementAssetType')?.value || '';
+    const assetName = document.getElementById('announcementAssetName')?.value || '';
+    if (!input || !preview || !img || !fileInfo) return;
 
     const value = (input.value || '').trim();
     if (!value) {
         preview.style.display = 'none';
         img.removeAttribute('src');
+        img.style.display = 'none';
+        fileInfo.style.display = 'none';
         return;
     }
 
-    img.src = value;
+    if (isImageAsset(value, assetType)) {
+        img.src = value;
+        img.style.display = 'block';
+        fileInfo.style.display = 'none';
+    } else {
+        img.removeAttribute('src');
+        img.style.display = 'none';
+        fileInfo.style.display = 'block';
+        fileInfo.innerHTML = `<i class="fas fa-file-alt"></i> Attached template file: <strong>${escapeHtml(assetName || 'custom-template')}</strong><br><small>${escapeHtml(assetType || 'unknown type')} - this file will be stored with the announcement.</small>`;
+    }
     preview.style.display = 'block';
 }
 
@@ -361,7 +385,11 @@ function handleAnnouncementTemplateUpload(event) {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-        showNotification('Please upload a valid image file', 'error');
+        showNotification('Template file loaded. Non-image files will be attached and accessible from the announcement card.', 'info');
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+        showNotification('File is too large. Please use a file under 8MB.', 'error');
         event.target.value = '';
         return;
     }
@@ -373,10 +401,52 @@ function handleAnnouncementTemplateUpload(event) {
         if (input) {
             input.value = imageData;
         }
+        if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = file.name || '';
+        if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = file.type || '';
         updateAnnouncementImagePreview();
-        showNotification('Template image loaded. Publish to save it to this announcement.', 'success');
+        showNotification('Template file loaded. Publish to save it to this announcement.', 'success');
     };
     reader.readAsDataURL(file);
+}
+
+function isImageAsset(url, mimeType) {
+    if (mimeType && mimeType.startsWith('image/')) return true;
+    if (!url) return false;
+    if (url.startsWith('data:image/')) return true;
+    return /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(url);
+}
+
+function renderAnnouncementAsset(a) {
+    if (!a.imageUrl) return '';
+
+    if (isImageAsset(a.imageUrl, a.assetType)) {
+        return `<div class="announcement-media"><img src="${a.imageUrl}" alt="Announcement image" loading="lazy"></div>`;
+    }
+
+    const name = a.assetName || 'Announcement template';
+    const type = a.assetType || 'file';
+    return `
+        <div class="announcement-attachment">
+            <div class="attachment-info">
+                <i class="fas fa-file-alt"></i>
+                <div>
+                    <strong>${escapeHtml(name)}</strong>
+                    <p>${escapeHtml(type)}</p>
+                </div>
+            </div>
+            <a class="btn-secondary btn-sm" href="${a.imageUrl}" target="_blank" download="${escapeHtml(name)}">
+                <i class="fas fa-download"></i> Open Template
+            </a>
+        </div>`;
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 // ── Utilities ──────────────────────────────────────────────
@@ -400,6 +470,10 @@ styleEl.textContent = `
 .announcement-card{background:var(--bg-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:1.5rem;border-left:4px solid var(--primary);transition:var(--transition);}
 .announcement-media{margin:-1.5rem -1.5rem 1rem -1.5rem;border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;max-height:170px;}
 .announcement-media img{width:100%;height:170px;object-fit:cover;display:block;}
+.announcement-attachment{margin-bottom:1rem;padding:0.75rem;border:1px solid #dbe3f0;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
+.attachment-info{display:flex;align-items:center;gap:0.6rem;color:#334155;min-width:0;}
+.attachment-info i{color:var(--primary);}
+.attachment-info p{margin:0;color:#64748b;font-size:.8rem;}
 .announcement-card.priority-high{border-left-color:var(--danger);}.announcement-card.priority-urgent{border-left-color:#dc2626;background:#fef2f2;}
 .announcement-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
 .announcement-header{display:flex;justify-content:space-between;margin-bottom:1rem;}

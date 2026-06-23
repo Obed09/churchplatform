@@ -102,7 +102,9 @@ async function saveAnnouncement(ann) {
 
     const withImage = {
         ...basic,
-        image_url: ann.imageUrl || null
+        image_url: ann.imageUrl || null,
+        asset_name: ann.assetName || null,
+        asset_type: ann.assetType || null
     };
 
     async function doSave(payload) {
@@ -120,8 +122,15 @@ async function saveAnnouncement(ann) {
         return await doSave(withImage);
     } catch (e) {
         // Fallback for older schema without image_url
-        if (e.code === '42703' || (e.message && e.message.toLowerCase().includes('image_url'))) {
-            console.warn('announcements.image_url missing, saving without image_url field');
+        if (
+            e.code === '42703' ||
+            (e.message && (
+                e.message.toLowerCase().includes('image_url') ||
+                e.message.toLowerCase().includes('asset_name') ||
+                e.message.toLowerCase().includes('asset_type')
+            ))
+        ) {
+            console.warn('announcements asset columns missing, saving without template asset fields');
             return await doSave(basic);
         }
         console.error('Error saving announcement:', e);
@@ -148,6 +157,8 @@ function convertAnnouncementFromDB(a) {
         title:     a.title,
         content:   a.content,
         imageUrl:  a.image_url || null,
+        assetName: a.asset_name || null,
+        assetType: a.asset_type || null,
         priority:  a.priority,
         startDate: a.start_date,
         endDate:   a.end_date,
