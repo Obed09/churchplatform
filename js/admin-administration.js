@@ -384,47 +384,42 @@ async function confirmDeleteStaff(id) {
 
 // Edit staff member
 async function editStaff(id) {
-    const dbStaff = await getStaffData();
-    const staff = dbStaff.find(s => s.id === id);
-    
-    if (!staff) return;
-    
-    const staffData = convertStaffFromDB(staff);
-    
-    document.getElementById('staffId').value = staffData.id;
-    document.getElementById('staffName').value = staffData.name;
-    document.getElementById('staffEmail').value = staffData.email;
-    document.getElementById('staffPhone').value = staffData.phone || '';
-    document.getElementById('staffRole').value = staffData.role;
-    document.getElementById('staffDepartment').value = staffData.department;
-    document.getElementById('staffStartDate').value = staffData.startDate;
-    document.getElementById('staffEmploymentType').value = staffData.employmentType;
-    document.getElementById('staffBio').value = staffData.bio || '';
-    document.getElementById('staffPhotoData').value = staffData.photo || '';
-    
-    if (staffData.photo) {
-        document.getElementById('staffPhotoPreview').innerHTML = `<img src="${staffData.photo}" alt="Preview">`;
-    }
-    
-    openModal('staffModal');
-}
-
-// Delete staff member
-function deleteStaff(id) {
-    const staffData = getStaffData();
-    const staff = staffData.find(s => s.id === id);
-    
-    if (!staff) {
-        showNotification('Staff member not found', 'error');
-        return;
-    }
-    
-    if (confirm(`Are you sure you want to remove ${staff.name} from the staff directory?\\n\\nThis action cannot be undone.`)) {
-        const updatedStaff = staffData.filter(s => s.id !== id);
-        saveStaffData(updatedStaff);
-        showNotification(`${staff.name} removed from staff directory`, 'success');
-        renderStaffGrid();
-        loadAdminStats();
+    try {
+        const dbStaff = await getStaffData();
+        const staff = dbStaff.find(s => s.id === id);
+        
+        if (!staff) {
+            showNotification('Staff member not found', 'error');
+            return;
+        }
+        
+        const staffData = convertStaffFromDB(staff);
+        
+        document.getElementById('staffId').value = staffData.id;
+        document.getElementById('staffName').value = staffData.name;
+        document.getElementById('staffEmail').value = staffData.email;
+        document.getElementById('staffPhone').value = staffData.phone || '';
+        document.getElementById('staffRole').value = staffData.role;
+        document.getElementById('staffDepartment').value = staffData.department;
+        document.getElementById('staffStartDate').value = staffData.startDate;
+        document.getElementById('staffEmploymentType').value = staffData.employmentType;
+        document.getElementById('staffBio').value = staffData.bio || '';
+        document.getElementById('staffPhotoData').value = staffData.photo || '';
+        
+        if (staffData.photo) {
+            document.getElementById('staffPhotoPreview').innerHTML = `<img src="${staffData.photo}" alt="Preview">`;
+        } else {
+            resetStaffPhotoPreview();
+        }
+        
+        // Update modal title and button
+        document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
+        document.getElementById('staffSubmitBtn').textContent = 'Update Staff';
+        
+        openModal('staffModal');
+    } catch (error) {
+        console.error('Error loading staff for edit:', error);
+        showNotification('Error loading staff member', 'error');
     }
 }
 
