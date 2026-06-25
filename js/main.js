@@ -199,30 +199,4 @@ window.addEventListener('load', function() {
     }
 });
 
-// ============================================
-// ACCESSIBILITY: SKIP TO CONTENT
-// ============================================
-const skipLink = document.createElement('a');
-skipLink.href = '#home';
-skipLink.className = 'skip-to-content';
-skipLink.textContent = 'Skip to main content';
-skipLink.style.cssText = `
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: #000;
-    color: #fff;
-    padding: 8px;
-    text-decoration: none;
-    z-index: 9999;
-`;
 
-skipLink.addEventListener('focus', function() {
-    this.style.top = '0';
-});
-
-skipLink.addEventListener('blur', function() {
-    this.style.top = '-40px';
-});
-
-document.body.insertBefore(skipLink, document.body.firstChild);
