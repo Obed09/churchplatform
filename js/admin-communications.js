@@ -10,8 +10,23 @@ const messageTemplates = [
 ];
 
 const CHURCH_ANNOUNCEMENT_TEMPLATE = {
-    title: 'Church Announcement',
-    content: 'Update this message with this week\'s announcement details. Include the date, time, and any registration or contact instructions.',
+    title: 'Church Announcement Template',
+    content: [
+        'Dear Church Family,',
+        '',
+        'We are excited to invite you to [Event/Program Name] on [Date] at [Time].',
+        '',
+        'Please join us for [short description of the event or purpose].',
+        '',
+        'Location: [Location]',
+        '',
+        'For more information or to register, please contact [Name/Phone/Email].',
+        '',
+        'We look forward to worshipping and fellowshipping with you.',
+        '',
+        'Blessings,',
+        '[Church Name]'
+    ].join('\n'),
     priority: 'high',
     imageUrl: 'images/church building1.png'
 };
@@ -324,27 +339,36 @@ function setDefaultAnnouncementImage() {
     updateAnnouncementImagePreview();
 }
 
-function useChurchAnnouncementTemplate() {
+function populateAnnouncementFormFromTemplate(template, options = {}) {
     const today = new Date();
     const end = new Date(today);
     end.setDate(end.getDate() + 7);
 
-    document.getElementById('announcementTitle').value = CHURCH_ANNOUNCEMENT_TEMPLATE.title;
-    document.getElementById('announcementContent').value = CHURCH_ANNOUNCEMENT_TEMPLATE.content;
-    document.getElementById('announcementPriority').value = CHURCH_ANNOUNCEMENT_TEMPLATE.priority;
-    if (document.getElementById('announcementImageUrl')) {
-        document.getElementById('announcementImageUrl').value = CHURCH_ANNOUNCEMENT_TEMPLATE.imageUrl;
-    }
-    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = 'church building1.png';
-    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = 'image/png';
-    updateAnnouncementImagePreview();
-    document.getElementById('announcementStartDate').value = today.toISOString().split('T')[0];
-    document.getElementById('announcementEndDate').value = end.toISOString().split('T')[0];
-
+    const tpl = { ...template };
     const form = document.getElementById('announcementForm');
+    if (!form) return;
+
+    document.getElementById('announcementTitle').value = tpl.title || 'Church Announcement Template';
+    document.getElementById('announcementContent').value = tpl.content || '';
+    document.getElementById('announcementPriority').value = tpl.priority || 'high';
+    if (document.getElementById('announcementImageUrl')) {
+        document.getElementById('announcementImageUrl').value = tpl.imageUrl || '';
+    }
+    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = tpl.assetName || 'church building1.png';
+    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = tpl.assetType || 'image/png';
+    document.getElementById('announcementStartDate').value = options.startDate || today.toISOString().split('T')[0];
+    document.getElementById('announcementEndDate').value = options.endDate || end.toISOString().split('T')[0];
+
     delete form.dataset.editId;
-    document.getElementById('announcementModalTitle').textContent = 'New Church Template Announcement';
+    document.getElementById('announcementModalTitle').textContent = options.title || 'New Church Template Announcement';
+    updateAnnouncementImagePreview();
     openModal('announcementModal');
+}
+
+function useChurchAnnouncementTemplate() {
+    populateAnnouncementFormFromTemplate(CHURCH_ANNOUNCEMENT_TEMPLATE, {
+        title: 'New Church Template Announcement'
+    });
 }
 
 function getAnnouncementFormState() {
@@ -395,20 +419,11 @@ function applyReusableAnnouncementTemplate() {
     const end = new Date(today);
     end.setDate(end.getDate() + 7);
 
-    document.getElementById('announcementTitle').value = tpl.title || '';
-    document.getElementById('announcementContent').value = tpl.content || '';
-    document.getElementById('announcementPriority').value = tpl.priority || 'normal';
-    if (document.getElementById('announcementImageUrl')) document.getElementById('announcementImageUrl').value = tpl.imageUrl || '';
-    if (document.getElementById('announcementAssetName')) document.getElementById('announcementAssetName').value = tpl.assetName || '';
-    if (document.getElementById('announcementAssetType')) document.getElementById('announcementAssetType').value = tpl.assetType || '';
-    document.getElementById('announcementStartDate').value = today.toISOString().split('T')[0];
-    document.getElementById('announcementEndDate').value = end.toISOString().split('T')[0];
-
-    const form = document.getElementById('announcementForm');
-    delete form.dataset.editId;
-    document.getElementById('announcementModalTitle').textContent = 'Reusable Template Announcement';
-    updateAnnouncementImagePreview();
-    openModal('announcementModal');
+    populateAnnouncementFormFromTemplate(tpl, {
+        title: 'Reusable Template Announcement',
+        startDate: today.toISOString().split('T')[0],
+        endDate: end.toISOString().split('T')[0]
+    });
 }
 
 function initializeAnnouncementImageInput() {
