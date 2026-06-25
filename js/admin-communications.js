@@ -11,20 +11,7 @@ const messageTemplates = [
 
 const CHURCH_ANNOUNCEMENT_TEMPLATE = {
     title: 'Church Announcement Template',
-    content: `Dear Church Family,
-
-We are pleased to invite you to [EVENT NAME] on [DATE] at [TIME].
-
-This special gathering will take place at [LOCATION] and will include [BRIEF DESCRIPTION].
-
-Please join us as we [PURPOSE OR THEMES]. We would be honored to have you with us.
-
-For more information or to RSVP, please contact [CONTACT NAME] at [PHONE/EMAIL].
-
-Thank you and we look forward to seeing you there.
-
-Blessings,
-[CHURCH NAME]`,
+    content: '',
     priority: 'high',
     imageUrl: 'images/church building1.png'
 };
@@ -365,7 +352,7 @@ function populateAnnouncementFormFromTemplate(template, options = {}) {
 }
 
 async function useChurchAnnouncementTemplate() {
-    let templateContent = CHURCH_ANNOUNCEMENT_TEMPLATE.content;
+    let templateContent = '';
 
     try {
         const response = await fetch(CHURCH_ANNOUNCEMENT_TEMPLATE_FILE);
@@ -373,7 +360,7 @@ async function useChurchAnnouncementTemplate() {
             templateContent = await response.text();
         }
     } catch (error) {
-        console.warn('Could not load church announcement template file, using built-in fallback.', error);
+        console.warn('Could not load church announcement template file.', error);
     }
 
     populateAnnouncementFormFromTemplate({
