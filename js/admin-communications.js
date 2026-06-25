@@ -14,23 +14,24 @@ const CHURCH_ANNOUNCEMENT_TEMPLATE = {
     content: [
         'Dear Church Family,',
         '',
-        'We are excited to invite you to [Event/Program Name] on [Date] at [Time].',
+        'We are pleased to invite you to [EVENT NAME] on [DATE] at [TIME].',
         '',
-        'Please join us for [short description of the event or purpose].',
+        'This special gathering will take place at [LOCATION] and will include [BRIEF DESCRIPTION].',
         '',
-        'Location: [Location]',
+        'Please join us as we [PURPOSE OR THEMES]. We would be honored to have you with us.',
         '',
-        'For more information or to register, please contact [Name/Phone/Email].',
+        'For more information or to RSVP, please contact [CONTACT NAME] at [PHONE/EMAIL].',
         '',
-        'We look forward to worshipping and fellowshipping with you.',
+        'Thank you and we look forward to seeing you there.',
         '',
         'Blessings,',
-        '[Church Name]'
+        '[CHURCH NAME]'
     ].join('\n'),
     priority: 'high',
     imageUrl: 'images/church building1.png'
 };
 
+const CHURCH_ANNOUNCEMENT_TEMPLATE_FILE = 'templates/church-announcement-template.txt';
 const REUSABLE_ANNOUNCEMENT_TEMPLATE_KEY = 'churchReusableAnnouncementTemplateV1';
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -365,8 +366,22 @@ function populateAnnouncementFormFromTemplate(template, options = {}) {
     openModal('announcementModal');
 }
 
-function useChurchAnnouncementTemplate() {
-    populateAnnouncementFormFromTemplate(CHURCH_ANNOUNCEMENT_TEMPLATE, {
+async function useChurchAnnouncementTemplate() {
+    let templateContent = CHURCH_ANNOUNCEMENT_TEMPLATE.content;
+
+    try {
+        const response = await fetch(CHURCH_ANNOUNCEMENT_TEMPLATE_FILE);
+        if (response.ok) {
+            templateContent = await response.text();
+        }
+    } catch (error) {
+        console.warn('Could not load church announcement template file, using built-in fallback.', error);
+    }
+
+    populateAnnouncementFormFromTemplate({
+        ...CHURCH_ANNOUNCEMENT_TEMPLATE,
+        content: templateContent
+    }, {
         title: 'New Church Template Announcement'
     });
 }
