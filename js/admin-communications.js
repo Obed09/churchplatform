@@ -612,15 +612,20 @@ function renderAnnouncementContent(content) {
 
     const text = String(content);
     if (text.includes('church-template-flyer')) {
-        const lines = text
-            .split('\n')
-            .map(line => line.trim())
-            .filter(Boolean)
-            .slice(0, 6)
-            .map(line => `<div class="announcement-inline-line">${escapeHtml(line)}</div>`)
-            .join('');
+        const titles = [...text.matchAll(/<div class="church-template-card-title">([\s\S]*?)<\/div>/g)].map(match => match[1].replace(/<[^>]+>/g, '').trim());
+        const values = [...text.matchAll(/<div class="church-template-card-value">([\s\S]*?)<\/div>/g)].map(match => match[1].replace(/<[^>]+>/g, '').trim());
 
-        return `<div class="announcement-inline-template">${lines}<div class="announcement-inline-note">Church flyer content ready to publish</div></div>`;
+        const sections = titles.slice(0, 4).map((title, index) => {
+            const value = values[index] || '';
+            return `<div class="announcement-flyer-item"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(value)}</span></div>`;
+        }).join('');
+
+        return `
+            <div class="announcement-flyer-preview">
+                <div class="announcement-flyer-header">Church Announcement</div>
+                <div class="announcement-flyer-grid">${sections}</div>
+                <div class="announcement-flyer-footer">Ready to publish</div>
+            </div>`;
     }
 
     return `<div class="announcement-text">${escapeHtml(content).replace(/\n/g, '<br>')}</div>`;
