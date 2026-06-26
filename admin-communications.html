@@ -301,14 +301,48 @@
                 </button>
             </div>
             <form id="announcementForm" class="modal-form">
-                <div class="form-group">
-                    <label for="announcementTitle">Title *</label>
-                    <input type="text" id="announcementTitle" required>
-                </div>
+                <input type="hidden" id="announcementTitle" value="Church Announcement">
+                <input type="hidden" id="announcementContent" value="">
 
                 <div class="form-group">
-                    <label for="announcementContent">Content *</label>
-                    <textarea id="announcementContent" rows="5" required></textarea>
+                    <label>Church Template</label>
+                    <div class="church-template-editor">
+                        <div class="church-template-field-grid">
+                            <div class="form-group">
+                                <label for="churchProgramme">Programme du</label>
+                                <input type="text" id="churchProgramme" placeholder="Programme du">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchDirigeant">Dirigeant(e)</label>
+                                <input type="text" id="churchDirigeant" placeholder="Dirigeant(e)">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchLecture">Lecture</label>
+                                <input type="text" id="churchLecture" placeholder="Lecture">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchPrierePastorale">Prière Pastorale</label>
+                                <input type="text" id="churchPrierePastorale" placeholder="Prière Pastorale">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchEncouragement">Encouragement / Exhortation</label>
+                                <input type="text" id="churchEncouragement" placeholder="Encouragement / Exhortation">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchMessagePrincipal">Message Principal</label>
+                                <input type="text" id="churchMessagePrincipal" placeholder="Message Principal">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchPriereFinale">Prière Finale</label>
+                                <input type="text" id="churchPriereFinale" placeholder="Prière Finale">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchFooterMessage">Footer Message</label>
+                                <input type="text" id="churchFooterMessage" placeholder="Footer Message">
+                            </div>
+                        </div>
+                        <div id="churchTemplatePreviewContainer" class="church-template-preview-container"></div>
+                    </div>
                 </div>
 
                 <div class="form-group">

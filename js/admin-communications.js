@@ -16,7 +16,7 @@ const CHURCH_ANNOUNCEMENT_TEMPLATE = {
     imageUrl: 'images/church building1.png'
 };
 
-const CHURCH_ANNOUNCEMENT_TEMPLATE_FILE = 'templates/church-announcement-template.txt';
+const CHURCH_ANNOUNCEMENT_TEMPLATE_FILE = 'templates/church-announcement-template.html';
 const REUSABLE_ANNOUNCEMENT_TEMPLATE_KEY = 'churchReusableAnnouncementTemplateV1';
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     await renderAnnouncementsGrid();
     renderTemplatesGrid();
     initializeMessageForm();
+    initializeChurchTemplateEditor();
     initializeAnnouncementForm();
     initializeAnnouncementImageInput();
 });
@@ -221,6 +222,70 @@ async function renderAnnouncementsGrid() {
     }
 }
 
+function getChurchTemplateFieldValues() {
+    return {
+        programme: document.getElementById('churchProgramme')?.value || '',
+        dirigeant: document.getElementById('churchDirigeant')?.value || '',
+        lecture: document.getElementById('churchLecture')?.value || '',
+        priere_pastorale: document.getElementById('churchPrierePastorale')?.value || '',
+        encouragement: document.getElementById('churchEncouragement')?.value || '',
+        message_principal: document.getElementById('churchMessagePrincipal')?.value || '',
+        priere_finale: document.getElementById('churchPriereFinale')?.value || '',
+        footer_message: document.getElementById('churchFooterMessage')?.value || ''
+    };
+}
+
+function buildChurchTemplateText(values) {
+    return [
+        `Programme du: ${values.programme || ''}`,
+        `Dirigeant(e): ${values.dirigeant || ''}`,
+        `Lecture: ${values.lecture || ''}`,
+        `Prière Pastorale: ${values.priere_pastorale || ''}`,
+        `Encouragement / Exhortation: ${values.encouragement || ''}`,
+        `Message Principal: ${values.message_principal || ''}`,
+        `Prière Finale: ${values.priere_finale || ''}`,
+        `Footer Message: ${values.footer_message || ''}`
+    ].join('\n');
+}
+
+async function initializeChurchTemplateEditor() {
+    const previewContainer = document.getElementById('churchTemplatePreviewContainer');
+    const hiddenContent = document.getElementById('announcementContent');
+    if (!previewContainer) return;
+
+    const fieldIds = ['churchProgramme', 'churchDirigeant', 'churchLecture', 'churchPrierePastorale', 'churchEncouragement', 'churchMessagePrincipal', 'churchPriereFinale', 'churchFooterMessage'];
+    const inputs = fieldIds.map(id => document.getElementById(id)).filter(Boolean);
+
+    const renderPreview = async () => {
+        const values = getChurchTemplateFieldValues();
+        if (hiddenContent) {
+            hiddenContent.value = buildChurchTemplateText(values);
+        }
+
+        try {
+            const response = await fetch(`${CHURCH_ANNOUNCEMENT_TEMPLATE_FILE}?t=${Date.now()}`);
+            let html = response.ok ? await response.text() : '';
+            if (!html) {
+                previewContainer.innerHTML = '<div style="padding:1rem;color:#7a6b3e;">Template preview unavailable.</div>';
+                return;
+            }
+
+            const replacements = Object.entries(values).map(([key, value]) => [new RegExp(`\\{\\{${key}\\}\\}`, 'g'), escapeHtml(value || '')]);
+            replacements.forEach(([pattern, replacement]) => {
+                html = html.replace(pattern, replacement);
+            });
+
+            previewContainer.innerHTML = html;
+        } catch (error) {
+            console.error('Could not load church template preview:', error);
+            previewContainer.innerHTML = '<div style="padding:1rem;color:#7a6b3e;">Template preview unavailable.</div>';
+        }
+    };
+
+    inputs.forEach(input => input.addEventListener('input', () => renderPreview()));
+    await renderPreview();
+}
+
 function initializeAnnouncementForm() {
     const form = document.getElementById('announcementForm');
     if (!form) return;
@@ -228,10 +293,15 @@ function initializeAnnouncementForm() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         const editId = form.dataset.editId;
+        const contentField = document.getElementById('announcementContent');
+        if (contentField) {
+            contentField.value = buildChurchTemplateText(getChurchTemplateFieldValues());
+        }
+
         const ann = {
             id:        editId || undefined,
-            title:     document.getElementById('announcementTitle').value,
-            content:   document.getElementById('announcementContent').value,
+            title:     document.getElementById('announcementTitle').value || 'Church Announcement',
+            content:   contentField?.value || '',
             imageUrl:  document.getElementById('announcementImageUrl')?.value || null,
             assetName: document.getElementById('announcementAssetName')?.value || null,
             assetType: document.getElementById('announcementAssetType')?.value || null,
