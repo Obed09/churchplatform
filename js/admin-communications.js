@@ -208,7 +208,7 @@ async function renderAnnouncementsGrid() {
                     <span class="status-badge ${a.status}">${a.status}</span>
                 </div>
                 <h3>${a.title}</h3>
-                <p>${a.content}</p>
+                <div class="announcement-body">${renderAnnouncementContent(a.content)}</div>
                 <div class="announcement-dates">
                     <span><i class="fas fa-calendar"></i> ${formatDate(a.startDate)} – ${formatDate(a.endDate)}</span>
                 </div>
@@ -248,6 +248,37 @@ function buildChurchTemplateText(values) {
     ].join('\n');
 }
 
+function getChurchTemplateDisplayValues(values) {
+    return {
+        programme: values.programme || 'Saisissez le programme du service',
+        dirigeant: values.dirigeant || 'Nom du dirigeant',
+        lecture: values.lecture || 'Saisissez la lecture',
+        priere_pastorale: values.priere_pastorale || 'Saisissez la prière pastorale',
+        encouragement: values.encouragement || 'Saisissez l’encouragement',
+        message_principal: values.message_principal || 'Saisissez le message principal',
+        priere_finale: values.priere_finale || 'Saisissez la prière finale',
+        footer_message: values.footer_message || 'Saisissez un message de clôture'
+    };
+}
+
+async function buildChurchTemplateMarkup(values) {
+    try {
+        const response = await fetch(`${CHURCH_ANNOUNCEMENT_TEMPLATE_FILE}?t=${Date.now()}`);
+        let html = response.ok ? await response.text() : '';
+        if (!html) return '';
+
+        const replacements = Object.entries(getChurchTemplateDisplayValues(values)).map(([key, value]) => [new RegExp(`\\{\\{${key}\\}\\}`, 'g'), escapeHtml(value)]);
+        replacements.forEach(([pattern, replacement]) => {
+            html = html.replace(pattern, replacement);
+        });
+
+        return html;
+    } catch (error) {
+        console.error('Could not load church template preview:', error);
+        return '';
+    }
+}
+
 async function initializeChurchTemplateEditor() {
     const previewContainer = document.getElementById('churchTemplatePreviewContainer');
     const hiddenContent = document.getElementById('announcementContent');
@@ -262,33 +293,10 @@ async function initializeChurchTemplateEditor() {
             hiddenContent.value = buildChurchTemplateText(values);
         }
 
-        const placeholderValues = {
-            programme: values.programme || 'Saisissez le programme du service',
-            dirigeant: values.dirigeant || 'Nom du dirigeant',
-            lecture: values.lecture || 'Saisissez la lecture',
-            priere_pastorale: values.priere_pastorale || 'Saisissez la prière pastorale',
-            encouragement: values.encouragement || 'Saisissez l’encouragement',
-            message_principal: values.message_principal || 'Saisissez le message principal',
-            priere_finale: values.priere_finale || 'Saisissez la prière finale',
-            footer_message: values.footer_message || 'Saisissez un message de clôture'
-        };
-
-        try {
-            const response = await fetch(`${CHURCH_ANNOUNCEMENT_TEMPLATE_FILE}?t=${Date.now()}`);
-            let html = response.ok ? await response.text() : '';
-            if (!html) {
-                previewContainer.innerHTML = '<div style="padding:1rem;color:#7a6b3e;">Template preview unavailable.</div>';
-                return;
-            }
-
-            const replacements = Object.entries(placeholderValues).map(([key, value]) => [new RegExp(`\\{\\{${key}\\}\\}`, 'g'), escapeHtml(value)]);
-            replacements.forEach(([pattern, replacement]) => {
-                html = html.replace(pattern, replacement);
-            });
-
-            previewContainer.innerHTML = html;
-        } catch (error) {
-            console.error('Could not load church template preview:', error);
+        const markup = await buildChurchTemplateMarkup(values);
+        if (markup) {
+            previewContainer.innerHTML = markup;
+        } else {
             previewContainer.innerHTML = '<div style="padding:1rem;color:#7a6b3e;">Template preview unavailable.</div>';
         }
     };
@@ -305,8 +313,10 @@ function initializeAnnouncementForm() {
         e.preventDefault();
         const editId = form.dataset.editId;
         const contentField = document.getElementById('announcementContent');
+        const values = getChurchTemplateFieldValues();
+        const markup = await buildChurchTemplateMarkup(values);
         if (contentField) {
-            contentField.value = buildChurchTemplateText(getChurchTemplateFieldValues());
+            contentField.value = markup || buildChurchTemplateText(values);
         }
 
         const ann = {
@@ -576,6 +586,16 @@ function isImageAsset(url, mimeType) {
     if (!url) return false;
     if (url.startsWith('data:image/')) return true;
     return /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(url);
+}
+
+function renderAnnouncementContent(content) {
+    if (!content) return '<p style="margin:0;color:var(--text-light);">No content provided.</p>';
+
+    if (String(content).includes('church-template-flyer')) {
+        return `<div class="announcement-rendered-template">${content}</div>`;
+    }
+
+    return `<div class="announcement-text">${escapeHtml(content).replace(/\n/g, '<br>')}</div>`;
 }
 
 function renderAnnouncementAsset(a) {

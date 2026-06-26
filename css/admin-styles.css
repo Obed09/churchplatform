@@ -2464,6 +2464,22 @@ body {
     overflow: hidden;
 }
 
+.announcement-rendered-template .church-template-flyer {
+    max-width: 100%;
+    border-radius: 14px;
+    font-size: 0.95rem;
+}
+
+.announcement-rendered-template .church-template-card {
+    min-height: auto;
+}
+
+.announcement-text {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
 @media (max-width: 768px) {
     .church-template-field-grid {
         grid-template-columns: 1fr;
