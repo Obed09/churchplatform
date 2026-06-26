@@ -2461,6 +2461,7 @@ body {
     border-radius: 14px;
     padding: 0.75rem;
     background: linear-gradient(145deg, #fdfaf0, #f7f2df);
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {

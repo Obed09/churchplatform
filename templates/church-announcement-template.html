@@ -6,115 +6,151 @@
   <style>
     .church-template-flyer {
       width: 100%;
-      max-width: 860px;
+      max-width: 900px;
       margin: 0 auto;
-      border-radius: 18px;
+      border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 18px 45px rgba(7, 43, 85, 0.16);
-      background: #fffdf8;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: #103d63;
-      border: 1px solid #e5d094;
+      background: linear-gradient(135deg, #fffdf5 0%, #f8f1db 100%);
+      font-family: "Georgia", "Times New Roman", serif;
+      color: #123b5b;
+      border: 2px solid #d8b24b;
+      position: relative;
+    }
+
+    .church-template-flyer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 8px solid rgba(216, 178, 75, 0.2);
+      border-radius: 20px;
+      pointer-events: none;
     }
 
     .church-template-header {
-      background: linear-gradient(90deg, #0f4e8a 0%, #1b6cb2 45%, #2a82c1 100%);
+      background: linear-gradient(90deg, #0e4b83 0%, #1b6eb1 45%, #2f83bf 100%);
       color: #fff;
-      padding: 1.25rem 1.5rem;
+      padding: 1.2rem 1.4rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
+      border-bottom: 4px solid #f2c94c;
     }
 
     .church-template-brand {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
+      gap: 0.85rem;
     }
 
     .church-template-logo {
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       object-fit: contain;
       background: #fff;
       border-radius: 50%;
       padding: 0.3rem;
+      border: 3px solid #f0c54c;
     }
 
     .church-template-heading h1 {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       margin: 0;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       font-weight: 700;
     }
 
     .church-template-heading p {
-      margin: 0.25rem 0 0;
+      margin: 0.3rem 0 0;
       font-size: 0.92rem;
-      opacity: 0.92;
+      opacity: 0.95;
+      font-family: "Segoe UI", sans-serif;
     }
 
     .church-template-hero {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 1rem;
-      padding: 1.25rem 1.5rem 0.5rem;
-      align-items: center;
+      padding: 1.2rem 1.4rem 0.8rem;
+      align-items: stretch;
     }
 
-    .church-template-body {
-      padding: 0 1.5rem 1.5rem;
+    .church-template-hero-left {
       display: grid;
-      gap: 0.85rem;
+      gap: 0.75rem;
     }
 
     .church-template-card {
-      background: #fffdf8;
-      border: 1px solid #e9dfbc;
-      border-radius: 12px;
-      padding: 0.9rem 1rem;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #e6d29e;
+      border-radius: 14px;
+      padding: 0.85rem 0.95rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+      min-height: 78px;
     }
 
     .church-template-card-title {
-      font-size: 0.96rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: #c99822;
+      color: #c8981f;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.08em;
       margin-bottom: 0.35rem;
+      font-family: "Segoe UI", sans-serif;
     }
 
     .church-template-card-value {
       font-size: 1rem;
       line-height: 1.55;
-      color: #183b5b;
-      min-height: 1.6rem;
+      color: #173d5e;
+      min-height: 1.5rem;
       white-space: pre-wrap;
+      font-family: "Georgia", serif;
     }
 
     .church-template-image {
       width: 100%;
-      max-height: 260px;
+      height: 100%;
+      min-height: 220px;
       object-fit: cover;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 2px solid #e4c96a;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .church-template-body {
+      padding: 0 1.4rem 1.4rem;
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .church-template-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
     }
 
     .church-template-footer {
-      border-top: 2px solid #e4c96a;
+      border-top: 2px dashed #d8b24b;
       margin-top: 0.4rem;
-      padding-top: 1rem;
+      padding-top: 0.9rem;
       font-size: 0.95rem;
       font-style: italic;
-      color: #5f6c7a;
+      color: #5b6c7a;
       text-align: center;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .church-template-highlight {
+      background: linear-gradient(90deg, rgba(216,178,75,0.16) 0%, rgba(255,255,255,0.96) 100%);
+      border-left: 4px solid #c8981f;
     }
 
     @media (max-width: 760px) {
-      .church-template-hero {
+      .church-template-hero,
+      .church-template-section {
         grid-template-columns: 1fr;
       }
       .church-template-header {
@@ -134,12 +170,12 @@
           <p>Template de communication religieuse</p>
         </div>
       </div>
-      <div style="font-size: 0.9rem; font-weight: 600; opacity: 0.95;">Version 1</div>
+      <div style="font-size:0.9rem;font-weight:700;opacity:0.95;font-family:'Segoe UI',sans-serif;">Version 1</div>
     </div>
 
     <div class="church-template-hero">
-      <div>
-        <div class="church-template-card">
+      <div class="church-template-hero-left">
+        <div class="church-template-card church-template-highlight">
           <div class="church-template-card-title">Programme du</div>
           <div class="church-template-card-value">{{programme}}</div>
         </div>
@@ -152,24 +188,26 @@
     </div>
 
     <div class="church-template-body">
-      <div class="church-template-card">
-        <div class="church-template-card-title">Lecture</div>
-        <div class="church-template-card-value">{{lecture}}</div>
+      <div class="church-template-section">
+        <div class="church-template-card">
+          <div class="church-template-card-title">Lecture</div>
+          <div class="church-template-card-value">{{lecture}}</div>
+        </div>
+        <div class="church-template-card">
+          <div class="church-template-card-title">Prière Pastorale</div>
+          <div class="church-template-card-value">{{priere_pastorale}}</div>
+        </div>
       </div>
 
-      <div class="church-template-card">
-        <div class="church-template-card-title">Prière Pastorale</div>
-        <div class="church-template-card-value">{{priere_pastorale}}</div>
-      </div>
-
-      <div class="church-template-card">
-        <div class="church-template-card-title">Encouragement / Exhortation</div>
-        <div class="church-template-card-value">{{encouragement}}</div>
-      </div>
-
-      <div class="church-template-card">
-        <div class="church-template-card-title">Message Principal</div>
-        <div class="church-template-card-value">{{message_principal}}</div>
+      <div class="church-template-section">
+        <div class="church-template-card">
+          <div class="church-template-card-title">Encouragement / Exhortation</div>
+          <div class="church-template-card-value">{{encouragement}}</div>
+        </div>
+        <div class="church-template-card">
+          <div class="church-template-card-title">Message Principal</div>
+          <div class="church-template-card-value">{{message_principal}}</div>
+        </div>
       </div>
 
       <div class="church-template-card">

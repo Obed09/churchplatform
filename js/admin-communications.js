@@ -262,6 +262,17 @@ async function initializeChurchTemplateEditor() {
             hiddenContent.value = buildChurchTemplateText(values);
         }
 
+        const placeholderValues = {
+            programme: values.programme || 'Saisissez le programme du service',
+            dirigeant: values.dirigeant || 'Nom du dirigeant',
+            lecture: values.lecture || 'Saisissez la lecture',
+            priere_pastorale: values.priere_pastorale || 'Saisissez la prière pastorale',
+            encouragement: values.encouragement || 'Saisissez l’encouragement',
+            message_principal: values.message_principal || 'Saisissez le message principal',
+            priere_finale: values.priere_finale || 'Saisissez la prière finale',
+            footer_message: values.footer_message || 'Saisissez un message de clôture'
+        };
+
         try {
             const response = await fetch(`${CHURCH_ANNOUNCEMENT_TEMPLATE_FILE}?t=${Date.now()}`);
             let html = response.ok ? await response.text() : '';
@@ -270,7 +281,7 @@ async function initializeChurchTemplateEditor() {
                 return;
             }
 
-            const replacements = Object.entries(values).map(([key, value]) => [new RegExp(`\\{\\{${key}\\}\\}`, 'g'), escapeHtml(value || '')]);
+            const replacements = Object.entries(placeholderValues).map(([key, value]) => [new RegExp(`\\{\\{${key}\\}\\}`, 'g'), escapeHtml(value)]);
             replacements.forEach(([pattern, replacement]) => {
                 html = html.replace(pattern, replacement);
             });
