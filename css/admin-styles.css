@@ -2445,9 +2445,28 @@ body {
     }
 }
 
-.church-template-editor {
+.church-template-editor-shell {
     display: grid;
+    grid-template-columns: minmax(280px, 360px) 1fr;
     gap: 1rem;
+    align-items: start;
+}
+
+.church-template-editor-form {
+    background: linear-gradient(145deg, #fdfaf0, #f7f2df);
+    border: 1px solid #e7d7a4;
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.church-template-form-header,
+.church-template-preview-header {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #8a6b14;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .church-template-field-grid {
@@ -2456,12 +2475,25 @@ body {
     gap: 0.75rem;
 }
 
-.church-template-preview-container {
+.church-template-preview-panel {
     border: 1px solid #e7d7a4;
     border-radius: 14px;
-    padding: 0.75rem;
-    background: linear-gradient(145deg, #fdfaf0, #f7f2df);
+    padding: 0.85rem;
+    background: #fffdf9;
+}
+
+.church-template-preview-container {
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    background: transparent;
     overflow: hidden;
+}
+
+.church-template-preview-container .church-template-flyer {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: 0 12px 36px rgba(7, 43, 85, 0.14);
 }
 
 .announcement-flyer-preview {
@@ -2526,6 +2558,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    .church-template-editor-shell {
+        grid-template-columns: 1fr;
+    }
+
     .church-template-field-grid {
         grid-template-columns: 1fr;
     }
