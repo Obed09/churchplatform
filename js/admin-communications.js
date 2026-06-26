@@ -261,6 +261,25 @@ function getChurchTemplateDisplayValues(values) {
     };
 }
 
+function extractChurchTemplateFragment(templateHtml) {
+    if (!templateHtml) return '';
+
+    const styleMatch = templateHtml.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    let fragment = '';
+
+    if (styleMatch) {
+        fragment += `<style>${styleMatch[1]}</style>`;
+    }
+
+    const start = templateHtml.indexOf('<div class="church-template-flyer">');
+    if (start === -1) return templateHtml;
+
+    const end = templateHtml.lastIndexOf('</div>');
+    if (end === -1) return templateHtml;
+
+    return `${fragment}${templateHtml.slice(start, end + 6)}`;
+}
+
 async function buildChurchTemplateMarkup(values) {
     try {
         const response = await fetch(`${CHURCH_ANNOUNCEMENT_TEMPLATE_FILE}?t=${Date.now()}`);
@@ -272,7 +291,7 @@ async function buildChurchTemplateMarkup(values) {
             html = html.replace(pattern, replacement);
         });
 
-        return html;
+        return extractChurchTemplateFragment(html);
     } catch (error) {
         console.error('Could not load church template preview:', error);
         return '';
