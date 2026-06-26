@@ -2464,14 +2464,26 @@ body {
     overflow: hidden;
 }
 
-.announcement-rendered-template .church-template-flyer {
-    max-width: 100%;
-    border-radius: 14px;
-    font-size: 0.95rem;
+.announcement-inline-template {
+    border: 1px solid #e7d7a4;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fdfaf0, #f7f2df);
+    padding: 0.75rem;
+    display: grid;
+    gap: 0.4rem;
 }
 
-.announcement-rendered-template .church-template-card {
-    min-height: auto;
+.announcement-inline-line {
+    color: #173d5e;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+.announcement-inline-note {
+    margin-top: 0.2rem;
+    color: #8a6b14;
+    font-size: 0.83rem;
+    font-weight: 600;
 }
 
 .announcement-text {

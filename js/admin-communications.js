@@ -610,8 +610,17 @@ function isImageAsset(url, mimeType) {
 function renderAnnouncementContent(content) {
     if (!content) return '<p style="margin:0;color:var(--text-light);">No content provided.</p>';
 
-    if (String(content).includes('church-template-flyer')) {
-        return `<div class="announcement-rendered-template">${content}</div>`;
+    const text = String(content);
+    if (text.includes('church-template-flyer')) {
+        const lines = text
+            .split('\n')
+            .map(line => line.trim())
+            .filter(Boolean)
+            .slice(0, 6)
+            .map(line => `<div class="announcement-inline-line">${escapeHtml(line)}</div>`)
+            .join('');
+
+        return `<div class="announcement-inline-template">${lines}<div class="announcement-inline-note">Church flyer content ready to publish</div></div>`;
     }
 
     return `<div class="announcement-text">${escapeHtml(content).replace(/\n/g, '<br>')}</div>`;
