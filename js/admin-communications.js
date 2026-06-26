@@ -611,20 +611,32 @@ function renderAnnouncementContent(content) {
     if (!content) return '<p style="margin:0;color:var(--text-light);">No content provided.</p>';
 
     const text = String(content);
-    if (text.includes('church-template-flyer')) {
-        const titles = [...text.matchAll(/<div class="church-template-card-title">([\s\S]*?)<\/div>/g)].map(match => match[1].replace(/<[^>]+>/g, '').trim());
-        const values = [...text.matchAll(/<div class="church-template-card-value">([\s\S]*?)<\/div>/g)].map(match => match[1].replace(/<[^>]+>/g, '').trim());
+    const isFlyerMarkup = text.includes('church-template-flyer') || text.includes('church-template-card-title');
 
-        const sections = titles.slice(0, 4).map((title, index) => {
-            const value = values[index] || '';
-            return `<div class="announcement-flyer-item"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(value)}</span></div>`;
-        }).join('');
+    if (isFlyerMarkup) {
+        const parser = document.createElement('div');
+        parser.innerHTML = text;
+
+        const pairs = Array.from(parser.querySelectorAll('.church-template-card'))
+            .map(card => ({
+                title: card.querySelector('.church-template-card-title')?.textContent?.trim() || '',
+                value: card.querySelector('.church-template-card-value')?.textContent?.trim() || ''
+            }))
+            .filter(entry => entry.title);
+
+        const footerValue = parser.querySelector('.church-template-footer .church-template-card-value')?.textContent?.trim() || 'Ready to publish';
+
+        const sections = pairs.map(({ title, value }) => `
+            <div class="announcement-flyer-item">
+                <strong>${escapeHtml(title)}</strong>
+                <span>${escapeHtml(value).replace(/\n/g, '<br>')}</span>
+            </div>`).join('');
 
         return `
             <div class="announcement-flyer-preview">
                 <div class="announcement-flyer-header">Church Announcement</div>
-                <div class="announcement-flyer-grid">${sections}</div>
-                <div class="announcement-flyer-footer">Ready to publish</div>
+                <div class="announcement-flyer-grid">${sections || '<div class="announcement-flyer-item"><strong>Preview</strong><span>No content yet</span></div>'}</div>
+                <div class="announcement-flyer-footer">${escapeHtml(footerValue)}</div>
             </div>`;
     }
 
