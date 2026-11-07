@@ -1161,6 +1161,40 @@ ul {
     color: var(--success);
 }
 
+.donate-qr {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: var(--spacing-lg);
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: var(--radius-md);
+}
+
+.donate-qr-link {
+    flex: 0 0 auto;
+    line-height: 0;
+}
+
+.donate-qr img {
+    display: block;
+    width: 200px;
+    height: 200px;
+}
+
+.donate-qr-copy h3 {
+    margin: 0 0 0.4rem;
+    color: #1a202c;
+    font-size: 1.25rem;
+}
+
+.donate-qr-copy p {
+    margin: 0;
+    color: #2d3748;
+    font-size: 0.98rem;
+    line-height: 1.5;
+}
+
 /* ============================================ */
 /* CONTACT SECTION */
 /* ============================================ */
@@ -1599,6 +1633,17 @@ ul {
         padding: var(--spacing-md);
     }
     
+    .donate-qr {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem 0.75rem;
+    }
+
+    .donate-qr img {
+        width: 180px;
+        height: 180px;
+    }
+
     .donate-title {
         font-size: 2rem;
     }
