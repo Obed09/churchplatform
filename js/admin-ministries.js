@@ -694,8 +694,51 @@ function chosenMinistryPhoto() {
     return ministryPhotoData;
 }
 
-function compressMinistryPhoto(file) {
-    return new Promise((resolve, reject) => {
+function readPhotoSize(file) {
+    return file.slice(0, 2097152).arrayBuffer().then(function(buffer) {
+        return imageSizeFromBytes(new Uint8Array(buffer));
+    }).catch(function() {
+        return null;
+    });
+}
+
+function imageSizeFromBytes(bytes) {
+    if (bytes.length >= 24 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        return { width: readUint32(bytes, 16), height: readUint32(bytes, 20) };
+    }
+    if (bytes.length >= 10 && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+        return { width: bytes[6] | (bytes[7] << 8), height: bytes[8] | (bytes[9] << 8) };
+    }
+    if (bytes[0] !== 0xFF || bytes[1] !== 0xD8) return null;
+    let offset = 2;
+    while (offset + 8 < bytes.length) {
+        if (bytes[offset] !== 0xFF) return null;
+        let marker = bytes[offset + 1];
+        while (marker === 0xFF && offset + 2 < bytes.length) {
+            offset += 1;
+            marker = bytes[offset + 1];
+        }
+        if (marker === 0xD9 || marker === 0xDA) return null;
+        const length = (bytes[offset + 2] << 8) | bytes[offset + 3];
+        if (length < 2 || offset + 2 + length > bytes.length) return null;
+        const startOfFrame = marker >= 0xC0 && marker <= 0xCF && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC;
+        if (startOfFrame) {
+            return {
+                height: (bytes[offset + 5] << 8) | bytes[offset + 6],
+                width: (bytes[offset + 7] << 8) | bytes[offset + 8]
+            };
+        }
+        offset += 2 + length;
+    }
+    return null;
+}
+
+function readUint32(bytes, offset) {
+    return ((bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3]) >>> 0;
+}
+
+function loadPhotoElement(file) {
+    return new Promise(function(resolve, reject) {
         const reader = new FileReader();
         reader.onerror = function() {
             reject(new Error('unreadable'));
@@ -703,26 +746,7 @@ function compressMinistryPhoto(file) {
         reader.onload = function() {
             const image = new Image();
             image.onload = function() {
-                const maxSide = 640;
-                const scale = Math.min(1, maxSide / image.width, maxSide / image.height);
-                const canvas = document.createElement('canvas');
-                canvas.width = Math.max(1, Math.round(image.width * scale));
-                canvas.height = Math.max(1, Math.round(image.height * scale));
-                const context = canvas.getContext('2d');
-                context.fillStyle = '#ffffff';
-                context.fillRect(0, 0, canvas.width, canvas.height);
-                context.drawImage(image, 0, 0, canvas.width, canvas.height);
-                let quality = 0.72;
-                let dataUrl = canvas.toDataURL('image/jpeg', quality);
-                while (dataUrl.length > 180000 && quality > 0.4) {
-                    quality -= 0.1;
-                    dataUrl = canvas.toDataURL('image/jpeg', quality);
-                }
-                if (!isMinistryImage(dataUrl)) {
-                    reject(new Error('unreadable'));
-                    return;
-                }
-                resolve(dataUrl);
+                resolve(image);
             };
             image.onerror = function() {
                 reject(new Error('unreadable'));
@@ -731,6 +755,96 @@ function compressMinistryPhoto(file) {
         };
         reader.readAsDataURL(file);
     });
+}
+
+// Phone photos are often wider than the graphics card can draw in one step.
+// Resize while decoding so the card shows the picture instead of vertical stripes.
+async function loadScaledPhoto(file) {
+    const maxSide = 640;
+    if (typeof createImageBitmap !== 'function') return loadPhotoElement(file);
+    try {
+        const header = await readPhotoSize(file);
+        const longSide = header ? Math.max(header.width, header.height) : 0;
+        const options = {
+            imageOrientation: 'from-image',
+            colorSpaceConversion: 'none'
+        };
+        if (!longSide || longSide > maxSide) {
+            options.resizeWidth = maxSide;
+            options.resizeQuality = 'high';
+        }
+        let bitmap = await createImageBitmap(file, options);
+        if (bitmap.width > 2048 || bitmap.height > 2048) {
+            bitmap.close();
+            return loadPhotoElement(file);
+        }
+        if (bitmap.width > maxSide || bitmap.height > maxSide) {
+            const scale = Math.min(maxSide / bitmap.width, maxSide / bitmap.height);
+            const fitted = await createImageBitmap(bitmap, {
+                resizeWidth: Math.max(1, Math.round(bitmap.width * scale)),
+                resizeHeight: Math.max(1, Math.round(bitmap.height * scale)),
+                resizeQuality: 'high'
+            });
+            bitmap.close();
+            bitmap = fitted;
+        }
+        return bitmap;
+    } catch (error) {
+        return loadPhotoElement(file);
+    }
+}
+
+function drawPhotoInTiles(context, image, srcW, srcH, destW, destH) {
+    const tile = 1024;
+    if (srcW <= tile && srcH <= tile) {
+        context.drawImage(image, 0, 0, srcW, srcH, 0, 0, destW, destH);
+        return;
+    }
+    for (let y = 0; y < srcH; y += tile) {
+        const sh = Math.min(tile, srcH - y);
+        const dy = Math.round((y * destH) / srcH);
+        const dh = Math.max(1, Math.round(((y + sh) * destH) / srcH) - dy);
+        for (let x = 0; x < srcW; x += tile) {
+            const sw = Math.min(tile, srcW - x);
+            const dx = Math.round((x * destW) / srcW);
+            const dw = Math.max(1, Math.round(((x + sw) * destW) / srcW) - dx);
+            context.drawImage(image, x, y, sw, sh, dx, dy, dw, dh);
+        }
+    }
+}
+
+async function compressMinistryPhoto(file) {
+    const source = await loadScaledPhoto(file);
+    try {
+        const srcW = source.naturalWidth || source.width;
+        const srcH = source.naturalHeight || source.height;
+        if (!srcW || !srcH) throw new Error('unreadable');
+        const maxSide = 640;
+        const scale = Math.min(1, maxSide / srcW, maxSide / srcH);
+        const destW = Math.max(1, Math.round(srcW * scale));
+        const destH = Math.max(1, Math.round(srcH * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = destW;
+        canvas.height = destH;
+        const context = canvas.getContext('2d', { alpha: false }) || canvas.getContext('2d');
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, destW, destH);
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = 'high';
+        drawPhotoInTiles(context, source, srcW, srcH, destW, destH);
+        let quality = 0.72;
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+        while (dataUrl.length > 180000 && quality > 0.4) {
+            quality -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        if (typeof isMinistryImage !== 'function' || !isMinistryImage(dataUrl)) {
+            throw new Error('unreadable');
+        }
+        return dataUrl;
+    } finally {
+        if (source.close) source.close();
+    }
 }
 
 function safeAdminImage(value) {
@@ -813,7 +927,7 @@ if (!document.getElementById('admin-ministries-styles')) {
     styleElement.textContent = `
 .ministry-site-note{margin:.35rem 0 0;color:#4a5568;font-size:.92rem;max-width:46rem;line-height:1.45;}
 .ministry-photo-picker{display:flex;flex-direction:column;gap:.75rem;margin-bottom:.75rem;}
-.ministry-photo-picker img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;background:#edf2f7;}
+.ministry-photo-picker img{width:100%;height:200px;object-fit:cover;object-position:center;border-radius:10px;background:#edf2f7;}
 #ministryPhotoEmpty,.ministry-photo-hint{margin:0;color:#4a5568;}
 .ministry-photo-hint{font-size:.85rem;}
 .ministry-photo-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
