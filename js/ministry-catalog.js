@@ -193,5 +193,7 @@ function websiteMinistries() {
 
 function isMinistryImage(value) {
     const image = String(value || '').trim();
-    return /^https?:\/\//i.test(image) || /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,[a-z0-9+/=]+$/i.test(image);
+    if (/^https?:\/\//i.test(image)) return true;
+    if (/^data:image\/svg/i.test(image)) return false;
+    return /^data:image\/[a-z0-9.+-]+;base64,/i.test(image);
 }

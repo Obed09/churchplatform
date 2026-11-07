@@ -256,6 +256,10 @@ function renderResourcesGrid(ledger) {
 function bindMinistryForms() {
     document.getElementById('ministryForm')?.addEventListener('submit', function(submitEvent) {
         submitEvent.preventDefault();
+        if (ministryPhotoBusy) {
+            showNotification('Wait for the photo to finish, then click Save again.', 'error');
+            return;
+        }
         const ledger = loadLedger();
         const editId = this.dataset.editId || '';
         const existing = ledger.ministries.find(ministry => ministry.id === editId);
@@ -385,19 +389,27 @@ function bindMinistryForms() {
     document.getElementById('ministryPhotoFile')?.addEventListener('change', async function() {
         const file = this.files && this.files[0];
         if (!file) return;
-        if (!file.type.startsWith('image/')) {
-            showNotification('Choose a picture file.', 'error');
+        const photoProblem = ministryPhotoProblem(file);
+        if (photoProblem) {
+            showNotification(photoProblem, 'error');
             this.value = '';
             return;
         }
+        ministryPhotoBusy = true;
+        showNotification('Preparing the photo…', 'info');
         try {
             const dataUrl = await compressMinistryPhoto(file);
             const link = document.getElementById('ministryImage');
             if (link) link.value = '';
             showMinistryPhoto(dataUrl);
+            showNotification('Photo ready. Save the ministry to show it on the website.', 'success');
         } catch (error) {
-            showNotification('That picture could not be used. Try a smaller one.', 'error');
+            showNotification(error && error.message === 'heic'
+                ? 'This photo is HEIC. Save it as a JPG or PNG, then upload that file.'
+                : 'This photo could not be read. Save it as a JPG or PNG and try again.', 'error');
             this.value = '';
+        } finally {
+            ministryPhotoBusy = false;
         }
     });
 
@@ -637,6 +649,21 @@ function ministryName(ledger, id) {
 }
 
 let ministryPhotoData = '';
+let ministryPhotoBusy = false;
+
+function ministryPhotoProblem(file) {
+    const name = String(file.name || '').toLowerCase();
+    const type = String(file.type || '').toLowerCase();
+    if (type.includes('heic') || type.includes('heif') || name.endsWith('.heic') || name.endsWith('.heif')) {
+        return 'This photo is HEIC. Save it as a JPG or PNG, then upload that file.';
+    }
+    const allowedType = type.startsWith('image/') && !type.includes('svg');
+    const allowedName = /\.(jpe?g|png|webp|gif|bmp)$/i.test(name);
+    if (!allowedType && !allowedName) {
+        return 'Use a JPG or PNG photo.';
+    }
+    return '';
+}
 
 function showMinistryPhoto(value) {
     const image = String(value || '').trim();
@@ -676,20 +703,23 @@ function compressMinistryPhoto(file) {
         reader.onload = function() {
             const image = new Image();
             image.onload = function() {
-                const maxSide = 900;
+                const maxSide = 640;
                 const scale = Math.min(1, maxSide / image.width, maxSide / image.height);
                 const canvas = document.createElement('canvas');
                 canvas.width = Math.max(1, Math.round(image.width * scale));
                 canvas.height = Math.max(1, Math.round(image.height * scale));
-                canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-                let quality = 0.82;
+                const context = canvas.getContext('2d');
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                let quality = 0.72;
                 let dataUrl = canvas.toDataURL('image/jpeg', quality);
-                while (dataUrl.length > 350000 && quality > 0.45) {
-                    quality -= 0.12;
+                while (dataUrl.length > 180000 && quality > 0.4) {
+                    quality -= 0.1;
                     dataUrl = canvas.toDataURL('image/jpeg', quality);
                 }
-                if (typeof isMinistryImage === 'function' && (!isMinistryImage(dataUrl) || dataUrl.length > 500000)) {
-                    reject(new Error('too large'));
+                if (!isMinistryImage(dataUrl)) {
+                    reject(new Error('unreadable'));
                     return;
                 }
                 resolve(dataUrl);
@@ -784,7 +814,8 @@ if (!document.getElementById('admin-ministries-styles')) {
 .ministry-site-note{margin:.35rem 0 0;color:#4a5568;font-size:.92rem;max-width:46rem;line-height:1.45;}
 .ministry-photo-picker{display:flex;flex-direction:column;gap:.75rem;margin-bottom:.75rem;}
 .ministry-photo-picker img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;background:#edf2f7;}
-#ministryPhotoEmpty{margin:0;color:#4a5568;}
+#ministryPhotoEmpty,.ministry-photo-hint{margin:0;color:#4a5568;}
+.ministry-photo-hint{font-size:.85rem;}
 .ministry-photo-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
 .ministry-photo-upload{position:relative;overflow:hidden;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;}
 .ministry-photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;}
