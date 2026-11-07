@@ -676,26 +676,65 @@ function getDetailActionButtons(request) {
 /* ============================================ */
 /* REQUEST ACTIONS */
 /* ============================================ */
-function approveRequest(requestNumber) {
-    // In production, send to backend API
-    showNotification('Request approved successfully', 'success');
+function saveFinanceRequests(requests) {
+    localStorage.setItem('financeRequests', JSON.stringify(requests));
+}
+
+function updateRequestStatus(requestNumber, status, action, comments, notice, noticeType) {
+    const requests = getFinanceRequests();
+    const request = requests.find(item => item.requestNumber === requestNumber);
+    if (!request) {
+        showNotification('Request not found', 'error');
+        return;
+    }
+
+    request.status = status;
+    request.approvalHistory = request.approvalHistory || [];
+    request.approvalHistory.push({
+        approver: getCurrentUserName(),
+        role: 'Finance Officer',
+        action: action,
+        date: new Date().toISOString(),
+        comments: comments || ''
+    });
+    saveFinanceRequests(requests);
     closeModal('requestDetailsModal');
     loadFinanceRequests();
     updateRequestStats();
+    showNotification(notice, noticeType);
+}
+
+function approveRequest(requestNumber) {
+    updateRequestStatus(
+        requestNumber,
+        'Approved',
+        'Approved',
+        'Approved from Finance Department',
+        'Request approved successfully',
+        'success'
+    );
 }
 
 function rejectRequest(requestNumber) {
-    // In production, send to backend API
-    showNotification('Request rejected', 'error');
-    closeModal('requestDetailsModal');
-    loadFinanceRequests();
-    updateRequestStats();
+    updateRequestStatus(
+        requestNumber,
+        'Rejected',
+        'Rejected',
+        'Rejected from Finance Department',
+        'Request rejected',
+        'error'
+    );
 }
 
 function requestMoreInfo(requestNumber) {
-    // In production, send to backend API
-    showNotification('Information request sent to requestor', 'info');
-    closeModal('requestDetailsModal');
+    updateRequestStatus(
+        requestNumber,
+        'Awaiting Information',
+        'Requested information',
+        'More information requested from the requestor',
+        'Information request sent to requestor',
+        'info'
+    );
 }
 
 function processPayment(requestNumber) {
