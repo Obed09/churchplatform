@@ -12,8 +12,11 @@ function renderMinistries() {
 
     ministriesGrid.innerHTML = ministries.map(ministry => {
         const image = safeMinistryImage(ministry.image);
+        const photoKey = typeof ministryPhotoKey === 'function' ? ministryPhotoKey(ministry.image) : '';
         const icon = safeMinistryIcon(ministry.icon);
-        const photo = image
+        const photo = photoKey
+            ? `<img data-ministry-photo="${escapeMinistryText(photoKey)}" alt="${escapeMinistryText(ministry.name)}" class="ministry-image">`
+            : image
             ? `<img src="${escapeMinistryText(image)}" alt="${escapeMinistryText(ministry.name)}" class="ministry-image">`
             : '<div class="ministry-image ministry-image-empty"></div>';
         const leader = ministry.leader
@@ -35,6 +38,7 @@ function renderMinistries() {
                 </div>
             </div>`;
     }).join('');
+    if (typeof hydrateMinistryPhotos === 'function') hydrateMinistryPhotos(ministriesGrid);
 }
 
 function safeMinistryImage(value) {

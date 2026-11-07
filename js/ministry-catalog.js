@@ -197,3 +197,115 @@ function isMinistryImage(value) {
     if (/^data:image\/svg/i.test(image)) return false;
     return /^data:image\/[a-z0-9.+-]+;base64,/i.test(image);
 }
+
+function ministryPhotoKey(value) {
+    const match = String(value || '').trim().match(/^idb:([a-z0-9-]{4,80})$/i);
+    return match ? match[1] : '';
+}
+
+function isStoredMinistryPhoto(value) {
+    return isMinistryImage(value) || Boolean(ministryPhotoKey(value));
+}
+
+function createMinistryPhotoKey() {
+    return 'photo-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function ministryPhotoDb() {
+    return new Promise(function(resolve, reject) {
+        const request = indexedDB.open('churchMinistryPhotos', 1);
+        request.onupgradeneeded = function() {
+            if (!request.result.objectStoreNames.contains('photos')) {
+                request.result.createObjectStore('photos');
+            }
+        };
+        request.onsuccess = function() {
+            resolve(request.result);
+        };
+        request.onerror = function() {
+            reject(request.error || new Error('unreadable'));
+        };
+    });
+}
+
+function saveMinistryPhotoBlob(key, file) {
+    const type = String(file.type || '').toLowerCase();
+    const blob = type.startsWith('image/') && !type.includes('svg') ? file : new Blob([file], { type: 'image/jpeg' });
+    return ministryPhotoDb().then(function(db) {
+        return new Promise(function(resolve, reject) {
+            const transaction = db.transaction('photos', 'readwrite');
+            transaction.objectStore('photos').put(blob, key);
+            transaction.oncomplete = function() {
+                db.close();
+                resolve(key);
+            };
+            transaction.onerror = function() {
+                db.close();
+                reject(transaction.error || new Error('unreadable'));
+            };
+        });
+    });
+}
+
+function loadMinistryPhotoBlob(key) {
+    return ministryPhotoDb().then(function(db) {
+        return new Promise(function(resolve, reject) {
+            const transaction = db.transaction('photos', 'readonly');
+            const request = transaction.objectStore('photos').get(key);
+            request.onsuccess = function() {
+                db.close();
+                resolve(request.result || null);
+            };
+            request.onerror = function() {
+                db.close();
+                reject(request.error || new Error('unreadable'));
+            };
+        });
+    });
+}
+
+function deleteMinistryPhotoBlob(key) {
+    if (!key) return Promise.resolve();
+    return ministryPhotoDb().then(function(db) {
+        return new Promise(function(resolve) {
+            const transaction = db.transaction('photos', 'readwrite');
+            transaction.objectStore('photos').delete(key);
+            transaction.oncomplete = function() {
+                db.close();
+                resolve();
+            };
+            transaction.onerror = function() {
+                db.close();
+                resolve();
+            };
+        });
+    }).catch(function() {});
+}
+
+function blobToDataUrl(blob) {
+    return new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.onerror = function() {
+            reject(reader.error || new Error('unreadable'));
+        };
+        reader.onload = function() {
+            resolve(String(reader.result || ''));
+        };
+        reader.readAsDataURL(blob);
+    });
+}
+
+function hydrateMinistryPhotos(root) {
+    if (!root) return;
+    root.querySelectorAll('[data-ministry-photo]').forEach(function(img) {
+        const key = img.getAttribute('data-ministry-photo');
+        if (!key) return;
+        loadMinistryPhotoBlob(key).then(function(blob) {
+            if (!blob || img.getAttribute('data-ministry-photo') !== key) return null;
+            return blobToDataUrl(blob);
+        }).then(function(url) {
+            if (!url || img.getAttribute('data-ministry-photo') !== key) return;
+            img.src = url;
+        }).catch(function() {});
+    });
+}
