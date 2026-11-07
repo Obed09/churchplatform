@@ -37,7 +37,7 @@
                 <h1><i class="fas fa-hands-praying"></i> Ministries Oversight</h1>
             </div>
             <div class="header-right">
-                <button class="btn-primary" onclick="openAddMinistryModal()">
+                <button type="button" class="btn-primary" onclick="openAddMinistryModal()">
                     <i class="fas fa-plus"></i> Add Ministry
                 </button>
             </div>
@@ -75,7 +75,7 @@
                 <div id="ministries-tab" class="tab-content active">
                     <div class="content-header">
                         <h2>Ministry List</h2>
-                        <button class="btn-primary" onclick="openAddMinistryModal()"><i class="fas fa-plus"></i> Add Ministry</button>
+                        <button type="button" class="btn-primary" onclick="openAddMinistryModal()"><i class="fas fa-plus"></i> Add Ministry</button>
                     </div>
                     <div class="filter-bar">
                         <select id="ministryStatusFilter" onchange="filterMinistriesList()">
@@ -103,7 +103,7 @@
                 <div id="members-tab" class="tab-content">
                     <div class="content-header">
                         <h2>Ministry Volunteers</h2>
-                        <button class="btn-primary" onclick="openAddMemberModal()"><i class="fas fa-plus"></i> Add Volunteer</button>
+                        <button type="button" class="btn-primary" onclick="openAddMemberModal()"><i class="fas fa-plus"></i> Add Volunteer</button>
                     </div>
                     <div class="filter-bar">
                         <select id="memberMinistryFilter" onchange="filterMembersTable()">
@@ -131,7 +131,7 @@
                 <div id="activities-tab" class="tab-content">
                     <div class="content-header">
                         <h2>Ministry Activities</h2>
-                        <button class="btn-primary" onclick="openAddActivityModal()"><i class="fas fa-plus"></i> Add Activity</button>
+                        <button type="button" class="btn-primary" onclick="openAddActivityModal()"><i class="fas fa-plus"></i> Add Activity</button>
                     </div>
                     <div class="filter-bar">
                         <select id="activityMinistryFilter" onchange="filterActivities()">
@@ -147,7 +147,7 @@
                 <div id="resources-tab" class="tab-content">
                     <div class="content-header">
                         <h2>Ministry Resources</h2>
-                        <button class="btn-primary" onclick="openAddResourceModal()"><i class="fas fa-plus"></i> Add Resource</button>
+                        <button type="button" class="btn-primary" onclick="openAddResourceModal()"><i class="fas fa-plus"></i> Add Resource</button>
                     </div>
                     <div class="filter-bar">
                         <select id="resourceMinistryFilter" onchange="filterResources()">
@@ -277,9 +277,6 @@
 
     <div id="notification-container"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/supabase-ministries.js"></script>
     <script src="js/admin-sidebar.js"></script>
     <script src="js/admin-ministries.js"></script>
 </body>
