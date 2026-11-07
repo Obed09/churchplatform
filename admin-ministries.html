@@ -74,7 +74,10 @@
                 <!-- MINISTRIES TAB -->
                 <div id="ministries-tab" class="tab-content active">
                     <div class="content-header">
-                        <h2>Ministry List</h2>
+                        <div>
+                            <h2>Ministry List</h2>
+                            <p class="ministry-site-note">Add, edit, or remove a ministry here. The website Ministries section in this browser updates with it. Choose “Hide from the website” to take one off the public page without deleting it.</p>
+                        </div>
                         <button type="button" class="btn-primary" onclick="openAddMinistryModal()"><i class="fas fa-plus"></i> Add Ministry</button>
                     </div>
                     <div class="filter-bar">
@@ -91,6 +94,9 @@
                             <option value="outreach">Outreach</option>
                             <option value="prayer">Prayer</option>
                             <option value="education">Education</option>
+                            <option value="men">Men</option>
+                            <option value="women">Women</option>
+                            <option value="seniors">Seniors</option>
                             <option value="general">General</option>
                         </select>
                     </div>
@@ -180,7 +186,7 @@
             <form id="ministryForm">
                 <div class="form-grid">
                     <div class="form-group"><label>Ministry Name *</label><input type="text" id="ministryName" required placeholder="e.g. Worship Ministry"></div>
-                    <div class="form-group"><label>Category</label><select id="ministryCategory"><option value="worship">Worship</option><option value="children">Children</option><option value="youth">Youth</option><option value="outreach">Outreach</option><option value="prayer">Prayer</option><option value="education">Education</option><option value="general">General</option></select></div>
+                    <div class="form-group"><label>Category</label><select id="ministryCategory"><option value="worship">Worship</option><option value="children">Children</option><option value="youth">Youth</option><option value="outreach">Outreach</option><option value="prayer">Prayer</option><option value="education">Education</option><option value="men">Men</option><option value="women">Women</option><option value="seniors">Seniors</option><option value="general">General</option></select></div>
                     <div class="form-group"><label>Leader Name</label><input type="text" id="ministryLeader" placeholder="Full name"></div>
                     <div class="form-group"><label>Leader Email</label><input type="email" id="ministryLeaderEmail" placeholder="email@example.com"></div>
                     <div class="form-group"><label>Leader Phone</label><input type="tel" id="ministryLeaderPhone" placeholder="Phone number"></div>
@@ -188,7 +194,9 @@
                     <div class="form-group"><label>Meeting Time</label><input type="time" id="ministryMeetingTime"></div>
                     <div class="form-group"><label>Meeting Location</label><input type="text" id="ministryMeetingLocation" placeholder="e.g. Room 101"></div>
                     <div class="form-group"><label>Annual Budget (RD$)</label><input type="number" id="ministryBudget" min="0" step="0.01" placeholder="0.00"></div>
-                    <div class="form-group"><label>Status</label><select id="ministryStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                    <div class="form-group"><label>Website</label><select id="ministryStatus"><option value="active">Show on the website</option><option value="inactive">Hide from the website</option></select></div>
+                    <div class="form-group"><label>Icon</label><select id="ministryIcon"><option value="fa-child">Children</option><option value="fa-users">Youth / Group</option><option value="fa-music">Worship</option><option value="fa-praying-hands">Prayer</option><option value="fa-hands-helping">Outreach</option><option value="fa-male">Men</option><option value="fa-female">Women</option><option value="fa-heart">Seniors / Care</option><option value="fa-book">Education</option><option value="fa-hands-praying">General</option></select></div>
+                    <div class="form-group" style="grid-column:1/-1"><label>Photo URL</label><input type="url" id="ministryImage" placeholder="https://..."></div>
                     <div class="form-group" style="grid-column:1/-1"><label>Description</label><textarea id="ministryDescription" rows="3" placeholder="What does this ministry do?"></textarea></div>
                 </div>
                 <div class="modal-actions">
@@ -277,6 +285,7 @@
 
     <div id="notification-container"></div>
 
+    <script src="js/ministry-catalog.js"></script>
     <script src="js/admin-sidebar.js"></script>
     <script src="js/admin-ministries.js"></script>
 </body>

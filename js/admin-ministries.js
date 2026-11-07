@@ -4,8 +4,6 @@
 // update the ministries shown on this page.
 // ============================================
 
-const MINISTRIES_STORAGE_KEY = 'churchMinistriesLedger';
-
 const CATEGORY_NAMES = {
     worship: 'Worship',
     children: 'Children',
@@ -13,6 +11,9 @@ const CATEGORY_NAMES = {
     outreach: 'Outreach',
     prayer: 'Prayer',
     education: 'Education',
+    men: 'Men',
+    women: 'Women',
+    seniors: 'Seniors',
     general: 'General'
 };
 
@@ -23,6 +24,9 @@ const CATEGORY_COLORS = {
     outreach: '#f5a623',
     prayer: '#4facfe',
     education: '#718096',
+    men: '#2c5282',
+    women: '#d53f8c',
+    seniors: '#dd6b20',
     general: '#4a5568'
 };
 
@@ -33,6 +37,9 @@ const CATEGORY_ICONS = {
     outreach: 'hand-holding-heart',
     prayer: 'pray',
     education: 'book',
+    men: 'male',
+    women: 'female',
+    seniors: 'heart',
     general: 'hands-praying'
 };
 
@@ -46,24 +53,16 @@ function emptyLedger() {
 }
 
 function loadLedger() {
-    try {
-        const raw = localStorage.getItem(MINISTRIES_STORAGE_KEY);
-        if (raw === null || raw === '') return emptyLedger();
-        const saved = JSON.parse(raw);
-        return {
-            ministries: Array.isArray(saved.ministries) ? saved.ministries : [],
-            volunteers: Array.isArray(saved.volunteers) ? saved.volunteers : [],
-            activities: Array.isArray(saved.activities) ? saved.activities : [],
-            resources: Array.isArray(saved.resources) ? saved.resources : []
-        };
-    } catch (error) {
-        console.error('Could not read ministries:', error);
-        return emptyLedger();
-    }
+    if (typeof readMinistryLedger === 'function') return readMinistryLedger();
+    return emptyLedger();
 }
 
 function saveLedger(ledger) {
-    localStorage.setItem(MINISTRIES_STORAGE_KEY, JSON.stringify(ledger));
+    if (typeof writeMinistryLedger === 'function') {
+        writeMinistryLedger(ledger);
+        return;
+    }
+    localStorage.setItem('churchMinistriesLedger', JSON.stringify(ledger));
 }
 
 function renderMinistriesPage() {
@@ -118,8 +117,10 @@ function renderMinistriesGrid(ledger) {
         const icon = CATEGORY_ICONS[ministry.category] || 'hands-praying';
         const meeting = [ministry.meetingDay, ministry.meetingTime ? formatTime(ministry.meetingTime) : '']
             .filter(Boolean).join(' at ');
+        const photo = safeAdminImage(ministry.image);
         return `
             <div class="ministry-card">
+                ${photo ? `<img class="ministry-admin-photo" src="${escapeHtml(photo)}" alt="">` : ''}
                 <div class="ministry-card-header" style="background:${color}20;border-left:4px solid ${color};">
                     <div class="ministry-icon" style="background:${color}"><i class="fas fa-${icon}"></i></div>
                     <div>
@@ -271,7 +272,9 @@ function bindMinistryForms() {
             meetingLocation: document.getElementById('ministryMeetingLocation').value.trim(),
             budget: budget === '' ? '' : Number(budget),
             status: document.getElementById('ministryStatus').value,
-            description: document.getElementById('ministryDescription').value.trim()
+            description: document.getElementById('ministryDescription').value.trim(),
+            icon: document.getElementById('ministryIcon').value,
+            image: document.getElementById('ministryImage').value.trim()
         };
         ledger.ministries = existing
             ? ledger.ministries.map(ministry => ministry.id === record.id ? record : ministry)
@@ -403,6 +406,8 @@ function editMinistry(id) {
     document.getElementById('ministryMeetingLocation').value = ministry.meetingLocation || '';
     document.getElementById('ministryBudget').value = ministry.budget === '' || ministry.budget == null ? '' : ministry.budget;
     document.getElementById('ministryStatus').value = ministry.status || 'active';
+    document.getElementById('ministryIcon').value = ministry.icon || 'fa-hands-praying';
+    document.getElementById('ministryImage').value = ministry.image || '';
     document.getElementById('ministryDescription').value = ministry.description || '';
 }
 
@@ -587,6 +592,11 @@ function ministryName(ledger, id) {
     return ministry ? ministry.name : 'Former ministry';
 }
 
+function safeAdminImage(value) {
+    const image = String(value || '').trim();
+    return /^https?:\/\//i.test(image) ? image : '';
+}
+
 function categoryName(value) {
     return CATEGORY_NAMES[value] || value || 'General';
 }
@@ -660,6 +670,8 @@ if (!document.getElementById('admin-ministries-styles')) {
     const styleElement = document.createElement('style');
     styleElement.id = 'admin-ministries-styles';
     styleElement.textContent = `
+.ministry-site-note{margin:.35rem 0 0;color:#4a5568;font-size:.92rem;max-width:46rem;line-height:1.45;}
+.ministry-admin-photo{display:block;width:100%;height:140px;object-fit:cover;}
 .filter-bar{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;}
 .filter-bar select{padding:.5rem 1rem;border:1px solid var(--border-color,#e2e8f0);border-radius:var(--radius-md,8px);background:#fff;color:#1a202c;}
 .ministries-grid,.activities-grid,.resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;}

@@ -782,6 +782,10 @@ ul {
     object-fit: cover;
 }
 
+.ministry-image-empty {
+    background: linear-gradient(135deg, #2c5282, #4a90e2);
+}
+
 .ministry-content {
     padding: var(--spacing-md);
 }
