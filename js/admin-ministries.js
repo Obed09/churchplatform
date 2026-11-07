@@ -669,33 +669,37 @@ function chosenMinistryPhoto() {
 
 function compressMinistryPhoto(file) {
     return new Promise((resolve, reject) => {
-        const objectUrl = URL.createObjectURL(file);
-        const image = new Image();
-        image.onload = function() {
-            URL.revokeObjectURL(objectUrl);
-            const maxSide = 900;
-            const scale = Math.min(1, maxSide / image.width, maxSide / image.height);
-            const canvas = document.createElement('canvas');
-            canvas.width = Math.max(1, Math.round(image.width * scale));
-            canvas.height = Math.max(1, Math.round(image.height * scale));
-            canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-            let quality = 0.82;
-            let dataUrl = canvas.toDataURL('image/jpeg', quality);
-            while (dataUrl.length > 350000 && quality > 0.45) {
-                quality -= 0.12;
-                dataUrl = canvas.toDataURL('image/jpeg', quality);
-            }
-            if (!isMinistryImage(dataUrl) || dataUrl.length > 500000) {
-                reject(new Error('too large'));
-                return;
-            }
-            resolve(dataUrl);
-        };
-        image.onerror = function() {
-            URL.revokeObjectURL(objectUrl);
+        const reader = new FileReader();
+        reader.onerror = function() {
             reject(new Error('unreadable'));
         };
-        image.src = objectUrl;
+        reader.onload = function() {
+            const image = new Image();
+            image.onload = function() {
+                const maxSide = 900;
+                const scale = Math.min(1, maxSide / image.width, maxSide / image.height);
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(image.width * scale));
+                canvas.height = Math.max(1, Math.round(image.height * scale));
+                canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+                let quality = 0.82;
+                let dataUrl = canvas.toDataURL('image/jpeg', quality);
+                while (dataUrl.length > 350000 && quality > 0.45) {
+                    quality -= 0.12;
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                }
+                if (typeof isMinistryImage === 'function' && (!isMinistryImage(dataUrl) || dataUrl.length > 500000)) {
+                    reject(new Error('too large'));
+                    return;
+                }
+                resolve(dataUrl);
+            };
+            image.onerror = function() {
+                reject(new Error('unreadable'));
+            };
+            image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
     });
 }
 
