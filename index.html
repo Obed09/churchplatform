@@ -335,30 +335,59 @@
                 <p class="donate-subtitle">Your generosity helps us spread the Gospel and serve our community</p>
                 
                 <!-- Give Once / Monthly Toggle -->
-                <div class="donation-type-toggle">
-                    <button class="toggle-btn active" data-type="once">Give Once</button>
-                    <button class="toggle-btn" data-type="monthly">Monthly</button>
+                <div class="donation-type-toggle" id="frequencyToggle">
+                    <button type="button" class="toggle-btn active" data-type="once" aria-pressed="true">Give Once</button>
+                    <button type="button" class="toggle-btn" data-type="monthly" aria-pressed="false">Monthly</button>
+                </div>
+
+                <!-- Giving purpose -->
+                <h3 class="section-label">Giving For</h3>
+                <div class="purpose-options" id="purposeOptions" role="group" aria-label="Giving for">
+                    <button type="button" class="purpose-btn" data-purpose="Tithe" aria-pressed="false">Tithe</button>
+                    <button type="button" class="purpose-btn" data-purpose="Offering" aria-pressed="false">Offering</button>
+                    <button type="button" class="purpose-btn" data-purpose="Special Offering" aria-pressed="false">Special Offering</button>
+                    <button type="button" class="purpose-btn" data-purpose="Donation" aria-pressed="false">Donation</button>
+                    <button type="button" class="purpose-btn" data-purpose="Other" aria-pressed="false">Other</button>
+                </div>
+                <div class="other-purpose-group" id="otherPurposeGroup" hidden>
+                    <label class="visually-hidden" for="otherPurpose">Please specify</label>
+                    <input type="text" id="otherPurpose" class="other-purpose-input" placeholder="Please specify" maxlength="80" autocomplete="off">
+                </div>
+
+                <!-- Currency -->
+                <h3 class="section-label">Currency</h3>
+                <div class="donation-type-toggle" id="currencyToggle" role="group" aria-label="Currency">
+                    <button type="button" class="toggle-btn currency-btn" data-currency="DOP" aria-pressed="false">
+                        <span class="currency-code">RD$</span>
+                        <span class="currency-name">Pesos Dominicanos</span>
+                    </button>
+                    <button type="button" class="toggle-btn currency-btn active" data-currency="USD" aria-pressed="true">
+                        <span class="currency-code">USD</span>
+                        <span class="currency-name">US Dollars</span>
+                    </button>
                 </div>
                 
                 <!-- Choose Amount -->
-                <h3 class="section-label">Choose Amount (USD)</h3>
-                <div class="amount-options">
-                    <button class="amount-btn" data-amount="10">$10</button>
-                    <button class="amount-btn" data-amount="20">$20</button>
-                    <button class="amount-btn" data-amount="50">$50</button>
-                    <button class="amount-btn" data-amount="100">$100</button>
+                <h3 class="section-label" id="amountLabel">Choose Amount (USD)</h3>
+                <div class="amount-options" id="amountOptions">
+                    <button type="button" class="amount-btn" data-amount="10">$10</button>
+                    <button type="button" class="amount-btn" data-amount="20">$20</button>
+                    <button type="button" class="amount-btn" data-amount="50">$50</button>
+                    <button type="button" class="amount-btn" data-amount="100">$100</button>
                 </div>
                 
                 <div class="or-divider">Or</div>
                 
                 <!-- Custom Amount Input -->
-                <div class="custom-amount-group">
-                    <span class="currency-symbol">$</span>
-                    <input type="number" id="customAmount" class="custom-amount-input" placeholder="Enter Amount in USD" min="1" step="1">
+                <div class="custom-amount-group" id="customAmountGroup">
+                    <span class="currency-symbol" id="currencySymbol">$</span>
+                    <input type="number" id="customAmount" class="custom-amount-input" placeholder="Custom amount" min="1" step="0.01" inputmode="decimal">
                 </div>
+
+                <p class="donation-error" id="donationError" role="alert" hidden></p>
                 
                 <!-- Donate Button -->
-                <button class="btn-donate" id="donateBtn">
+                <button type="button" class="btn-donate" id="donateBtn">
                     <i class="fas fa-heart"></i> DONATE NOW
                 </button>
                 
@@ -366,11 +395,11 @@
                 <!-- REPLACE WITH YOUR PAYMENT PROCESSOR -->
                 <!-- Options: PayPal, Stripe, Tithe.ly, Pushpay -->
                 <!-- ============================================ -->
-                <p class="donation-note">
-                    <i class="fas fa-lock"></i> Secure donation processing via PayPal (USD)
+                <p class="donation-note" id="donationSecurityNote">
+                    <i class="fas fa-lock"></i> Secure donation processing via PayPal
                 </p>
-                <p class="donation-note" style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.8;">
-                    Note: PayPal accepts USD. You can pay with any currency - PayPal will convert automatically.
+                <p class="donation-note" id="donationCurrencyNote">
+                    Amounts are sent to PayPal in US dollars (USD).
                 </p>
             </div>
         </div>

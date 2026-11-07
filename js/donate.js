@@ -1,15 +1,34 @@
 /* ============================================ */
 /* DONATION FUNCTIONALITY */
-/* Handles donation type toggle and amount selection */
+/* Handles frequency, purpose, currency, and amount */
 /* ============================================ */
 
 // PayPal Configuration
 const PAYPAL_CONFIG = {
     email: 'amorporelcalvario@gmail.com',
-    currency: 'USD', // PayPal Personal accounts in DR only accept USD
-    currencySymbol: '$',
     environment: 'live',
-    itemName: 'Donation to Tabernacle Amour Pour Le Calvaire'
+    churchName: 'Tabernacle Amour Pour Le Calvaire'
+};
+
+// USD stays the default because this PayPal account charges in dollars.
+// DOP is offered as Dominican pesos (shown as RD$).
+const CURRENCIES = {
+    USD: {
+        code: 'USD',
+        symbol: '$',
+        amounts: [10, 20, 50, 100],
+        placeholder: 'Custom amount',
+        amountHeading: 'Choose Amount (USD)',
+        note: 'Amounts are sent to PayPal in US dollars (USD).'
+    },
+    DOP: {
+        code: 'DOP',
+        symbol: 'RD$',
+        amounts: [500, 1000, 2500, 5000],
+        placeholder: 'Custom amount',
+        amountHeading: 'Choose Amount (RD$)',
+        note: 'Amounts are sent to PayPal in Dominican pesos (RD$).'
+    }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -18,29 +37,85 @@ document.addEventListener('DOMContentLoaded', function() {
     // STATE MANAGEMENT
     // ============================================
     let donationType = 'once'; // 'once' or 'monthly'
+    let selectedPurpose = null;
+    let selectedCurrency = 'USD';
     let selectedAmount = null;
     
     // Get elements
-    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    const frequencyButtons = document.querySelectorAll('#frequencyToggle .toggle-btn');
+    const purposeButtons = document.querySelectorAll('.purpose-btn');
+    const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+    const otherPurposeInput = document.getElementById('otherPurpose');
+    const currencyButtons = document.querySelectorAll('#currencyToggle .currency-btn');
     const amountButtons = document.querySelectorAll('.amount-btn');
+    const amountLabel = document.getElementById('amountLabel');
+    const customAmountGroup = document.getElementById('customAmountGroup');
+    const currencySymbol = document.getElementById('currencySymbol');
     const customAmountInput = document.getElementById('customAmount');
+    const donationError = document.getElementById('donationError');
+    const donationCurrencyNote = document.getElementById('donationCurrencyNote');
     const donateButton = document.getElementById('donateBtn');
     
     // ============================================
     // DONATION TYPE TOGGLE (Give Once / Monthly)
     // ============================================
-    toggleButtons.forEach(button => {
+    frequencyButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            toggleButtons.forEach(btn => btn.classList.remove('active'));
+            frequencyButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+            });
             
-            // Add active class to clicked button
             this.classList.add('active');
-            
-            // Update donation type
+            this.setAttribute('aria-pressed', 'true');
             donationType = this.dataset.type;
-            
-            console.log('Donation type:', donationType);
+            clearError();
+        });
+    });
+
+    // ============================================
+    // GIVING PURPOSE
+    // ============================================
+    purposeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            purposeButtons.forEach(btn => {
+                btn.classList.remove('selected');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+
+            this.classList.add('selected');
+            this.setAttribute('aria-pressed', 'true');
+            selectedPurpose = this.dataset.purpose;
+
+            const isOther = selectedPurpose === 'Other';
+            otherPurposeGroup.hidden = !isOther;
+            if (!isOther) {
+                otherPurposeInput.value = '';
+            } else {
+                otherPurposeInput.focus();
+            }
+            clearError();
+        });
+    });
+
+    if (otherPurposeInput) {
+        otherPurposeInput.addEventListener('input', clearError);
+    }
+
+    // ============================================
+    // CURRENCY (RD$ / USD)
+    // ============================================
+    currencyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currencyButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+
+            this.classList.add('active');
+            this.setAttribute('aria-pressed', 'true');
+            applyCurrency(this.dataset.currency);
+            clearError();
         });
     });
     
@@ -49,19 +124,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     amountButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Remove selected class from all amount buttons
             amountButtons.forEach(btn => btn.classList.remove('selected'));
-            
-            // Add selected class to clicked button
             this.classList.add('selected');
-            
-            // Update selected amount
-            selectedAmount = parseInt(this.dataset.amount);
-            
-            // Clear custom input
+            selectedAmount = parseAmount(this.dataset.amount);
             customAmountInput.value = '';
-            
-            console.log('Selected amount: ' + PAYPAL_CONFIG.currencySymbol + selectedAmount);
+            clearError();
         });
     });
     
@@ -69,38 +136,92 @@ document.addEventListener('DOMContentLoaded', function() {
     // CUSTOM AMOUNT INPUT
     // ============================================
     customAmountInput.addEventListener('input', function() {
-        // Remove selected class from preset buttons
         amountButtons.forEach(btn => btn.classList.remove('selected'));
-        
-        // Update selected amount
-        selectedAmount = parseInt(this.value) || null;
-        
-        console.log('Custom amount: ' + PAYPAL_CONFIG.currencySymbol + selectedAmount);
+        selectedAmount = parseAmount(this.value);
+        clearError();
     });
     
     // ============================================
     // DONATE BUTTON CLICK
     // ============================================
     donateButton.addEventListener('click', function() {
-        // Validate amount
-        if (!selectedAmount || selectedAmount <= 0) {
-            alert('Please select or enter a donation amount.');
+        const purposeLabel = getPurposeLabel();
+
+        if (!selectedPurpose) {
+            showError('Please choose what this gift is for.');
             return;
         }
-        
-        // Log donation details
-        console.log('Processing donation:', {
-            type: donationType,
-            amount: selectedAmount
-        });
-        
-        // Redirect to PayPal for payment processing
-        redirectToPayPal(donationType, selectedAmount);
+
+        if (selectedPurpose === 'Other' && !purposeLabel) {
+            showError('Please specify what this gift is for.');
+            otherPurposeInput.focus();
+            return;
+        }
+
+        if (!selectedAmount || selectedAmount <= 0) {
+            showError('Please select or enter a donation amount.');
+            return;
+        }
+
+        clearError();
+        redirectToPayPal(donationType, selectedAmount, purposeLabel, CURRENCIES[selectedCurrency].code);
     });
     
     // ============================================
     // HELPER FUNCTIONS
     // ============================================
+
+    function parseAmount(value) {
+        const amount = Number(value);
+        if (!Number.isFinite(amount) || amount <= 0) {
+            return null;
+        }
+        return Math.round(amount * 100) / 100;
+    }
+
+    function getPurposeLabel() {
+        if (!selectedPurpose) {
+            return null;
+        }
+        if (selectedPurpose === 'Other') {
+            const detail = otherPurposeInput.value.trim();
+            return detail ? 'Other: ' + detail : null;
+        }
+        return selectedPurpose;
+    }
+
+    function applyCurrency(currencyKey) {
+        const currency = CURRENCIES[currencyKey];
+        if (!currency) {
+            return;
+        }
+
+        selectedCurrency = currencyKey;
+        selectedAmount = null;
+        customAmountInput.value = '';
+        amountButtons.forEach((button, index) => {
+            const amount = currency.amounts[index];
+            button.dataset.amount = String(amount);
+            button.textContent = currency.symbol + amount.toLocaleString('en-US');
+            button.classList.remove('selected');
+        });
+
+        amountLabel.textContent = currency.amountHeading;
+        currencySymbol.textContent = currency.symbol;
+        customAmountInput.placeholder = currency.placeholder;
+        customAmountGroup.classList.toggle('is-dop', currencyKey === 'DOP');
+        donationCurrencyNote.textContent = currency.note;
+    }
+
+    function showError(message) {
+        donationError.textContent = message;
+        donationError.hidden = false;
+    }
+
+    function clearError() {
+        donationError.textContent = '';
+        donationError.hidden = true;
+    }
     
     function resetDonationForm() {
         amountButtons.forEach(btn => btn.classList.remove('selected'));
@@ -113,19 +234,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     
     // PayPal Integration
-    function redirectToPayPal(type, amount) {
-        // For one-time donations
-        if (type === 'once') {
-            const paypalUrl = `https://www.paypal.com/donate?business=${encodeURIComponent(PAYPAL_CONFIG.email)}&amount=${amount}&currency_code=${PAYPAL_CONFIG.currency}&item_name=${encodeURIComponent(PAYPAL_CONFIG.itemName)}`;
-            window.location.href = paypalUrl; // Opens in same tab
-        } 
-        // For monthly subscriptions (Note: Requires PayPal Business account for subscription setup)
-        else {
-            // For now, redirect to one-time donation with a note
+    function redirectToPayPal(type, amount, purposeLabel, currencyCode) {
+        const frequency = type === 'monthly' ? ' (Monthly)' : '';
+        const itemName = purposeLabel + frequency + ' — ' + PAYPAL_CONFIG.churchName;
+        const paypalUrl = 'https://www.paypal.com/donate?business=' + encodeURIComponent(PAYPAL_CONFIG.email)
+            + '&amount=' + encodeURIComponent(amount)
+            + '&currency_code=' + encodeURIComponent(currencyCode)
+            + '&item_name=' + encodeURIComponent(itemName);
+
+        // Monthly gifts still open PayPal as a one-time payment until a Business subscription is configured.
+        if (type !== 'once') {
             alert('Monthly recurring donations require PayPal Business account setup.\n\nYou can still make a one-time donation now and set up recurring payments in your PayPal account.');
-            const paypalUrl = `https://www.paypal.com/donate?business=${encodeURIComponent(PAYPAL_CONFIG.email)}&amount=${amount}&currency_code=${PAYPAL_CONFIG.currency}&item_name=${encodeURIComponent(PAYPAL_CONFIG.itemName + ' - Monthly')}`;
-            window.location.href = paypalUrl; // Opens in same tab
         }
+
+        window.location.href = paypalUrl;
     }
     
     // Example 2: Stripe Checkout Integration
@@ -178,8 +300,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Quick amount selection with keyboard (1-4)
+    // Quick amount selection with keyboard (1-4), ignored while typing in a field
     document.addEventListener('keypress', function(e) {
+        if (e.target.closest('input, textarea, select')) {
+            return;
+        }
         const key = e.key;
         if (key >= '1' && key <= '4') {
             const index = parseInt(key) - 1;
