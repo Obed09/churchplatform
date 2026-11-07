@@ -76,7 +76,7 @@
                 <h1><i class="fas fa-calendar-alt"></i> Events Management</h1>
             </div>
             <div class="header-right">
-                <button class="btn-primary" onclick="openCreateEventModal()">
+                <button type="button" class="btn-primary" onclick="openCreateEventModal()">
                     <i class="fas fa-plus"></i> Create Event
                 </button>
             </div>
@@ -93,7 +93,7 @@
                     <div class="stat-info">
                         <h3 id="upcomingEvents">2</h3>
                         <p>Upcoming Events</p>
-                        <span class="stat-change">Next: June 12</span>
+                        <span class="stat-change" id="nextEventDate">Next: June 12</span>
                     </div>
                 </div>
 
@@ -135,10 +135,10 @@
             <div class="section-header">
                 <h2><i class="fas fa-calendar"></i> Events Calendar</h2>
                 <div class="view-toggle">
-                    <button class="view-btn active" onclick="switchView('calendar')">
+                    <button type="button" class="view-btn active" onclick="switchView('calendar', this)">
                         <i class="fas fa-calendar"></i> Calendar
                     </button>
-                    <button class="view-btn" onclick="switchView('list')">
+                    <button type="button" class="view-btn" onclick="switchView('list', this)">
                         <i class="fas fa-list"></i> List
                     </button>
                 </div>
@@ -147,11 +147,11 @@
             <!-- Calendar Container -->
             <div id="calendar-view" class="calendar-container">
                 <div class="calendar-header">
-                    <button class="calendar-nav" onclick="previousMonth()">
+                    <button type="button" class="calendar-nav" onclick="previousMonth()">
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <h3 id="currentMonth">June 2026</h3>
-                    <button class="calendar-nav" onclick="nextMonth()">
+                    <button type="button" class="calendar-nav" onclick="nextMonth()">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
