@@ -274,12 +274,17 @@ function bindMinistryForms() {
             status: document.getElementById('ministryStatus').value,
             description: document.getElementById('ministryDescription').value.trim(),
             icon: document.getElementById('ministryIcon').value,
-            image: document.getElementById('ministryImage').value.trim()
+            image: chosenMinistryPhoto()
         };
         ledger.ministries = existing
             ? ledger.ministries.map(ministry => ministry.id === record.id ? record : ministry)
             : ledger.ministries.concat(record);
-        saveLedger(ledger);
+        try {
+            saveLedger(ledger);
+        } catch (error) {
+            showNotification('That photo is too large to save. Choose a smaller picture.', 'error');
+            return;
+        }
         delete this.dataset.editId;
         closeModal('ministryModal');
         renderMinistriesPage();
@@ -376,6 +381,42 @@ function bindMinistryForms() {
         renderMinistriesPage();
         showNotification(existing ? 'Resource updated.' : 'Resource added.', 'success');
     });
+
+    document.getElementById('ministryPhotoFile')?.addEventListener('change', async function() {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            showNotification('Choose a picture file.', 'error');
+            this.value = '';
+            return;
+        }
+        try {
+            const dataUrl = await compressMinistryPhoto(file);
+            const link = document.getElementById('ministryImage');
+            if (link) link.value = '';
+            showMinistryPhoto(dataUrl);
+        } catch (error) {
+            showNotification('That picture could not be used. Try a smaller one.', 'error');
+            this.value = '';
+        }
+    });
+
+    document.getElementById('ministryImage')?.addEventListener('input', function() {
+        const value = this.value.trim();
+        if (!value) {
+            if (String(ministryPhotoData).startsWith('http')) showMinistryPhoto('');
+            return;
+        }
+        if (/^https?:\/\//i.test(value)) showMinistryPhoto(value);
+    });
+
+    document.getElementById('ministryPhotoClear')?.addEventListener('click', function() {
+        const file = document.getElementById('ministryPhotoFile');
+        const link = document.getElementById('ministryImage');
+        if (file) file.value = '';
+        if (link) link.value = '';
+        showMinistryPhoto('');
+    });
 }
 
 function openAddMinistryModal() {
@@ -386,6 +427,9 @@ function openAddMinistryModal() {
     }
     const title = document.getElementById('ministryModalTitle');
     if (title) title.innerHTML = '<i class="fas fa-hands-praying"></i> Add Ministry';
+    const file = document.getElementById('ministryPhotoFile');
+    if (file) file.value = '';
+    showMinistryPhoto('');
     openModal('ministryModal');
 }
 
@@ -407,8 +451,8 @@ function editMinistry(id) {
     document.getElementById('ministryBudget').value = ministry.budget === '' || ministry.budget == null ? '' : ministry.budget;
     document.getElementById('ministryStatus').value = ministry.status || 'active';
     document.getElementById('ministryIcon').value = ministry.icon || 'fa-hands-praying';
-    document.getElementById('ministryImage').value = ministry.image || '';
     document.getElementById('ministryDescription').value = ministry.description || '';
+    showMinistryPhoto(ministry.image || '');
 }
 
 function deleteMinistryRecord(id) {
@@ -592,9 +636,72 @@ function ministryName(ledger, id) {
     return ministry ? ministry.name : 'Former ministry';
 }
 
+let ministryPhotoData = '';
+
+function showMinistryPhoto(value) {
+    const image = String(value || '').trim();
+    ministryPhotoData = typeof isMinistryImage === 'function' && isMinistryImage(image) ? image : '';
+    const preview = document.getElementById('ministryPhotoPreview');
+    const empty = document.getElementById('ministryPhotoEmpty');
+    const clearButton = document.getElementById('ministryPhotoClear');
+    const link = document.getElementById('ministryImage');
+    if (preview) {
+        if (ministryPhotoData) {
+            preview.src = ministryPhotoData;
+            preview.hidden = false;
+        } else {
+            preview.removeAttribute('src');
+            preview.hidden = true;
+        }
+    }
+    if (empty) empty.hidden = Boolean(ministryPhotoData);
+    if (clearButton) clearButton.hidden = !ministryPhotoData;
+    if (link && document.activeElement !== link) {
+        link.value = ministryPhotoData.startsWith('http') ? ministryPhotoData : '';
+    }
+}
+
+function chosenMinistryPhoto() {
+    const typed = document.getElementById('ministryImage')?.value.trim() || '';
+    if (/^https?:\/\//i.test(typed)) return typed;
+    return ministryPhotoData;
+}
+
+function compressMinistryPhoto(file) {
+    return new Promise((resolve, reject) => {
+        const objectUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = function() {
+            URL.revokeObjectURL(objectUrl);
+            const maxSide = 900;
+            const scale = Math.min(1, maxSide / image.width, maxSide / image.height);
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.width * scale));
+            canvas.height = Math.max(1, Math.round(image.height * scale));
+            canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+            let quality = 0.82;
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+            while (dataUrl.length > 350000 && quality > 0.45) {
+                quality -= 0.12;
+                dataUrl = canvas.toDataURL('image/jpeg', quality);
+            }
+            if (!isMinistryImage(dataUrl) || dataUrl.length > 500000) {
+                reject(new Error('too large'));
+                return;
+            }
+            resolve(dataUrl);
+        };
+        image.onerror = function() {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error('unreadable'));
+        };
+        image.src = objectUrl;
+    });
+}
+
 function safeAdminImage(value) {
     const image = String(value || '').trim();
-    return /^https?:\/\//i.test(image) ? image : '';
+    return typeof isMinistryImage === 'function' && isMinistryImage(image) ? image : '';
 }
 
 function categoryName(value) {
@@ -671,6 +778,12 @@ if (!document.getElementById('admin-ministries-styles')) {
     styleElement.id = 'admin-ministries-styles';
     styleElement.textContent = `
 .ministry-site-note{margin:.35rem 0 0;color:#4a5568;font-size:.92rem;max-width:46rem;line-height:1.45;}
+.ministry-photo-picker{display:flex;flex-direction:column;gap:.75rem;margin-bottom:.75rem;}
+.ministry-photo-picker img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;background:#edf2f7;}
+#ministryPhotoEmpty{margin:0;color:#4a5568;}
+.ministry-photo-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
+.ministry-photo-upload{position:relative;overflow:hidden;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;}
+.ministry-photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;}
 .ministry-admin-photo{display:block;width:100%;height:140px;object-fit:cover;}
 .filter-bar{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;}
 .filter-bar select{padding:.5rem 1rem;border:1px solid var(--border-color,#e2e8f0);border-radius:var(--radius-md,8px);background:#fff;color:#1a202c;}

@@ -190,3 +190,8 @@ function writeMinistryLedger(ledger) {
 function websiteMinistries() {
     return readMinistryLedger().ministries.filter(ministry => ministry.status !== 'inactive');
 }
+
+function isMinistryImage(value) {
+    const image = String(value || '').trim();
+    return /^https?:\/\//i.test(image) || /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,[a-z0-9+/=]+$/i.test(image);
+}

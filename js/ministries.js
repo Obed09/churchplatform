@@ -39,7 +39,7 @@ function renderMinistries() {
 
 function safeMinistryImage(value) {
     const image = String(value || '').trim();
-    return /^https?:\/\//i.test(image) ? image : '';
+    return typeof isMinistryImage === 'function' && isMinistryImage(image) ? image : '';
 }
 
 function safeMinistryIcon(value) {
