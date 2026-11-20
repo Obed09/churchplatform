@@ -251,6 +251,9 @@ ul {
 }
 
 .lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
     border: 1px solid transparent;
     background: transparent;
     color: var(--text-dark);
@@ -258,9 +261,17 @@ ul {
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.04em;
-    padding: 0.35rem 0.45rem;
+    padding: 0.35rem 0.4rem;
     border-radius: var(--radius-sm);
     cursor: pointer;
+}
+
+.lang-flag {
+    width: 1.15rem;
+    height: 0.78rem;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+    flex-shrink: 0;
 }
 
 .lang-btn[aria-pressed="true"] {
@@ -1757,8 +1768,14 @@ ul {
     }
 
     .lang-btn {
-        padding: 0.3rem 0.35rem;
-        font-size: 0.7rem;
+        padding: 0.28rem 0.28rem;
+        font-size: 0.68rem;
+        gap: 0.18rem;
+    }
+
+    .lang-flag {
+        width: 0.95rem;
+        height: 0.64rem;
     }
     
     .hamburger.active span:nth-child(1) {

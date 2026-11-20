@@ -39,10 +39,22 @@
 
             <div class="nav-tools">
                 <div class="lang-switcher" role="group" aria-label="Language">
-                    <button type="button" class="lang-btn" data-lang="fr" aria-pressed="true">FR</button>
-                    <button type="button" class="lang-btn" data-lang="es" aria-pressed="false">ES</button>
-                    <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
-                    <button type="button" class="lang-btn" data-lang="ht" aria-pressed="false">HT</button>
+                    <button type="button" class="lang-btn" data-lang="fr" aria-pressed="true" aria-label="Français">
+                        <svg class="lang-flag" viewBox="0 0 3 2" aria-hidden="true" focusable="false"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#FFFFFF"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg>
+                        <span>FR</span>
+                    </button>
+                    <button type="button" class="lang-btn" data-lang="es" aria-pressed="false" aria-label="Español">
+                        <svg class="lang-flag" viewBox="0 0 3 2" aria-hidden="true" focusable="false"><rect width="3" height="2" fill="#AA151B"/><rect y="0.5" width="3" height="1" fill="#F1BF00"/></svg>
+                        <span>ES</span>
+                    </button>
+                    <button type="button" class="lang-btn" data-lang="en" aria-pressed="false" aria-label="English">
+                        <svg class="lang-flag" viewBox="0 0 19 10" aria-hidden="true" focusable="false"><rect width="19" height="10" fill="#BF0A30"/><rect y="1.54" width="19" height="1.54" fill="#FFFFFF"/><rect y="4.62" width="19" height="1.54" fill="#FFFFFF"/><rect y="7.7" width="19" height="1.54" fill="#FFFFFF"/><rect width="8" height="5.4" fill="#002868"/></svg>
+                        <span>EN</span>
+                    </button>
+                    <button type="button" class="lang-btn" data-lang="ht" aria-pressed="false" aria-label="Kreyòl">
+                        <svg class="lang-flag" viewBox="0 0 3 2" aria-hidden="true" focusable="false"><rect width="3" height="1" fill="#00209F"/><rect y="1" width="3" height="1" fill="#D21034"/><rect x="1.15" y="0.4" width="0.7" height="1.2" fill="#FFFFFF"/></svg>
+                        <span>HT</span>
+                    </button>
                 </div>
                 <div class="hamburger" id="hamburger">
                     <span></span>
