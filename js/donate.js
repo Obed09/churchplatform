@@ -163,6 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
     payMethodButtons.forEach(button => {
         button.addEventListener('click', function() {
             setPayMethod(this.dataset.method);
+            if (this.dataset.method !== 'zelle') {
+                beginPayPalCheckout();
+            }
         });
     });
 
@@ -173,34 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // DONATE BUTTON CLICK
     // ============================================
-    donateButton.addEventListener('click', function() {
-        if (selectedMethod === 'zelle') {
-            updateZelleSummary();
-            zellePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            return;
-        }
-
-        const purposeLabel = getPurposeLabel();
-
-        if (!selectedPurpose) {
-            showError('Please choose what this gift is for.');
-            return;
-        }
-
-        if (selectedPurpose === 'Other' && !purposeLabel) {
-            showError('Please specify what this gift is for.');
-            otherPurposeInput.focus();
-            return;
-        }
-
-        if (!selectedAmount || selectedAmount <= 0) {
-            showError('Please select or enter a donation amount.');
-            return;
-        }
-
-        clearError();
-        redirectToPayPal(donationType, selectedAmount, purposeLabel, CURRENCIES[selectedCurrency].code);
-    });
+    donateButton.addEventListener('click', beginPayPalCheckout);
     
     // ============================================
     // HELPER FUNCTIONS
@@ -334,9 +310,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function beginPayPalCheckout() {
+        if (selectedMethod === 'zelle') {
+            updateZelleSummary();
+            zellePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+        }
+
+        const purposeLabel = getPurposeLabel();
+
+        if (!selectedPurpose) {
+            showError('Please choose what this gift is for.');
+            return;
+        }
+
+        if (selectedPurpose === 'Other' && !purposeLabel) {
+            showError('Please specify what this gift is for.');
+            otherPurposeInput.focus();
+            return;
+        }
+
+        if (!selectedAmount || selectedAmount <= 0) {
+            showError('Please select or enter a donation amount.');
+            return;
+        }
+
+        clearError();
+        redirectToPayPal(donationType, selectedAmount, purposeLabel, CURRENCIES[selectedCurrency].code);
+    }
+
     function showError(message) {
         donationError.textContent = message;
         donationError.hidden = false;
+        donationError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function clearError() {
