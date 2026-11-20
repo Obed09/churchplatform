@@ -10,6 +10,11 @@ const PAYPAL_CONFIG = {
     churchName: 'Tabernacle Amour Pour Le Calvaire'
 };
 
+const ZELLE_CONFIG = {
+    display: '+1 516-643-7811',
+    copyValue: '5166437811'
+};
+
 // USD stays the default because this PayPal account charges in dollars.
 // DOP is offered as Dominican pesos (shown as RD$).
 const CURRENCIES = {
@@ -40,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedPurpose = null;
     let selectedCurrency = 'USD';
     let selectedAmount = null;
+    let selectedMethod = 'paypal';
     
     // Get elements
     const frequencyButtons = document.querySelectorAll('#frequencyToggle .toggle-btn');
@@ -55,6 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const donationError = document.getElementById('donationError');
     const donationCurrencyNote = document.getElementById('donationCurrencyNote');
     const donateButton = document.getElementById('donateBtn');
+    const payMethodButtons = document.querySelectorAll('#payMethods .pay-method');
+    const paypalPay = document.getElementById('paypalPay');
+    const zellePanel = document.getElementById('zellePanel');
+    const zelleSummary = document.getElementById('zelleSummary');
+    const zelleCopyBtn = document.getElementById('zelleCopyBtn');
+    const zelleCopyStatus = document.getElementById('zelleCopyStatus');
+    const dopCurrencyButton = document.querySelector('#currencyToggle [data-currency="DOP"]');
     
     // ============================================
     // DONATION TYPE TOGGLE (Give Once / Monthly)
@@ -95,11 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 otherPurposeInput.focus();
             }
             clearError();
+            updateZelleSummary();
         });
     });
 
     if (otherPurposeInput) {
-        otherPurposeInput.addEventListener('input', clearError);
+        otherPurposeInput.addEventListener('input', function() {
+            clearError();
+            updateZelleSummary();
+        });
     }
 
     // ============================================
@@ -129,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedAmount = parseAmount(this.dataset.amount);
             customAmountInput.value = '';
             clearError();
+            updateZelleSummary();
         });
     });
     
@@ -139,12 +157,29 @@ document.addEventListener('DOMContentLoaded', function() {
         amountButtons.forEach(btn => btn.classList.remove('selected'));
         selectedAmount = parseAmount(this.value);
         clearError();
+        updateZelleSummary();
     });
+
+    payMethodButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            setPayMethod(this.dataset.method);
+        });
+    });
+
+    if (zelleCopyBtn) {
+        zelleCopyBtn.addEventListener('click', copyZelleNumber);
+    }
     
     // ============================================
     // DONATE BUTTON CLICK
     // ============================================
     donateButton.addEventListener('click', function() {
+        if (selectedMethod === 'zelle') {
+            updateZelleSummary();
+            zellePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+        }
+
         const purposeLabel = getPurposeLabel();
 
         if (!selectedPurpose) {
@@ -211,6 +246,92 @@ document.addEventListener('DOMContentLoaded', function() {
         customAmountInput.placeholder = currency.placeholder;
         customAmountGroup.classList.toggle('is-dop', currencyKey === 'DOP');
         donationCurrencyNote.textContent = currency.note;
+        updateZelleSummary();
+    }
+
+    function setPayMethod(method) {
+        selectedMethod = method === 'zelle' ? 'zelle' : 'paypal';
+        const isZelle = selectedMethod === 'zelle';
+
+        payMethodButtons.forEach(button => {
+            const active = button.dataset.method === selectedMethod;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        paypalPay.hidden = isZelle;
+        zellePanel.hidden = !isZelle;
+        dopCurrencyButton.disabled = isZelle;
+
+        if (isZelle && selectedCurrency !== 'USD') {
+            currencyButtons.forEach(button => {
+                const active = button.dataset.currency === 'USD';
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+            applyCurrency('USD');
+        }
+
+        clearError();
+        updateZelleSummary();
+    }
+
+    function updateZelleSummary() {
+        if (!zelleSummary) {
+            return;
+        }
+
+        const purpose = getPurposeLabel();
+        const currency = CURRENCIES[selectedCurrency];
+        const amountText = selectedAmount
+            ? currency.symbol + selectedAmount.toLocaleString('en-US')
+            : '';
+
+        if (purpose && amountText) {
+            zelleSummary.textContent = 'Send ' + amountText + ' for ' + purpose + '.';
+        } else if (purpose) {
+            zelleSummary.textContent = 'This gift is for ' + purpose + '. Choose an amount, then send it with Zelle.';
+        } else if (amountText) {
+            zelleSummary.textContent = 'Send ' + amountText + '. Choose what this gift is for, and put that in the Zelle memo.';
+        } else {
+            zelleSummary.textContent = 'Choose a purpose and amount above, then send that gift to this number.';
+        }
+    }
+
+    function copyZelleNumber() {
+        const text = ZELLE_CONFIG.copyValue;
+
+        function showCopied() {
+            zelleCopyStatus.textContent = 'Copied ' + text + '. Paste it into Zelle.';
+        }
+
+        function fallbackCopy() {
+            const field = document.createElement('textarea');
+            field.value = text;
+            field.setAttribute('readonly', '');
+            field.style.position = 'fixed';
+            field.style.left = '-9999px';
+            document.body.appendChild(field);
+            field.select();
+            let copied = false;
+            try {
+                copied = document.execCommand('copy');
+            } catch (err) {
+                copied = false;
+            }
+            document.body.removeChild(field);
+            if (copied) {
+                showCopied();
+            } else {
+                zelleCopyStatus.textContent = 'Copy this number into Zelle: ' + ZELLE_CONFIG.display;
+            }
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(showCopied, fallbackCopy);
+        } else {
+            fallbackCopy();
+        }
     }
 
     function showError(message) {

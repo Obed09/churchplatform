@@ -385,22 +385,59 @@
                 </div>
 
                 <p class="donation-error" id="donationError" role="alert" hidden></p>
-                
-                <!-- Donate Button -->
-                <button type="button" class="btn-donate" id="donateBtn">
-                    <i class="fas fa-heart"></i> DONATE NOW
-                </button>
-                
-                <!-- ============================================ -->
-                <!-- REPLACE WITH YOUR PAYMENT PROCESSOR -->
-                <!-- Options: PayPal, Stripe, Tithe.ly, Pushpay -->
-                <!-- ============================================ -->
-                <p class="donation-note" id="donationSecurityNote">
-                    <i class="fas fa-lock"></i> Secure donation processing via PayPal
-                </p>
-                <p class="donation-note" id="donationCurrencyNote">
-                    Amounts are sent to PayPal in US dollars (USD).
-                </p>
+
+                <h3 class="section-label">Pay with</h3>
+                <div class="pay-methods" id="payMethods" role="group" aria-label="Pay with">
+                    <button type="button" class="pay-method pay-method-paypal active" data-method="paypal" aria-pressed="true">
+                        <i class="fab fa-paypal" aria-hidden="true"></i>
+                        <span>PayPal</span>
+                    </button>
+                    <button type="button" class="pay-method pay-method-zelle" data-method="zelle" aria-pressed="false">
+                        <svg class="zelle-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M13.559 24h-2.841a.483.483 0 0 1-.483-.483v-2.765H5.638a.667.667 0 0 1-.666-.666v-2.234a.67.67 0 0 1 .142-.412l8.139-10.382h-7.25a.667.667 0 0 1-.667-.667V3.914c0-.367.299-.666.666-.666h4.23V.483c0-.266.217-.483.483-.483h2.841c.266 0 .483.217.483.483v2.765h4.323c.367 0 .666.299.666.666v2.137a.67.67 0 0 1-.141.41l-8.19 10.481h7.665c.367 0 .666.299.666.666v2.477a.667.667 0 0 1-.666.667h-4.32v2.765a.483.483 0 0 1-.483.483Z"/>
+                        </svg>
+                        <span>Zelle</span>
+                    </button>
+                </div>
+
+                <div id="paypalPay">
+                    <button type="button" class="btn-donate" id="donateBtn">
+                        <i class="fas fa-heart"></i> DONATE NOW
+                    </button>
+                    <p class="donation-note" id="donationSecurityNote">
+                        <i class="fas fa-lock"></i> Secure donation processing via PayPal
+                    </p>
+                    <p class="donation-note" id="donationCurrencyNote">
+                        Amounts are sent to PayPal in US dollars (USD).
+                    </p>
+                </div>
+
+                <div class="zelle-panel" id="zellePanel" hidden>
+                    <div class="zelle-brand">
+                        <svg class="zelle-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M13.559 24h-2.841a.483.483 0 0 1-.483-.483v-2.765H5.638a.667.667 0 0 1-.666-.666v-2.234a.67.67 0 0 1 .142-.412l8.139-10.382h-7.25a.667.667 0 0 1-.667-.667V3.914c0-.367.299-.666.666-.666h4.23V.483c0-.266.217-.483.483-.483h2.841c.266 0 .483.217.483.483v2.765h4.323c.367 0 .666.299.666.666v2.137a.67.67 0 0 1-.141.41l-8.19 10.481h7.665c.367 0 .666.299.666.666v2.477a.667.667 0 0 1-.666.667h-4.32v2.765a.483.483 0 0 1-.483.483Z"/>
+                        </svg>
+                        <div>
+                            <p class="zelle-brand-kicker">Pay with</p>
+                            <p class="zelle-brand-name">Zelle</p>
+                        </div>
+                    </div>
+                    <p class="zelle-lead">Send your gift from a U.S. bank app. Zelle delivers US dollars to this number.</p>
+                    <p class="zelle-phone-label">Zelle phone number</p>
+                    <p class="zelle-phone" id="zellePhone">+1 516-643-7811</p>
+                    <button type="button" class="btn-zelle-copy" id="zelleCopyBtn">
+                        <i class="fas fa-copy" aria-hidden="true"></i> Copy number
+                    </button>
+                    <p class="zelle-copy-status" id="zelleCopyStatus" role="status" aria-live="polite"></p>
+                    <p class="zelle-summary" id="zelleSummary">Choose a purpose and amount above, then send that gift to this number.</p>
+                    <ol class="zelle-steps">
+                        <li>Open your bank app and choose Zelle.</li>
+                        <li>Send to <strong>+1 516-643-7811</strong>.</li>
+                        <li>Enter the amount in US dollars.</li>
+                        <li>Put the purpose, such as Tithe or Offering, in the memo.</li>
+                    </ol>
+                    <p class="zelle-confirm">Your bank shows the name enrolled on this Zelle account before you confirm the payment.</p>
+                </div>
 
                 <div class="donate-qr">
                     <a href="#donate" class="donate-qr-link">
@@ -408,7 +445,7 @@
                     </a>
                     <div class="donate-qr-copy">
                         <h3>Scan to give</h3>
-                        <p>Point your phone camera at this code. It opens this donation page so you can choose your gift and pay with PayPal.</p>
+                        <p>Point your phone camera at this code. It opens this donation page so you can choose your gift and pay with PayPal or Zelle.</p>
                     </div>
                 </div>
             </div>
