@@ -3,6 +3,16 @@
 /* Fully functional front-end form */
 /* ============================================ */
 
+function ct(key, fallback) {
+    if (typeof window.siteT === 'function') {
+        const value = window.siteT(key);
+        if (value) {
+            return value;
+        }
+    }
+    return fallback;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     const formMessage = document.getElementById('formMessage');
@@ -49,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Form submitted:', formData);
             
             // Show success message
-            showMessage('Thank you! Your message has been sent successfully. We\'ll get back to you soon.', 'success');
+            showMessage(ct('contact.success', 'Thank you! Your message has been sent successfully. We\'ll get back to you soon.'), 'success');
             
             // Reset form
             contactForm.reset();
@@ -68,35 +78,35 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateForm(data) {
         // Check required fields
         if (!data.name) {
-            showMessage('Please enter your name.', 'error');
+            showMessage(ct('contact.needName', 'Please enter your name.'), 'error');
             return false;
         }
         
         if (!data.email) {
-            showMessage('Please enter your email address.', 'error');
+            showMessage(ct('contact.needEmail', 'Please enter your email address.'), 'error');
             return false;
         }
         
         // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
-            showMessage('Please enter a valid email address.', 'error');
+            showMessage(ct('contact.badEmail', 'Please enter a valid email address.'), 'error');
             return false;
         }
         
         if (!data.subject) {
-            showMessage('Please enter a subject.', 'error');
+            showMessage(ct('contact.needSubject', 'Please enter a subject.'), 'error');
             return false;
         }
         
         if (!data.message) {
-            showMessage('Please enter your message.', 'error');
+            showMessage(ct('contact.needMessage', 'Please enter your message.'), 'error');
             return false;
         }
         
         // Validate message length
         if (data.message.length < 10) {
-            showMessage('Please enter a message with at least 10 characters.', 'error');
+            showMessage(ct('contact.shortMessage', 'Please enter a message with at least 10 characters.'), 'error');
             return false;
         }
         

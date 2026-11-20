@@ -36,8 +36,9 @@ function renderEvents() {
     
     eventsGrid.innerHTML = eventsData.map(event => {
         const eventDate = new Date(event.date);
-        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-            "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const monthNames = (typeof window.siteT === 'function' && window.siteT('events.months')
+            ? window.siteT('events.months')
+            : 'JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC').split(',');
         const month = monthNames[eventDate.getMonth()];
         const day = eventDate.getDate();
         
@@ -61,7 +62,7 @@ function renderEvents() {
                     </div>
                     <p class="event-description">${event.description}</p>
                     <a href="${event.registrationUrl}" class="event-btn">
-                        <i class="fas fa-ticket-alt"></i> Register Now
+                        <i class="fas fa-ticket-alt"></i> ${typeof window.siteT === 'function' && window.siteT('events.register') ? window.siteT('events.register') : 'Register Now'}
                     </a>
                 </div>
             </div>
@@ -71,3 +72,4 @@ function renderEvents() {
 
 // Render events when page loads
 document.addEventListener('DOMContentLoaded', renderEvents);
+document.addEventListener('site-language', renderEvents);

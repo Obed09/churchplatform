@@ -3,6 +3,21 @@
     var LANGS = ['fr', 'es', 'en', 'ht'];
     var DEFAULT_LANG = 'fr';
     var STORAGE_KEY = 'siteLang';
+    var currentDict = null;
+
+    function format(value, vars) {
+        if (!vars) {
+            return value;
+        }
+        return value.replace(/\{(\w+)\}/g, function (_, name) {
+            return vars[name] == null ? '' : String(vars[name]);
+        });
+    }
+
+    window.siteT = function (key, vars) {
+        var value = lookup(currentDict, key);
+        return typeof value === 'string' ? format(value, vars) : '';
+    };
 
     function preferredLang() {
         var saved = '';
@@ -64,7 +79,9 @@
                 return response.json();
             })
             .then(function (dict) {
+                currentDict = dict;
                 apply(dict);
+                document.dispatchEvent(new CustomEvent('site-language', { detail: { lang: lang } }));
             })
             .catch(function (err) {
                 console.error(err);

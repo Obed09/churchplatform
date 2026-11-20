@@ -78,14 +78,14 @@ function renderSermons() {
             <div class="sermon-content">
                 <span class="sermon-date">${sermon.date}</span>
                 <h3 class="sermon-title">${sermon.title}</h3>
-                <p class="sermon-speaker">By ${sermon.speaker}</p>
+                <p class="sermon-speaker">${typeof window.siteT === 'function' && window.siteT('sermons.by', { name: sermon.speaker }) ? window.siteT('sermons.by', { name: sermon.speaker }) : 'By ' + sermon.speaker}</p>
                 <p class="sermon-description">${sermon.description}</p>
                 <div class="sermon-actions">
                     <a href="${sermon.audioUrl}" class="sermon-btn sermon-btn-primary">
-                        <i class="fas fa-headphones"></i> Listen
+                        <i class="fas fa-headphones"></i> ${typeof window.siteT === 'function' && window.siteT('sermons.listen') ? window.siteT('sermons.listen') : 'Listen'}
                     </a>
                     <a href="${sermon.videoUrl}" class="sermon-btn sermon-btn-secondary">
-                        <i class="fas fa-video"></i> Watch
+                        <i class="fas fa-video"></i> ${typeof window.siteT === 'function' && window.siteT('sermons.watch') ? window.siteT('sermons.watch') : 'Watch'}
                     </a>
                 </div>
             </div>
@@ -95,3 +95,4 @@ function renderSermons() {
 
 // Render sermons when page loads
 document.addEventListener('DOMContentLoaded', renderSermons);
+document.addEventListener('site-language', renderSermons);

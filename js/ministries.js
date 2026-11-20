@@ -6,7 +6,10 @@ function renderMinistries() {
 
     const ministries = websiteMinistries();
     if (!ministries.length) {
-        ministriesGrid.innerHTML = '<p class="section-subtitle">Ministries will be listed here.</p>';
+        const empty = typeof window.siteT === 'function' && window.siteT('ministries.empty')
+            ? window.siteT('ministries.empty')
+            : 'Ministries will be listed here.';
+        ministriesGrid.innerHTML = '<p class="section-subtitle">' + empty + '</p>';
         return;
     }
 
@@ -19,8 +22,12 @@ function renderMinistries() {
             : image
             ? `<img src="${escapeMinistryText(image)}" alt="${escapeMinistryText(ministry.name)}" class="ministry-image">`
             : '<div class="ministry-image ministry-image-empty"></div>';
+        const safeLeader = escapeMinistryText(ministry.leader);
+        const ledBy = typeof window.siteT === 'function' && window.siteT('ministries.ledBy', { name: safeLeader })
+            ? window.siteT('ministries.ledBy', { name: safeLeader })
+            : 'Led by ' + safeLeader;
         const leader = ministry.leader
-            ? `<p class="ministry-leader">Led by ${escapeMinistryText(ministry.leader)}</p>`
+            ? `<p class="ministry-leader">${ledBy}</p>`
             : '';
         const description = ministry.description
             ? `<p class="ministry-description">${escapeMinistryText(ministry.description)}</p>`
@@ -62,3 +69,4 @@ function escapeMinistryText(value) {
 }
 
 document.addEventListener('DOMContentLoaded', renderMinistries);
+document.addEventListener('site-language', renderMinistries);

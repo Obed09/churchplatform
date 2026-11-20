@@ -233,6 +233,10 @@ ul {
     background-color: var(--bg-light);
 }
 
+.pre-line {
+    white-space: pre-line;
+}
+
 .nav-tools {
     display: flex;
     align-items: center;

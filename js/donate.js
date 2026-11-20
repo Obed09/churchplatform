@@ -172,6 +172,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (zelleCopyBtn) {
         zelleCopyBtn.addEventListener('click', copyZelleNumber);
     }
+
+    document.addEventListener('site-language', function () {
+        const currency = CURRENCIES[selectedCurrency];
+        amountLabel.textContent = tr(selectedCurrency === 'DOP' ? 'donate.amountDop' : 'donate.amountUsd', currency.amountHeading);
+        customAmountInput.placeholder = tr('donate.customAmount', currency.placeholder);
+        donationCurrencyNote.textContent = tr(selectedCurrency === 'DOP' ? 'donate.noteDop' : 'donate.noteUsd', currency.note);
+        updateZelleSummary();
+    });
     
     // ============================================
     // DONATE BUTTON CLICK
@@ -190,15 +198,31 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.round(amount * 100) / 100;
     }
 
+    function tr(key, fallback, vars) {
+        if (typeof window.siteT === 'function') {
+            const value = window.siteT(key, vars);
+            if (value) {
+                return value;
+            }
+        }
+        return fallback;
+    }
+
     function getPurposeLabel() {
+        const purposeKeys = {
+            Tithe: 'donate.tithe',
+            Offering: 'donate.offering',
+            'Special Offering': 'donate.special',
+            Donation: 'donate.donation'
+        };
         if (!selectedPurpose) {
             return null;
         }
         if (selectedPurpose === 'Other') {
             const detail = otherPurposeInput.value.trim();
-            return detail ? 'Other: ' + detail : null;
+            return detail ? tr('donate.other', 'Other') + ': ' + detail : null;
         }
-        return selectedPurpose;
+        return tr(purposeKeys[selectedPurpose], selectedPurpose);
     }
 
     function applyCurrency(currencyKey) {
@@ -217,11 +241,11 @@ document.addEventListener('DOMContentLoaded', function() {
             button.classList.remove('selected');
         });
 
-        amountLabel.textContent = currency.amountHeading;
+        amountLabel.textContent = tr(currencyKey === 'DOP' ? 'donate.amountDop' : 'donate.amountUsd', currency.amountHeading);
         currencySymbol.textContent = currency.symbol;
-        customAmountInput.placeholder = currency.placeholder;
+        customAmountInput.placeholder = tr('donate.customAmount', currency.placeholder);
         customAmountGroup.classList.toggle('is-dop', currencyKey === 'DOP');
-        donationCurrencyNote.textContent = currency.note;
+        donationCurrencyNote.textContent = tr(currencyKey === 'DOP' ? 'donate.noteDop' : 'donate.noteUsd', currency.note);
         updateZelleSummary();
     }
 
@@ -264,13 +288,13 @@ document.addEventListener('DOMContentLoaded', function() {
             : '';
 
         if (purpose && amountText) {
-            zelleSummary.textContent = 'Send ' + amountText + ' for ' + purpose + '.';
+            zelleSummary.textContent = tr('donate.summaryGift', 'Send ' + amountText + ' for ' + purpose + '.', { amount: amountText, purpose: purpose });
         } else if (purpose) {
-            zelleSummary.textContent = 'This gift is for ' + purpose + '. Choose an amount, then send it with Zelle.';
+            zelleSummary.textContent = tr('donate.summaryPurpose', 'This gift is for ' + purpose + '. Choose an amount, then send it with Zelle.', { purpose: purpose });
         } else if (amountText) {
-            zelleSummary.textContent = 'Send ' + amountText + '. Choose what this gift is for, and put that in the Zelle memo.';
+            zelleSummary.textContent = tr('donate.summaryAmount', 'Send ' + amountText + '. Choose what this gift is for, and put that in the Zelle memo.', { amount: amountText });
         } else {
-            zelleSummary.textContent = 'Choose a purpose and amount above, then send that gift to this number.';
+            zelleSummary.textContent = tr('donate.summaryEmpty', 'Choose a purpose and amount above, then send that gift to this number.');
         }
     }
 
@@ -278,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const text = ZELLE_CONFIG.copyValue;
 
         function showCopied() {
-            zelleCopyStatus.textContent = 'Copied ' + text + '. Paste it into Zelle.';
+            zelleCopyStatus.textContent = tr('donate.copied', 'Copied ' + text + '. Paste it into Zelle.', { number: text });
         }
 
         function fallbackCopy() {
@@ -299,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (copied) {
                 showCopied();
             } else {
-                zelleCopyStatus.textContent = 'Copy this number into Zelle: ' + ZELLE_CONFIG.display;
+                zelleCopyStatus.textContent = tr('donate.copyFallback', 'Copy this number into Zelle: ' + ZELLE_CONFIG.display, { display: ZELLE_CONFIG.display });
             }
         }
 
@@ -320,18 +344,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const purposeLabel = getPurposeLabel();
 
         if (!selectedPurpose) {
-            showError('Please choose what this gift is for.');
+            showError(tr('donate.errorPurpose', 'Please choose what this gift is for.'));
             return;
         }
 
         if (selectedPurpose === 'Other' && !purposeLabel) {
-            showError('Please specify what this gift is for.');
+            showError(tr('donate.errorOther', 'Please specify what this gift is for.'));
             otherPurposeInput.focus();
             return;
         }
 
         if (!selectedAmount || selectedAmount <= 0) {
-            showError('Please select or enter a donation amount.');
+            showError(tr('donate.errorAmount', 'Please select or enter a donation amount.'));
             return;
         }
 
@@ -371,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Monthly gifts still open PayPal as a one-time payment until a Business subscription is configured.
         if (type !== 'once') {
-            alert('Monthly recurring donations require PayPal Business account setup.\n\nYou can still make a one-time donation now and set up recurring payments in your PayPal account.');
+            alert(tr('donate.monthlyAlert', 'Monthly recurring donations require a PayPal Business account.\n\nYou can still make a one-time donation now and set up recurring payments in your PayPal account.'));
         }
 
         window.location.href = paypalUrl;

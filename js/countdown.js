@@ -35,9 +35,12 @@ function updateCountdown() {
     // If the countdown is finished, display a message
     if (distance < 0) {
         clearInterval(countdownInterval);
+        const arrived = typeof window.siteT === 'function' && window.siteT('countdown.arrived')
+            ? window.siteT('countdown.arrived')
+            : 'The event has arrived!';
         document.getElementById('countdown').innerHTML = `
             <div style="font-size: 2rem; font-weight: 700; color: var(--accent-color);">
-                🎉 The Event Has Arrived! 🎉
+                ${arrived}
             </div>
         `;
     }

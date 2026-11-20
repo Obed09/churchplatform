@@ -93,25 +93,25 @@
             <!-- UPDATE EVENT NAME AND DATE -->
             <!-- Edit the target date in js/countdown.js -->
             <!-- ============================================ -->
-            <h2 class="section-title">3 Days of Intimacy with God</h2>
-            <p class="countdown-description">June 12-14, 2026 - Join us for a powerful encounter with the Father</p>
+            <h2 class="section-title" data-i18n="countdown.title">3 jours d'intimité avec Dieu</h2>
+            <p class="countdown-description" data-i18n="countdown.description">12-14 juin 2026 - Rejoignez-nous pour une rencontre puissante avec le Père</p>
             
             <div class="countdown" id="countdown">
                 <div class="countdown-item">
                     <span class="countdown-value" id="days">00</span>
-                    <span class="countdown-label">Days</span>
+                    <span class="countdown-label" data-i18n="countdown.days">Jours</span>
                 </div>
                 <div class="countdown-item">
                     <span class="countdown-value" id="hours">00</span>
-                    <span class="countdown-label">Hours</span>
+                    <span class="countdown-label" data-i18n="countdown.hours">Heures</span>
                 </div>
                 <div class="countdown-item">
                     <span class="countdown-value" id="minutes">00</span>
-                    <span class="countdown-label">Minutes</span>
+                    <span class="countdown-label" data-i18n="countdown.minutes">Minutes</span>
                 </div>
                 <div class="countdown-item">
                     <span class="countdown-value" id="seconds">00</span>
-                    <span class="countdown-label">Seconds</span>
+                    <span class="countdown-label" data-i18n="countdown.seconds">Secondes</span>
                 </div>
             </div>
         </div>
@@ -125,49 +125,37 @@
         <div class="container">
             <div class="about-grid">
                 <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800&q=80" alt="Church Interior">
+                    <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800&q=80" alt="Intérieur de l'église" data-i18n="about.imageAlt" data-i18n-attr="alt">
                 </div>
                 <div class="about-content">
-                    <h2 class="section-title">About Our Church</h2>
-                    <!-- ============================================ -->
-                    <!-- REPLACE WITH REAL CHURCH MISSION STATEMENT -->
-                    <!-- ============================================ -->
-             !-- Quick Action Buttons -->
-            <div class="quick-actions">
-                <a href="#services" class="btn btn-primary btn-large">
-                    <i class="fas fa-calendar-check"></i> Plan Your Visit
-                </a>
-                <a href="#contact" class="btn btn-secondary btn-large">
-                    <i class="fas fa-info-circle"></i> Learn More
-                </a>
-            </div>
-            
-            <       <p class="about-text">
-                        For over 50 years, Tabernacle Amour Pour Le Calvaire - Assemblee De Dieu has been a beacon of hope and faith in our community. 
-                        We are a diverse, multi-generational family united by our love for Christ and our commitment 
-                        to serving others.
-                    </p>
-                    <p class="about-text">
-                        Our mission is to glorify God by making disciples who worship passionately, love sacrificially, 
-                        and serve joyfully. We believe in the transformative power of the Gospel and strive to create 
-                        an environment where everyone can encounter God's love.
-                    </p>
-                    
+                    <h2 class="section-title" data-i18n="about.title">À propos de notre église</h2>
+                    <p class="about-text" data-i18n="about.paragraph1">Depuis plus de 50 ans, le Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu est un phare d'espérance et de foi dans notre communauté. Nous sommes une famille diverse, de toutes les générations, unie par notre amour pour Christ et notre engagement à servir les autres.</p>
+                    <p class="about-text" data-i18n="about.paragraph2">Notre mission est de glorifier Dieu en formant des disciples qui adorent avec passion, aiment avec sacrifice et servent avec joie. Nous croyons en la puissance transformatrice de l'Évangile et nous voulons un lieu où chacun peut rencontrer l'amour de Dieu.</p>
+
+                    <div class="quick-actions">
+                        <a href="#services" class="btn btn-primary btn-large">
+                            <i class="fas fa-calendar-check"></i> <span data-i18n="about.planVisit">Planifiez votre visite</span>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary btn-large">
+                            <i class="fas fa-info-circle"></i> <span data-i18n="about.learnMore">En savoir plus</span>
+                        </a>
+                    </div>
+
                     <div class="about-values">
                         <div class="value-item">
                             <i class="fas fa-bible"></i>
-                            <h3>Biblical Teaching</h3>
-                            <p>Grounded in Scripture</p>
+                            <h3 data-i18n="about.biblicalTitle">Enseignement biblique</h3>
+                            <p data-i18n="about.biblicalText">Ancrés dans l'Écriture</p>
                         </div>
                         <div class="value-item">
                             <i class="fas fa-heart"></i>
-                            <h3>Authentic Community</h3>
-                            <p>Real relationships matter</p>
+                            <h3 data-i18n="about.communityTitle">Communauté authentique</h3>
+                            <p data-i18n="about.communityText">Les vraies relations comptent</p>
                         </div>
                         <div class="value-item">
                             <i class="fas fa-hands-helping"></i>
-                            <h3>Serving Others</h3>
-                            <p>Love in action</p>
+                            <h3 data-i18n="about.servingTitle">Servir les autres</h3>
+                            <p data-i18n="about.servingText">L'amour en action</p>
                         </div>
                     </div>
                 </div>
@@ -181,8 +169,8 @@
     <!-- ============================================ -->
     <section id="services" class="services-section">
         <div class="container">
-            <h2 class="section-title">Service Times</h2>
-            <p class="section-subtitle">Join us as we worship together</p>
+            <h2 class="section-title" data-i18n="services.title">Horaires des cultes</h2>
+            <p class="section-subtitle" data-i18n="services.subtitle">Rejoignez-nous pour adorer ensemble</p>
             
             <div class="services-grid">
                 <!-- ============================================ -->
@@ -192,84 +180,63 @@
                     <div class="service-icon">
                         <i class="fas fa-book-open"></i>
                     </div>
-                    <h3>Tuesday Bible Study</h3>
-                    <p class="service-time-text">7:00 PM - 9:30 PM</p>
-                    <p class="service-description">
-                        Dive deep into God's Word with our weekly Bible study. Experience transformative teaching 
-                        and meaningful fellowship as we grow together in faith.
-                    </p>
+                    <h3 data-i18n="services.tuesdayTitle">Étude biblique du mardi</h3>
+                    <p class="service-time-text" data-i18n="services.tuesdayTime">19 h 00 - 21 h 30</p>
+                    <p class="service-description" data-i18n="services.tuesdayText">Plongez dans la Parole de Dieu lors de notre étude biblique hebdomadaire. Un enseignement qui transforme et une communion vraie, pendant que nous grandissons ensemble dans la foi.</p>
                 </div>
                 
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-praying-hands"></i>
                     </div>
-                    <h3>Wednesday Fasting & Prayer</h3>
-                    <p class="service-time-text">7:00 AM - 12:00 PM</p>
-                    <p class="service-description">
-                        Join us for a powerful morning of fasting and intercession. Seek God's face and 
-                        experience breakthrough through dedicated prayer.
-                    </p>
+                    <h3 data-i18n="services.wednesdayTitle">Jeûne et prière du mercredi</h3>
+                    <p class="service-time-text" data-i18n="services.wednesdayTime">7 h 00 - 12 h 00</p>
+                    <p class="service-description" data-i18n="services.wednesdayText">Rejoignez-nous pour une matinée de jeûne et d'intercession. Cherchez la face de Dieu et vivez une percée par la prière.</p>
                 </div>
                 
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-hands"></i>
                     </div>
-                    <h3>Friday Prayer Service</h3>
-                    <p class="service-time-text">7:00 PM - 12:00 AM</p>
-                    <p class="service-description">
-                        End your week with powerful worship and prayer. Experience God's presence as we 
-                        intercede for our families, church, and community.
-                    </p>
+                    <h3 data-i18n="services.fridayTitle">Culte de prière du vendredi</h3>
+                    <p class="service-time-text" data-i18n="services.fridayTime">19 h 00 - 00 h 00</p>
+                    <p class="service-description" data-i18n="services.fridayText">Terminez la semaine dans l'adoration et la prière. Vivez la présence de Dieu alors que nous intercédons pour nos familles, l'église et la communauté.</p>
                 </div>
                 
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-child"></i>
                     </div>
-                    <h3>Sunday School</h3>
-                    <p class="service-time-text">7:30 AM - 9:00 AM</p>
-                    <p class="service-description">
-                        Start your Sunday with enriching biblical education for all ages. Interactive lessons 
-                        that make Scripture come alive for the whole family.
-                    </p>
+                    <h3 data-i18n="services.schoolTitle">École du dimanche</h3>
+                    <p class="service-time-text" data-i18n="services.schoolTime">7 h 30 - 9 h 00</p>
+                    <p class="service-description" data-i18n="services.schoolText">Commencez le dimanche par un enseignement biblique pour tous les âges. Des leçons vivantes qui rendent l'Écriture proche de toute la famille.</p>
                 </div>
                 
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-church"></i>
                     </div>
-                    <h3>Sunday Worship Service</h3>
-                    <p class="service-time-text">9:30 AM - 11:30 AM</p>
-                    <p class="service-description">
-                        Our main worship celebration with inspiring music, powerful preaching, and 
-                        authentic fellowship. Come encounter God's presence with us.
-                    </p>
+                    <h3 data-i18n="services.worshipTitle">Culte d'adoration du dimanche</h3>
+                    <p class="service-time-text" data-i18n="services.worshipTime">9 h 30 - 11 h 30</p>
+                    <p class="service-description" data-i18n="services.worshipText">Notre grand culte, avec une musique qui inspire, une prédication puissante et une vraie communion. Venez rencontrer la présence de Dieu avec nous.</p>
                 </div>
                 
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h3>Youth Worship</h3>
-                    <p class="service-time-text">Sunday 4:00 PM - 6:00 PM</p>
-                    <p class="service-description">
-                        High-energy worship experience designed for teens and young adults. Relevant messages, 
-                        dynamic worship, and real community.
-                    </p>
+                    <h3 data-i18n="services.youthTitle">Culte des jeunes</h3>
+                    <p class="service-time-text" data-i18n="services.youthTime">Dimanche 16 h 00 - 18 h 00</p>
+                    <p class="service-description" data-i18n="services.youthText">Un culte vivant pour les adolescents et les jeunes adultes. Des messages proches de leur vie, une adoration dynamique et une vraie communauté.</p>
                 </div>
                 
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-music"></i>
                     </div>
-                    <h3>Praise & Worship Service</h3>
-                    <p class="service-time-text">Sunday 7:00 PM - 9:30 PM</p>
-                    <p class="service-description">
-                        End your Sunday with uplifting praise and worship. A Spirit-filled atmosphere where 
-                        hearts are refreshed and faith is renewed.
-                    </p>
+                    <h3 data-i18n="services.praiseTitle">Culte de louange</h3>
+                    <p class="service-time-text" data-i18n="services.praiseTime">Dimanche 19 h 00 - 21 h 30</p>
+                    <p class="service-description" data-i18n="services.praiseText">Terminez le dimanche dans la louange. Une atmosphère remplie de l'Esprit, où les cœurs sont renouvelés et la foi fortifiée.</p>
                 </div>
             </div>
         </div>
@@ -281,8 +248,8 @@
     <!-- ============================================ -->
     <section id="sermons" class="sermons-section">
         <div class="container">
-            <h2 class="section-title">Recent Sermons</h2>
-            <p class="section-subtitle">Listen to messages that inspire and transform</p>
+            <h2 class="section-title" data-i18n="sermons.title">Prédications récentes</h2>
+            <p class="section-subtitle" data-i18n="sermons.subtitle">Écoutez des messages qui inspirent et transforment</p>
             
             <!-- ============================================ -->
             <!-- SERMONS ARE DYNAMICALLY GENERATED -->
@@ -300,8 +267,8 @@
     <!-- ============================================ -->
     <section id="events" class="events-section">
         <div class="container">
-            <h2 class="section-title">Upcoming Events</h2>
-            <p class="section-subtitle">Join us for special gatherings and activities</p>
+            <h2 class="section-title" data-i18n="events.title">Événements à venir</h2>
+            <p class="section-subtitle" data-i18n="events.subtitle">Rejoignez-nous pour des rencontres et des activités spéciales</p>
             
             <!-- ============================================ -->
             <!-- EVENTS ARE DYNAMICALLY GENERATED -->
@@ -319,8 +286,8 @@
     <!-- ============================================ -->
     <section id="ministries" class="ministries-section">
         <div class="container">
-            <h2 class="section-title">Our Ministries</h2>
-            <p class="section-subtitle">Find your place to serve and grow</p>
+            <h2 class="section-title" data-i18n="ministries.title">Nos ministères</h2>
+            <p class="section-subtitle" data-i18n="ministries.subtitle">Trouvez votre place pour servir et grandir</p>
             
             <!-- ============================================ -->
             <!-- MINISTRY CARDS ARE DYNAMICALLY GENERATED -->
@@ -339,39 +306,39 @@
     <section id="donate" class="donate-section">
         <div class="container">
             <div class="donate-container">
-                <h2 class="donate-title">Donate to Tabernacle Amour Pour Le Calvaire</h2>
-                <p class="donate-subtitle">Your generosity helps us spread the Gospel and serve our community</p>
+                <h2 class="donate-title" data-i18n="donate.title">Faire un don au Tabernacle Amour Pour Le Calvaire</h2>
+                <p class="donate-subtitle" data-i18n="donate.subtitle">Votre générosité nous aide à annoncer l'Évangile et à servir notre communauté</p>
                 
                 <!-- Give Once / Monthly Toggle -->
                 <div class="donation-type-toggle" id="frequencyToggle">
-                    <button type="button" class="toggle-btn active" data-type="once" aria-pressed="true">Give Once</button>
-                    <button type="button" class="toggle-btn" data-type="monthly" aria-pressed="false">Monthly</button>
+                    <button type="button" class="toggle-btn active" data-type="once" aria-pressed="true" data-i18n="donate.once">Don unique</button>
+                    <button type="button" class="toggle-btn" data-type="monthly" aria-pressed="false" data-i18n="donate.monthly">Chaque mois</button>
                 </div>
 
                 <!-- Giving purpose -->
-                <h3 class="section-label">Giving For</h3>
+                <h3 class="section-label" data-i18n="donate.givingFor">Motif du don</h3>
                 <div class="purpose-options" id="purposeOptions" role="group" aria-label="Giving for">
-                    <button type="button" class="purpose-btn" data-purpose="Tithe" aria-pressed="false">Tithe</button>
-                    <button type="button" class="purpose-btn" data-purpose="Offering" aria-pressed="false">Offering</button>
-                    <button type="button" class="purpose-btn" data-purpose="Special Offering" aria-pressed="false">Special Offering</button>
-                    <button type="button" class="purpose-btn" data-purpose="Donation" aria-pressed="false">Donation</button>
-                    <button type="button" class="purpose-btn" data-purpose="Other" aria-pressed="false">Other</button>
+                    <button type="button" class="purpose-btn" data-purpose="Tithe" aria-pressed="false" data-i18n="donate.tithe">Dîme</button>
+                    <button type="button" class="purpose-btn" data-purpose="Offering" aria-pressed="false" data-i18n="donate.offering">Offrande</button>
+                    <button type="button" class="purpose-btn" data-purpose="Special Offering" aria-pressed="false" data-i18n="donate.special">Offrande spéciale</button>
+                    <button type="button" class="purpose-btn" data-purpose="Donation" aria-pressed="false" data-i18n="donate.donation">Don</button>
+                    <button type="button" class="purpose-btn" data-purpose="Other" aria-pressed="false" data-i18n="donate.other">Autre</button>
                 </div>
                 <div class="other-purpose-group" id="otherPurposeGroup" hidden>
-                    <label class="visually-hidden" for="otherPurpose">Please specify</label>
-                    <input type="text" id="otherPurpose" class="other-purpose-input" placeholder="Please specify" maxlength="80" autocomplete="off">
+                    <label class="visually-hidden" for="otherPurpose" data-i18n="donate.specify">Veuillez préciser</label>
+                    <input type="text" id="otherPurpose" class="other-purpose-input" placeholder="Veuillez préciser" data-i18n="donate.specify" data-i18n-attr="placeholder" maxlength="80" autocomplete="off">
                 </div>
 
                 <!-- Currency -->
-                <h3 class="section-label">Currency</h3>
+                <h3 class="section-label" data-i18n="donate.currency">Devise</h3>
                 <div class="donation-type-toggle" id="currencyToggle" role="group" aria-label="Currency">
                     <button type="button" class="toggle-btn currency-btn" data-currency="DOP" aria-pressed="false">
                         <span class="currency-code">RD$</span>
-                        <span class="currency-name">Pesos Dominicanos</span>
+                        <span class="currency-name" data-i18n="donate.dopName">Pesos dominicains</span>
                     </button>
                     <button type="button" class="toggle-btn currency-btn active" data-currency="USD" aria-pressed="true">
                         <span class="currency-code">USD</span>
-                        <span class="currency-name">US Dollars</span>
+                        <span class="currency-name" data-i18n="donate.usdName">Dollars américains</span>
                     </button>
                 </div>
                 
@@ -384,17 +351,17 @@
                     <button type="button" class="amount-btn" data-amount="100">$100</button>
                 </div>
                 
-                <div class="or-divider">Or</div>
+                <div class="or-divider" data-i18n="donate.or">Ou</div>
                 
                 <!-- Custom Amount Input -->
                 <div class="custom-amount-group" id="customAmountGroup">
                     <span class="currency-symbol" id="currencySymbol">$</span>
-                    <input type="number" id="customAmount" class="custom-amount-input" placeholder="Custom amount" min="1" step="0.01" inputmode="decimal">
+                    <input type="number" id="customAmount" class="custom-amount-input" placeholder="Autre montant" data-i18n="donate.customAmount" data-i18n-attr="placeholder" min="1" step="0.01" inputmode="decimal">
                 </div>
 
                 <p class="donation-error" id="donationError" role="alert" hidden></p>
 
-                <h3 class="section-label">Pay with</h3>
+                <h3 class="section-label" data-i18n="donate.payWith">Payer avec</h3>
                 <div class="pay-methods" id="payMethods" role="group" aria-label="Pay with">
                     <button type="button" class="pay-method pay-method-paypal active" data-method="paypal" aria-pressed="true">
                         <i class="fab fa-paypal" aria-hidden="true"></i>
@@ -410,10 +377,10 @@
 
                 <div id="paypalPay">
                     <button type="button" class="btn-donate" id="donateBtn">
-                        <i class="fas fa-heart"></i> DONATE NOW
+                        <i class="fas fa-heart"></i> <span data-i18n="donate.now">FAIRE UN DON</span>
                     </button>
                     <p class="donation-note" id="donationSecurityNote">
-                        <i class="fas fa-lock"></i> Secure donation processing via PayPal
+                        <i class="fas fa-lock"></i> <span data-i18n="donate.secure">Don sécurisé par PayPal</span>
                     </p>
                     <p class="donation-note" id="donationCurrencyNote">
                         Amounts are sent to PayPal in US dollars (USD).
@@ -426,34 +393,34 @@
                             <path d="M13.559 24h-2.841a.483.483 0 0 1-.483-.483v-2.765H5.638a.667.667 0 0 1-.666-.666v-2.234a.67.67 0 0 1 .142-.412l8.139-10.382h-7.25a.667.667 0 0 1-.667-.667V3.914c0-.367.299-.666.666-.666h4.23V.483c0-.266.217-.483.483-.483h2.841c.266 0 .483.217.483.483v2.765h4.323c.367 0 .666.299.666.666v2.137a.67.67 0 0 1-.141.41l-8.19 10.481h7.665c.367 0 .666.299.666.666v2.477a.667.667 0 0 1-.666.667h-4.32v2.765a.483.483 0 0 1-.483.483Z"/>
                         </svg>
                         <div>
-                            <p class="zelle-brand-kicker">Pay with</p>
+                            <p class="zelle-brand-kicker" data-i18n="donate.payWith">Payer avec</p>
                             <p class="zelle-brand-name">Zelle</p>
                         </div>
                     </div>
-                    <p class="zelle-lead">Send your gift from a U.S. bank app. Zelle delivers US dollars to this number.</p>
-                    <p class="zelle-phone-label">Zelle phone number</p>
+                    <p class="zelle-lead" data-i18n="donate.zelleLead">Envoyez votre don depuis l'application de votre banque aux États-Unis. Zelle remet des dollars américains à ce numéro.</p>
+                    <p class="zelle-phone-label" data-i18n="donate.zellePhone">Numéro Zelle</p>
                     <p class="zelle-phone" id="zellePhone">+1 516-643-7811</p>
                     <button type="button" class="btn-zelle-copy" id="zelleCopyBtn">
-                        <i class="fas fa-copy" aria-hidden="true"></i> Copy number
+                        <i class="fas fa-copy" aria-hidden="true"></i> <span data-i18n="donate.copy">Copier le numéro</span>
                     </button>
                     <p class="zelle-copy-status" id="zelleCopyStatus" role="status" aria-live="polite"></p>
-                    <p class="zelle-summary" id="zelleSummary">Choose a purpose and amount above, then send that gift to this number.</p>
+                    <p class="zelle-summary" id="zelleSummary" data-i18n="donate.summaryEmpty">Choisissez un motif et un montant ci-dessus, puis envoyez ce don à ce numéro.</p>
                     <ol class="zelle-steps">
-                        <li>Open your bank app and choose Zelle.</li>
-                        <li>Send to <strong>+1 516-643-7811</strong>.</li>
-                        <li>Enter the amount in US dollars.</li>
-                        <li>Put the purpose, such as Tithe or Offering, in the memo.</li>
+                        <li data-i18n="donate.step1">Ouvrez l'application de votre banque et choisissez Zelle.</li>
+                        <li data-i18n="donate.step2">Envoyez au +1 516-643-7811.</li>
+                        <li data-i18n="donate.step3">Entrez le montant en dollars américains.</li>
+                        <li data-i18n="donate.step4">Indiquez le motif, par exemple Dîme ou Offrande, dans la note.</li>
                     </ol>
-                    <p class="zelle-confirm">Your bank shows the name enrolled on this Zelle account before you confirm the payment.</p>
+                    <p class="zelle-confirm" data-i18n="donate.confirm">Votre banque affiche le nom inscrit sur ce compte Zelle avant que vous confirmiez le paiement.</p>
                 </div>
 
                 <div class="donate-qr">
                     <a href="#donate" class="donate-qr-link">
-                        <img src="images/donate-qr.png" width="200" height="200" alt="QR code that opens the donation section">
+                        <img src="images/donate-qr.png" width="200" height="200" alt="Code QR qui ouvre la section des dons" data-i18n="donate.qrAlt" data-i18n-attr="alt">
                     </a>
                     <div class="donate-qr-copy">
-                        <h3>Scan to give</h3>
-                        <p>Point your phone camera at this code. It opens this donation page so you can choose your gift and pay with PayPal or Zelle.</p>
+                        <h3 data-i18n="donate.scanTitle">Scanner pour donner</h3>
+                        <p data-i18n="donate.scanText">Pointez l'appareil photo de votre téléphone vers ce code. Il ouvre cette page pour choisir votre don et payer avec PayPal ou Zelle.</p>
                     </div>
                 </div>
             </div>
@@ -466,8 +433,8 @@
     <!-- ============================================ -->
     <section id="contact" class="contact-section">
         <div class="container">
-            <h2 class="section-title">Get In Touch</h2>
-            <p class="section-subtitle">We'd love to hear from you</p>
+            <h2 class="section-title" data-i18n="contact.title">Contactez-nous</h2>
+            <p class="section-subtitle" data-i18n="contact.subtitle">Nous serions heureux de vous lire</p>
             
             <div class="contact-grid">
                 <!-- Contact Info -->
@@ -480,8 +447,9 @@
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="contact-details">
-                            <h3>Address</h3>
-                            <p>252 C/ Juana Saltitopa Esq. Federico Velasquez<br>Villa Maria, STO. DGO. D.N.</p>
+                            <h3 data-i18n="contact.address">Adresse</h3>
+                            <p class="pre-line" data-i18n="contact.addressText">252 C/ Juana Saltitopa Esq. Federico Velasquez
+Villa Maria, STO. DGO. D.N.</p>
                         </div>
                     </div>
                     
@@ -490,8 +458,9 @@
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="contact-details">
-                            <h3>Phone</h3>
-                            <p>829-377-1099<br>829-303-0241</p>
+                            <h3 data-i18n="contact.phone">Téléphone</h3>
+                            <p class="pre-line" data-i18n="contact.phoneText">829-377-1099
+829-303-0241</p>
                         </div>
                     </div>
                     
@@ -500,7 +469,7 @@
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="contact-details">
-                            <h3>Email</h3>
+                            <h3 data-i18n="contact.email">E-mail</h3>
                             <p>info@gracechurch.org</p>
                         </div>
                     </div>
@@ -510,8 +479,9 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="contact-details">
-                            <h3>Office Hours</h3>
-                            <p>Monday - Friday<br>9:00 AM - 5:00 PM</p>
+                            <h3 data-i18n="contact.hours">Heures de bureau</h3>
+                            <p class="pre-line" data-i18n="contact.hoursText">Lundi - vendredi
+9 h 00 - 17 h 00</p>
                         </div>
                     </div>
                     
@@ -530,34 +500,34 @@
                 <div class="contact-form-container">
                     <form id="contactForm" class="contact-form">
                         <div class="form-group">
-                            <label for="name">Full Name *</label>
+                            <label for="name" data-i18n="contact.fullName">Nom complet *</label>
                             <input type="text" id="name" name="name" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="email">Email Address *</label>
+                            <label for="email" data-i18n="contact.emailAddress">Adresse e-mail *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="phone">Phone Number</label>
+                            <label for="phone" data-i18n="contact.phoneNumber">Numéro de téléphone</label>
                             <input type="tel" id="phone" name="phone">
                         </div>
                         
                         <div class="form-group">
-                            <label for="subject">Subject *</label>
+                            <label for="subject" data-i18n="contact.subject">Sujet *</label>
                             <input type="text" id="subject" name="subject" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="message">Message *</label>
+                            <label for="message" data-i18n="contact.message">Message *</label>
                             <textarea id="message" name="message" rows="5" required></textarea>
                         </div>
                         
                         <button type="submit" class="btn btn-primary btn-submit">
-                            <span class="btn-text">Send Message</span>
+                            <span class="btn-text" data-i18n="contact.send">Envoyer le message</span>
                             <span class="btn-loading" style="display: none;">
-                                <i class="fas fa-spinner fa-spin"></i> Sending...
+                                <i class="fas fa-spinner fa-spin"></i> <span data-i18n="contact.sending">Envoi...</span>
                             </span>
                         </button>
                         
@@ -576,34 +546,34 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <h3>About Us</h3>
-                    <p>Tabernacle Amour Pour Le Calvaire - Assemblee De Dieu is a vibrant, faith-filled community dedicated to worshiping God and serving others.</p>
+                    <h3 data-i18n="footer.aboutTitle">À propos</h3>
+                    <p data-i18n="footer.aboutText">Le Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu est une communauté vivante, attachée à adorer Dieu et à servir les autres.</p>
                 </div>
                 
                 <div class="footer-col">
-                    <h3>Quick Links</h3>
+                    <h3 data-i18n="footer.linksTitle">Liens rapides</h3>
                     <ul class="footer-links">
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#sermons">Sermons</a></li>
-                        <li><a href="#events">Events</a></li>
-                        <li><a href="#ministries">Ministries</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#about" data-i18n="nav.about">À propos</a></li>
+                        <li><a href="#services" data-i18n="nav.services">Cultes</a></li>
+                        <li><a href="#sermons" data-i18n="nav.sermons">Prédications</a></li>
+                        <li><a href="#events" data-i18n="nav.events">Événements</a></li>
+                        <li><a href="#ministries" data-i18n="nav.ministries">Ministères</a></li>
+                        <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-col">
-                    <h3>Service Times</h3>
+                    <h3 data-i18n="footer.timesTitle">Horaires des cultes</h3>
                     <ul class="footer-links">
-                        <li>Tuesday: 7:00 PM (Bible Study)</li>
-                        <li>Wednesday: 7:00 AM (Fasting & Prayer)</li>
-                        <li>Friday: 7:00 PM (Prayer Service)</li>
-                        <li>Sunday: 7:30 AM, 9:30 AM, 4:00 PM, 7:00 PM</li>
+                        <li data-i18n="footer.tuesday">Mardi : 19 h 00 (étude biblique)</li>
+                        <li data-i18n="footer.wednesday">Mercredi : 7 h 00 (jeûne et prière)</li>
+                        <li data-i18n="footer.friday">Vendredi : 19 h 00 (culte de prière)</li>
+                        <li data-i18n="footer.sunday">Dimanche : 7 h 30, 9 h 30, 16 h 00, 19 h 00</li>
                     </ul>
                 </div>
                 
                 <div class="footer-col">
-                    <h3>Connect With Us</h3>
+                    <h3 data-i18n="footer.connect">Restons en contact</h3>
                     <div class="footer-social">
                         <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
@@ -617,8 +587,8 @@
                 <!-- ============================================ -->
                 <!-- UPDATE COPYRIGHT WITH CHURCH NAME -->
                 <!-- ============================================ -->
-                <p>&copy; 2024 Tabernacle Amour Pour Le Calvaire - Assemblee De Dieu. All rights reserved.</p>
-                <p>Built with love and faith</p>
+                <p data-i18n="footer.copyright">© 2024 Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu. Tous droits réservés.</p>
+                <p data-i18n="footer.built">Fait avec amour et foi</p>
             </div>
         </div>
     </footer>
@@ -629,14 +599,14 @@
     </button>
 
     <!-- Scripts -->
-    <script src="js/countdown.js"></script>
-    <script src="js/sermons.js"></script>
-    <script src="js/events.js"></script>
-    <script src="js/donate.js?v=6"></script>
+    <script src="js/countdown.js?v=2"></script>
+    <script src="js/sermons.js?v=2"></script>
+    <script src="js/events.js?v=2"></script>
+    <script src="js/donate.js?v=7"></script>
     <script src="js/ministry-catalog.js?v=5"></script>
-    <script src="js/ministries.js?v=5"></script>
-    <script src="js/contact.js"></script>
-    <script src="js/i18n.js"></script>
+    <script src="js/ministries.js?v=6"></script>
+    <script src="js/contact.js?v=2"></script>
+    <script src="js/i18n.js?v=2"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
