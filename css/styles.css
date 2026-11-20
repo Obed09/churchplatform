@@ -1441,6 +1441,11 @@ ul {
     padding: var(--spacing-xl) 0;
 }
 
+.contact-details a {
+    color: inherit;
+    text-decoration: underline;
+}
+
 .contact-grid {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
