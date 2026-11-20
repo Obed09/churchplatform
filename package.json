@@ -1,0 +1,12 @@
+{
+  "name": "church-platform",
+  "private": true,
+  "description": "Translation tools for the public church website",
+  "scripts": {
+    "translate": "node scripts/translate.js",
+    "translate:check": "node scripts/translate.js --self-test"
+  },
+  "devDependencies": {
+    "@google-cloud/translate": "^10.3.0"
+  }
+}

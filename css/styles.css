@@ -216,20 +216,60 @@ ul {
 
 .nav-menu {
     display: flex;
-    gap: var(--spacing-md);
+    gap: 0.15rem;
     align-items: center;
 }
 
 .nav-link {
     color: var(--text-dark);
     font-weight: 500;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.55rem;
     border-radius: var(--radius-sm);
+    white-space: nowrap;
 }
 
 .nav-link:hover {
     color: var(--primary-color);
     background-color: var(--bg-light);
+}
+
+.nav-tools {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 0.75rem;
+}
+
+.lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.lang-btn {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-dark);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 0.35rem 0.45rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.lang-btn[aria-pressed="true"] {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+}
+
+.lang-btn:hover {
+    color: var(--primary-color);
+}
+
+.lang-btn[aria-pressed="true"]:hover {
+    color: var(--text-white);
 }
 
 .hamburger {
@@ -1705,6 +1745,11 @@ ul {
     
     .hamburger {
         display: flex;
+    }
+
+    .lang-btn {
+        padding: 0.3rem 0.35rem;
+        font-size: 0.7rem;
     }
     
     .hamburger.active span:nth-child(1) {

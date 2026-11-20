@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- ============================================ -->
     <!-- REPLACE WITH REAL CHURCH NAME IN TITLE -->
     <!-- ============================================ -->
-    <title>Tabernacle Amour Pour Le Calvaire - Assemblee De Dieu | Welcome Home</title>
-    <meta name="description" content="Join us for worship, community, and spiritual growth">
+    <title data-i18n="meta.title">Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu</title>
+    <meta name="description" data-i18n="meta.description" data-i18n-attr="content" content="Culte, communion et croissance spirituelle">
     
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,24 +23,32 @@
             <!-- REPLACE WITH REAL CHURCH LOGO -->
             <!-- ============================================ -->
             <div class="logo">
-                <img src="images/main logo withe BG.png" alt="Church Logo" class="logo-img">
+                <img src="images/main logo withe BG.png" alt="Logo de l'église" class="logo-img" data-i18n="nav.logoAlt" data-i18n-attr="alt">
             </div>
             
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#services" class="nav-link">Services</a></li>
-                <li><a href="#sermons" class="nav-link">Sermons</a></li>
-                <li><a href="#events" class="nav-link">Events</a></li>
-                <li><a href="#ministries" class="nav-link">Ministries</a></li>
-                <li><a href="#donate" class="nav-link">Donate</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="#home" class="nav-link" data-i18n="nav.home">Accueil</a></li>
+                <li><a href="#about" class="nav-link" data-i18n="nav.about">À propos</a></li>
+                <li><a href="#services" class="nav-link" data-i18n="nav.services">Cultes</a></li>
+                <li><a href="#sermons" class="nav-link" data-i18n="nav.sermons">Prédications</a></li>
+                <li><a href="#events" class="nav-link" data-i18n="nav.events">Événements</a></li>
+                <li><a href="#ministries" class="nav-link" data-i18n="nav.ministries">Ministères</a></li>
+                <li><a href="#donate" class="nav-link" data-i18n="nav.donate">Don</a></li>
+                <li><a href="#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
             </ul>
-            
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+
+            <div class="nav-tools">
+                <div class="lang-switcher" role="group" aria-label="Language">
+                    <button type="button" class="lang-btn" data-lang="fr" aria-pressed="true">FR</button>
+                    <button type="button" class="lang-btn" data-lang="es" aria-pressed="false">ES</button>
+                    <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+                    <button type="button" class="lang-btn" data-lang="ht" aria-pressed="false">HT</button>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
     </nav>
@@ -55,8 +63,8 @@
             <!-- ============================================ -->
             <!-- UPDATE CHURCH NAME AND TAGLINE HERE -->
             <!-- ============================================ -->
-            <h1 class="hero-title">Welcome to Tabernacle Amour Pour Le Calvaire - Assemblée De Dieu</h1>
-            <p class="hero-subtitle">A place where faith meets fellowship</p>
+            <h1 class="hero-title" data-i18n="hero.title">Bienvenue au Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">Un lieu où la foi rencontre la communion</p>
             
             <!-- ============================================ -->
             <!-- UPDATE SERVICE TIMES HERE -->
@@ -64,7 +72,7 @@
             <div class="hero-info">
                 <div class="service-time">
                     <i class="fas fa-clock"></i>
-                    <span>Sundays: 7:30 AM, 9:30 AM, 4:00 PM, 7:00 PM</span>
+                    <span data-i18n="hero.times">Dimanche : 7 h 30, 9 h 30, 16 h 00, 19 h 00</span>
                 </div>
             </div>
         </div>
@@ -628,6 +636,7 @@
     <script src="js/ministry-catalog.js?v=5"></script>
     <script src="js/ministries.js?v=5"></script>
     <script src="js/contact.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

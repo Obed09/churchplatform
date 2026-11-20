@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu",
+    "description": "Culto, comunión y crecimiento espiritual"
+  },
+  "nav": {
+    "logoAlt": "Logo de la iglesia",
+    "home": "Inicio",
+    "about": "Acerca de",
+    "services": "Cultos",
+    "sermons": "Sermones",
+    "events": "Eventos",
+    "ministries": "Ministerios",
+    "donate": "Donar",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Bienvenido al Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu",
+    "subtitle": "Un lugar donde la fe se encuentra con la comunión",
+    "times": "Domingos: 7:30 a. m., 9:30 a. m., 4:00 p. m., 7:00 p. m."
+  }
+}

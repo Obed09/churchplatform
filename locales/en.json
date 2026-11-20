@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Tabernacle Amour Pour Le Calvaire - Assemblée De Dieu | Welcome Home",
+    "description": "Join us for worship, community, and spiritual growth"
+  },
+  "nav": {
+    "logoAlt": "Church Logo",
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "sermons": "Sermons",
+    "events": "Events",
+    "ministries": "Ministries",
+    "donate": "Donate",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Welcome to Tabernacle Amour Pour Le Calvaire - Assemblée De Dieu",
+    "subtitle": "A place where faith meets fellowship",
+    "times": "Sundays: 7:30 AM, 9:30 AM, 4:00 PM, 7:00 PM"
+  }
+}

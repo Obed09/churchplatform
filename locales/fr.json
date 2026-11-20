@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu",
+    "description": "Culte, communion et croissance spirituelle"
+  },
+  "nav": {
+    "logoAlt": "Logo de l'église",
+    "home": "Accueil",
+    "about": "À propos",
+    "services": "Cultes",
+    "sermons": "Prédications",
+    "events": "Événements",
+    "ministries": "Ministères",
+    "donate": "Don",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Bienvenue au Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu",
+    "subtitle": "Un lieu où la foi rencontre la communion",
+    "times": "Dimanche : 7 h 30, 9 h 30, 16 h 00, 19 h 00"
+  }
+}

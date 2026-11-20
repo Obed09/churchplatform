@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu",
+    "description": "Adorasyon, kominyon, ak kwasans espirityèl"
+  },
+  "nav": {
+    "logoAlt": "Logo legliz la",
+    "home": "Akèy",
+    "about": "Sou nou",
+    "services": "Sèvis",
+    "sermons": "Prèch",
+    "events": "Evènman",
+    "ministries": "Ministè",
+    "donate": "Don",
+    "contact": "Kontak"
+  },
+  "hero": {
+    "title": "Byenveni nan Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu",
+    "subtitle": "Yon kote lafwa rankontre kominyon",
+    "times": "Dimanch: 7:30 a.m., 9:30 a.m., 4:00 p.m., 7:00 p.m."
+  }
+}
