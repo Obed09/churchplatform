@@ -23,7 +23,7 @@ CREATE TABLE staff (
     phone TEXT,
     role TEXT NOT NULL,
     department TEXT NOT NULL,
-    start_date DATE NOT NULL,
+    start_date DATE,
     employment_type TEXT DEFAULT 'Full-time',
     bio TEXT,
     photo TEXT,

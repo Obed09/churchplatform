@@ -128,7 +128,7 @@ async function saveStaff(staffMember) {
             phone: staffMember.phone,
             role: staffMember.role,
             department: staffMember.department,
-            start_date: staffMember.startDate,
+            start_date: staffMember.startDate || null,
             employment_type: staffMember.employmentType,
             bio: staffMember.bio,
             photo: staffMember.photo
