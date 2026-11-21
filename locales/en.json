@@ -84,7 +84,50 @@
     "title": "Our Ministries",
     "subtitle": "Find your place to serve and grow",
     "empty": "Ministries will be listed here.",
-    "ledBy": "Led by {name}"
+    "ledBy": "Led by {name}",
+    "cards": {
+      "children": {
+        "name": "Children's Ministry",
+        "description": "Nurturing young hearts to know and love Jesus through engaging lessons and activities."
+      },
+      "youth": {
+        "name": "Youth Ministry",
+        "description": "Empowering teens to grow in faith, build authentic friendships, and impact their world."
+      },
+      "worship": {
+        "name": "Worship Ministry",
+        "description": "Leading God's people in spirit-filled worship that honors Him and transforms lives."
+      },
+      "prayer": {
+        "name": "Prayer Ministry",
+        "description": "Interceding for our church family and community, believing God answers prayer."
+      },
+      "outreach": {
+        "name": "Outreach Ministry",
+        "description": "Serving our community with the love of Christ through practical acts of kindness."
+      },
+      "men": {
+        "name": "Men's Ministry",
+        "description": "Building godly men through fellowship, accountability, and biblical teaching."
+      },
+      "women": {
+        "name": "Women's Ministry",
+        "description": "Creating a space for women to grow spiritually and support one another in life's journey."
+      },
+      "seniors": {
+        "name": "Seniors Ministry",
+        "description": "Honoring and caring for our senior saints through fellowship and meaningful connections."
+      },
+      "pastoral": {
+        "name": "Pastoral Ministry"
+      },
+      "intercessory": {
+        "name": "Intercessory Ministry"
+      },
+      "education": {
+        "name": "Christian Education Ministry"
+      }
+    }
   },
   "donate": {
     "title": "Donate to Tabernacle Amour Pour Le Calvaire",

@@ -84,7 +84,50 @@
     "title": "Nuestros ministerios",
     "subtitle": "Encuentre su lugar para servir y crecer",
     "empty": "Los ministerios aparecerán aquí.",
-    "ledBy": "Dirigido por {name}"
+    "ledBy": "Dirigido por {name}",
+    "cards": {
+      "children": {
+        "name": "Ministerio de niños",
+        "description": "Nutrir el corazón de los niños para que conozcan y amen a Jesús a través de lecciones y actividades que los involucren."
+      },
+      "youth": {
+        "name": "Ministerio de jóvenes",
+        "description": "Ayudar a los adolescentes a crecer en la fe, formar amistades auténticas y dejar huella en su mundo."
+      },
+      "worship": {
+        "name": "Ministerio de alabanza",
+        "description": "Guiar al pueblo de Dios en una alabanza llena del Espíritu que lo honra y transforma vidas."
+      },
+      "prayer": {
+        "name": "Ministerio de oración",
+        "description": "Interceder por nuestra familia de la iglesia y la comunidad, creyendo que Dios responde a la oración."
+      },
+      "outreach": {
+        "name": "Ministerio de alcance",
+        "description": "Servir a nuestra comunidad con el amor de Cristo mediante actos concretos de bondad."
+      },
+      "men": {
+        "name": "Ministerio de hombres",
+        "description": "Formar hombres conforme a Dios por medio del compañerismo, la responsabilidad mutua y la enseñanza bíblica."
+      },
+      "women": {
+        "name": "Ministerio de mujeres",
+        "description": "Crear un espacio para que las mujeres crezcan espiritualmente y se apoyen unas a otras en el camino de la vida."
+      },
+      "seniors": {
+        "name": "Ministerio de adultos mayores",
+        "description": "Honrar y cuidar a nuestros hermanos mayores por medio del compañerismo y vínculos significativos."
+      },
+      "pastoral": {
+        "name": "Ministerio pastoral"
+      },
+      "intercessory": {
+        "name": "Ministerio de intercesión"
+      },
+      "education": {
+        "name": "Ministerio de educación cristiana"
+      }
+    }
   },
   "donate": {
     "title": "Done a Tabernacle Amour Pour Le Calvaire",

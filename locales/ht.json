@@ -84,7 +84,50 @@
     "title": "Ministè nou yo",
     "subtitle": "Jwenn kote ou pou sèvi epi grandi",
     "empty": "Ministè yo ap parèt isit la.",
-    "ledBy": "Dirije pa {name}"
+    "ledBy": "Dirije pa {name}",
+    "cards": {
+      "children": {
+        "name": "Ministè timoun",
+        "description": "Nouri kè timoun yo pou yo konnen epi renmen Jezi atravè leson ak aktivite ki angaje yo."
+      },
+      "youth": {
+        "name": "Ministè jèn",
+        "description": "Ede jèn yo grandi nan lafwa, bati vrè zanmitay, epi fè yon diferans nan mond yo."
+      },
+      "worship": {
+        "name": "Ministè louanj",
+        "description": "Kondi pèp Bondye a nan yon louanj ki plen ak Lespri a, ki onore Li epi ki transfòme lavi."
+      },
+      "prayer": {
+        "name": "Ministè lapriyè",
+        "description": "Fè entèsesyon pou fanmi legliz la ak kominote a, paske nou kwè Bondye reponn lapriyè."
+      },
+      "outreach": {
+        "name": "Ministè ouvèti",
+        "description": "Sèvi kominote nou an ak lanmou Kris la atravè bon aksyon konkrè."
+      },
+      "men": {
+        "name": "Ministè gason",
+        "description": "Fòme gason selon Bondye atravè fratènite, responsablite youn pou lòt, ak ansèyman biblik."
+      },
+      "women": {
+        "name": "Ministè fanm",
+        "description": "Bay fanm yo yon espas pou yo grandi nan lespri epi soutni youn lòt sou chemen lavi a."
+      },
+      "seniors": {
+        "name": "Ministè granmoun aje",
+        "description": "Onore epi pran swen granmoun lafwa yo atravè fratènite ak lyen ki gen sans."
+      },
+      "pastoral": {
+        "name": "Ministè pastoral"
+      },
+      "intercessory": {
+        "name": "Ministè entèsesyon"
+      },
+      "education": {
+        "name": "Ministè edikasyon kretyen"
+      }
+    }
   },
   "donate": {
     "title": "Fè yon don pou Tabernacle Amour Pour Le Calvaire",

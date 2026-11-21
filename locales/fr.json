@@ -84,7 +84,50 @@
     "title": "Nos ministères",
     "subtitle": "Trouvez votre place pour servir et grandir",
     "empty": "Les ministères seront affichés ici.",
-    "ledBy": "Dirigé par {name}"
+    "ledBy": "Dirigé par {name}",
+    "cards": {
+      "children": {
+        "name": "Ministère des enfants",
+        "description": "Nourrir le cœur des enfants afin qu'ils connaissent et aiment Jésus à travers des leçons et des activités qui les engagent."
+      },
+      "youth": {
+        "name": "Ministère des jeunes",
+        "description": "Aider les adolescents à grandir dans la foi, à bâtir de vraies amitiés et à avoir un impact dans leur monde."
+      },
+      "worship": {
+        "name": "Ministère de louange",
+        "description": "Conduire le peuple de Dieu dans une louange remplie de l'Esprit, qui l'honore et transforme des vies."
+      },
+      "prayer": {
+        "name": "Ministère de prière",
+        "description": "Intercéder pour notre famille d'église et notre communauté, en croyant que Dieu répond à la prière."
+      },
+      "outreach": {
+        "name": "Ministère d'entraide",
+        "description": "Servir notre communauté avec l'amour du Christ par des actes concrets de bonté."
+      },
+      "men": {
+        "name": "Ministère des hommes",
+        "description": "Former des hommes selon Dieu par la communion fraternelle, la responsabilité mutuelle et l'enseignement biblique."
+      },
+      "women": {
+        "name": "Ministère des femmes",
+        "description": "Offrir aux femmes un lieu pour grandir spirituellement et se soutenir les unes les autres tout au long de la vie."
+      },
+      "seniors": {
+        "name": "Ministère des aînés",
+        "description": "Honorer et prendre soin de nos aînés dans la foi par la communion fraternelle et des liens vrais."
+      },
+      "pastoral": {
+        "name": "Ministère pastoral"
+      },
+      "intercessory": {
+        "name": "Ministère d'intercession"
+      },
+      "education": {
+        "name": "Ministère d'éducation chrétienne"
+      }
+    }
   },
   "donate": {
     "title": "Faire un don au Tabernacle Amour Pour Le Calvaire",
