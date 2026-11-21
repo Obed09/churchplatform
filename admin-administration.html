@@ -6,6 +6,44 @@
     <title>Administration - Church Management</title>
     <link rel="stylesheet" href="css/admin-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #staffModal .modal-content { min-height: 0; }
+        #staffModal .modal-actions {
+            position: sticky;
+            bottom: 0;
+            z-index: 2;
+            margin: 0 -2rem -2rem;
+            padding: 1rem 2rem 1.5rem;
+            background: #fff;
+        }
+        #staffFormError {
+            display: none;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            color: #9b2c2c;
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+        }
+        #staffFormError.visible { display: block; }
+        .notification {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            z-index: 4000;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            max-width: 24rem;
+            padding: 0.9rem 1rem;
+            color: #fff;
+            background: #2d3748;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .notification-success { background: #276749; }
+        .notification-error { background: #9b2c2c; }
+    </style>
 </head>
 <body class="admin-body">
     <!-- Sidebar Navigation -->
@@ -373,6 +411,7 @@
             <form id="staffForm" class="modal-form">
                 <input type="hidden" id="staffId">
                 <input type="hidden" id="staffPhotoData">
+                <p id="staffFormError" role="alert"></p>
                 
                 <!-- Photo Upload Section -->
                 <div class="photo-upload-section">

@@ -9,14 +9,14 @@ let _cachedMembers = [];
 
 // Initialize administration page
 document.addEventListener('DOMContentLoaded', async function() {
+    initializeMemberForm();
+    initializeStaffForm();
+    initializeDonationForm();
+
     await loadAdminStats();
     await renderMembersTable();
     await renderStaffGrid();
     await renderDonationsTable();
-
-    initializeMemberForm();
-    initializeStaffForm();
-    initializeDonationForm();
 });
 
 // ============================================
@@ -256,6 +256,27 @@ async function renderStaffGrid() {
     }
 }
 
+function showStaffFormError(message) {
+    const error = document.getElementById('staffFormError');
+    if (!error) return;
+    error.textContent = message || '';
+    error.classList.toggle('visible', Boolean(message));
+}
+
+function staffSaveMessage(err) {
+    const raw = (err && (err.message || err.details)) || '';
+    if (err && (err.code === '23505' || /duplicate key/i.test(raw))) {
+        return 'That email is already used by another staff member. Use a different email.';
+    }
+    if (/invalid input syntax for type date/i.test(raw)) {
+        return 'The start date could not be saved. Clear it, or pick a date from the calendar.';
+    }
+    if (/Failed to fetch|NetworkError|Load failed/i.test(raw)) {
+        return 'The database could not be reached. Check the connection and try again.';
+    }
+    return raw ? 'Could not save staff: ' + raw : 'Could not save staff.';
+}
+
 function openStaffModal() {
     const form = document.getElementById('staffForm');
     if (form) {
@@ -266,6 +287,7 @@ function openStaffModal() {
         document.getElementById('staffModalTitle').textContent = 'Add New Staff';
         document.getElementById('staffSubmitBtn').textContent  = 'Add Staff';
     }
+    showStaffFormError('');
     openModal('staffModal');
 }
 
@@ -290,7 +312,11 @@ function initializeStaffForm() {
         };
 
         try {
-            await saveStaff(staffMember);
+            showStaffFormError('');
+            const saved = await saveStaff(staffMember);
+            if (!saved || !saved.id) {
+                throw new Error('The database did not keep this staff member.');
+            }
             showNotification(`${staffMember.name} ${staffId ? 'updated' : 'added'} successfully!`, 'success');
             closeModal('staffModal');
             form.reset();
@@ -300,7 +326,9 @@ function initializeStaffForm() {
             await loadAdminStats();
         } catch (err) {
             console.error('Error saving staff:', err);
-            showNotification('Error saving staff — check the console for details', 'error');
+            const message = staffSaveMessage(err);
+            showStaffFormError(message);
+            showNotification(message, 'error');
         }
     });
 }
@@ -333,6 +361,7 @@ function editStaff(id) {
 
     document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
     document.getElementById('staffSubmitBtn').textContent  = 'Update Staff';
+    showStaffFormError('');
     openModal('staffModal');
 }
 
