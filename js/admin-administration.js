@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     initializeMemberForm();
     initializeStaffForm();
     initializeDonationForm();
+    loadDepartmentOptions();
 
     await loadAdminStats();
     await renderMembersTable();
@@ -256,6 +257,102 @@ async function renderStaffGrid() {
     }
 }
 
+const DEFAULT_DEPARTMENTS = [
+    'Pastoral Team',
+    'Finance',
+    'Administration',
+    'Worship',
+    "Children's Ministry",
+    'Youth Ministry',
+    'Communications',
+    'Facilities',
+    'Events'
+];
+let departmentLoad = 0;
+
+async function loadDepartmentOptions(preferred) {
+    const select = document.getElementById('staffDepartment');
+    if (!select) return;
+    const token = ++departmentLoad;
+    const names = new Set(DEFAULT_DEPARTMENTS);
+    try {
+        const { data, error } = await supabase.from('departments').select('name').order('name');
+        if (error) throw error;
+        (data || []).forEach(row => {
+            const name = (row.name || '').trim();
+            if (name) names.add(name);
+        });
+    } catch (err) {
+        console.error('Could not load departments:', err);
+    }
+    if (token !== departmentLoad) return;
+    const selected = preferred || select.value;
+    if (selected) names.add(selected);
+    const sorted = Array.from(names).sort((a, b) => a.localeCompare(b));
+    select.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Select Department';
+    placeholder.defaultSelected = true;
+    select.appendChild(placeholder);
+    sorted.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+    select.value = sorted.includes(selected) ? selected : '';
+}
+
+function showAddDepartmentRow(show) {
+    const row = document.getElementById('addDepartmentRow');
+    const toggle = document.getElementById('showAddDepartment');
+    if (row) row.hidden = !show;
+    if (toggle) toggle.hidden = show;
+    if (show) {
+        const input = document.getElementById('newDepartmentName');
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
+    }
+}
+
+async function addDepartment() {
+    const input = document.getElementById('newDepartmentName');
+    const name = (input && input.value || '').trim().replace(/\s+/g, ' ');
+    if (!name) {
+        showStaffFormError('Type a department name first.');
+        return;
+    }
+    const select = document.getElementById('staffDepartment');
+    const exists = Array.from(select.options).some(option => option.value.toLowerCase() === name.toLowerCase());
+    if (exists) {
+        select.value = Array.from(select.options).find(option => option.value.toLowerCase() === name.toLowerCase()).value;
+        showAddDepartmentRow(false);
+        showStaffFormError('');
+        return;
+    }
+    try {
+        const { error } = await supabase.from('departments').insert([{ name }]);
+        if (error) throw error;
+        await loadDepartmentOptions(name);
+        showAddDepartmentRow(false);
+        showStaffFormError('');
+        showNotification(name + ' added to the department list.', 'success');
+    } catch (err) {
+        console.error('Could not add department:', err);
+        const raw = (err && err.message) || '';
+        if (err && (err.code === '23505' || /duplicate key/i.test(raw))) {
+            await loadDepartmentOptions(name);
+            showAddDepartmentRow(false);
+            showStaffFormError('');
+            return;
+        }
+        showStaffFormError('Could not add that department. ' + raw);
+    }
+}
+
 function showStaffFormError(message) {
     const error = document.getElementById('staffFormError');
     if (!error) return;
@@ -288,12 +385,30 @@ function openStaffModal() {
         document.getElementById('staffSubmitBtn').textContent  = 'Add Staff';
     }
     showStaffFormError('');
+    showAddDepartmentRow(false);
     openModal('staffModal');
 }
 
 function initializeStaffForm() {
     const form = document.getElementById('staffForm');
     if (!form) return;
+
+    const showButton = document.getElementById('showAddDepartment');
+    const saveButton = document.getElementById('saveDepartmentBtn');
+    const cancelButton = document.getElementById('cancelDepartmentBtn');
+    const nameInput = document.getElementById('newDepartmentName');
+    if (showButton) showButton.addEventListener('click', () => showAddDepartmentRow(true));
+    if (cancelButton) cancelButton.addEventListener('click', () => {
+        showAddDepartmentRow(false);
+        showStaffFormError('');
+    });
+    if (saveButton) saveButton.addEventListener('click', addDepartment);
+    if (nameInput) nameInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addDepartment();
+        }
+    });
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -333,7 +448,7 @@ function initializeStaffForm() {
     });
 }
 
-function editStaff(id) {
+async function editStaff(id) {
     // Use cache for instant response — modal opens immediately, no network call
     const db = _cachedStaff.find(s => s.id === id);
     if (!db) { showNotification('Staff member not found — try refreshing the page', 'error'); return; }
@@ -344,7 +459,7 @@ function editStaff(id) {
     document.getElementById('staffEmail').value          = s.email;
     document.getElementById('staffPhone').value          = s.phone || '';
     document.getElementById('staffRole').value           = s.role;
-    document.getElementById('staffDepartment').value     = s.department;
+    await loadDepartmentOptions(s.department);
     document.getElementById('staffStartDate').value      = s.startDate || '';
     document.getElementById('staffEmploymentType').value = s.employmentType || 'full-time';
     document.getElementById('staffBio').value            = s.bio || '';
@@ -362,6 +477,7 @@ function editStaff(id) {
     document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
     document.getElementById('staffSubmitBtn').textContent  = 'Update Staff';
     showStaffFormError('');
+    showAddDepartmentRow(false);
     openModal('staffModal');
 }
 

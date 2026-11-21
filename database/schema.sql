@@ -51,12 +51,32 @@ CREATE TABLE donations (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Department names for the staff form. New names can be added from Administration.
+CREATE TABLE departments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO departments (name) VALUES
+    ('Pastoral Team'),
+    ('Finance'),
+    ('Administration'),
+    ('Worship'),
+    ('Children''s Ministry'),
+    ('Youth Ministry'),
+    ('Communications'),
+    ('Facilities'),
+    ('Events');
+
 -- Enable Row Level Security
 ALTER TABLE members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE staff ENABLE ROW LEVEL SECURITY;
 ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE departments ENABLE ROW LEVEL SECURITY;
 
 -- Create Policies (Allow all operations for now)
 CREATE POLICY "Allow all" ON members FOR ALL USING (true);
 CREATE POLICY "Allow all" ON staff FOR ALL USING (true);
 CREATE POLICY "Allow all" ON donations FOR ALL USING (true);
+CREATE POLICY "Allow all" ON departments FOR ALL USING (true) WITH CHECK (true);

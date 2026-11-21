@@ -26,6 +26,15 @@
             border-radius: 8px;
         }
         #staffFormError.visible { display: block; }
+        .department-add { margin-top: 0.5rem; }
+        #addDepartmentRow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        #addDepartmentRow[hidden] { display: none; }
+        #addDepartmentRow input { flex: 1; min-width: 10rem; margin: 0; }
         .notification {
             position: fixed;
             right: 1.5rem;
@@ -471,6 +480,14 @@
                             <option value="Facilities">Facilities</option>
                             <option value="Events">Events</option>
                         </select>
+                        <div class="department-add">
+                            <button type="button" class="btn-secondary btn-sm" id="showAddDepartment">Add department</button>
+                            <div id="addDepartmentRow" hidden>
+                                <input type="text" id="newDepartmentName" placeholder="New department name" maxlength="80">
+                                <button type="button" class="btn-primary btn-sm" id="saveDepartmentBtn">Add</button>
+                                <button type="button" class="btn-secondary btn-sm" id="cancelDepartmentBtn">Cancel</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
