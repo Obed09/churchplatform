@@ -15,6 +15,10 @@ const ZELLE_CONFIG = {
     copyValue: '5166437811'
 };
 
+const TRANSFER_CONFIG = {
+    recipient: 'Patricia Jean Fabien'
+};
+
 // USD stays the default because this PayPal account charges in dollars.
 // DOP is offered as Dominican pesos (shown as RD$).
 const CURRENCIES = {
@@ -67,6 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const zelleSummary = document.getElementById('zelleSummary');
     const zelleCopyBtn = document.getElementById('zelleCopyBtn');
     const zelleCopyStatus = document.getElementById('zelleCopyStatus');
+    const transferPanel = document.getElementById('transferPanel');
+    const transferSummary = document.getElementById('transferSummary');
+    const transferCopyBtn = document.getElementById('transferCopyBtn');
+    const transferCopyStatus = document.getElementById('transferCopyStatus');
     const dopCurrencyButton = document.querySelector('#currencyToggle [data-currency="DOP"]');
     
     // ============================================
@@ -108,14 +116,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 otherPurposeInput.focus();
             }
             clearError();
-            updateZelleSummary();
+            updateMethodSummaries();
         });
     });
 
     if (otherPurposeInput) {
         otherPurposeInput.addEventListener('input', function() {
             clearError();
-            updateZelleSummary();
+            updateMethodSummaries();
         });
     }
 
@@ -146,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedAmount = parseAmount(this.dataset.amount);
             customAmountInput.value = '';
             clearError();
-            updateZelleSummary();
+            updateMethodSummaries();
         });
     });
     
@@ -157,13 +165,13 @@ document.addEventListener('DOMContentLoaded', function() {
         amountButtons.forEach(btn => btn.classList.remove('selected'));
         selectedAmount = parseAmount(this.value);
         clearError();
-        updateZelleSummary();
+        updateMethodSummaries();
     });
 
     payMethodButtons.forEach(button => {
         button.addEventListener('click', function() {
             setPayMethod(this.dataset.method);
-            if (this.dataset.method !== 'zelle') {
+            if (this.dataset.method === 'paypal') {
                 beginPayPalCheckout();
             }
         });
@@ -173,12 +181,16 @@ document.addEventListener('DOMContentLoaded', function() {
         zelleCopyBtn.addEventListener('click', copyZelleNumber);
     }
 
+    if (transferCopyBtn) {
+        transferCopyBtn.addEventListener('click', copyTransferName);
+    }
+
     document.addEventListener('site-language', function () {
         const currency = CURRENCIES[selectedCurrency];
         amountLabel.textContent = tr(selectedCurrency === 'DOP' ? 'donate.amountDop' : 'donate.amountUsd', currency.amountHeading);
         customAmountInput.placeholder = tr('donate.customAmount', currency.placeholder);
         donationCurrencyNote.textContent = tr(selectedCurrency === 'DOP' ? 'donate.noteDop' : 'donate.noteUsd', currency.note);
-        updateZelleSummary();
+        updateMethodSummaries();
     });
     
     // ============================================
@@ -246,11 +258,11 @@ document.addEventListener('DOMContentLoaded', function() {
         customAmountInput.placeholder = tr('donate.customAmount', currency.placeholder);
         customAmountGroup.classList.toggle('is-dop', currencyKey === 'DOP');
         donationCurrencyNote.textContent = tr(currencyKey === 'DOP' ? 'donate.noteDop' : 'donate.noteUsd', currency.note);
-        updateZelleSummary();
+        updateMethodSummaries();
     }
 
     function setPayMethod(method) {
-        selectedMethod = method === 'zelle' ? 'zelle' : 'paypal';
+        selectedMethod = method === 'zelle' || method === 'transfer' ? method : 'paypal';
         const isZelle = selectedMethod === 'zelle';
 
         payMethodButtons.forEach(button => {
@@ -259,8 +271,11 @@ document.addEventListener('DOMContentLoaded', function() {
             button.setAttribute('aria-pressed', active ? 'true' : 'false');
         });
 
-        paypalPay.hidden = isZelle;
+        paypalPay.hidden = selectedMethod !== 'paypal';
         zellePanel.hidden = !isZelle;
+        if (transferPanel) {
+            transferPanel.hidden = selectedMethod !== 'transfer';
+        }
         dopCurrencyButton.disabled = isZelle;
 
         if (isZelle && selectedCurrency !== 'USD') {
@@ -273,7 +288,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         clearError();
+        updateMethodSummaries();
+    }
+
+    function updateMethodSummaries() {
         updateZelleSummary();
+        updateTransferSummary();
     }
 
     function updateZelleSummary() {
@@ -295,6 +315,69 @@ document.addEventListener('DOMContentLoaded', function() {
             zelleSummary.textContent = tr('donate.summaryAmount', 'Send ' + amountText + '. Choose what this gift is for, and put that in the Zelle memo.', { amount: amountText });
         } else {
             zelleSummary.textContent = tr('donate.summaryEmpty', 'Choose a purpose and amount above, then send that gift to this number.');
+        }
+    }
+
+    function updateTransferSummary() {
+        if (!transferSummary) {
+            return;
+        }
+
+        const purpose = getPurposeLabel();
+        const currency = CURRENCIES[selectedCurrency];
+        const amountText = selectedAmount
+            ? currency.symbol + selectedAmount.toLocaleString('en-US')
+            : '';
+        const recipient = TRANSFER_CONFIG.recipient;
+
+        if (purpose && amountText) {
+            transferSummary.textContent = tr('donate.summaryGift', 'Send ' + amountText + ' for ' + purpose + '.', { amount: amountText, purpose: purpose });
+        } else if (purpose) {
+            transferSummary.textContent = tr('donate.transferSummaryPurpose', 'This gift is for ' + purpose + '. Choose an amount, then send it by transfer to ' + recipient + '.', { purpose: purpose, name: recipient });
+        } else if (amountText) {
+            transferSummary.textContent = tr('donate.transferSummaryAmount', 'Send ' + amountText + '. Choose what this gift is for, and put that in the transfer note.', { amount: amountText });
+        } else {
+            transferSummary.textContent = tr('donate.transferSummaryEmpty', 'Choose a purpose and amount above, then send that gift to ' + recipient + '.', { name: recipient });
+        }
+    }
+
+    function copyTransferName() {
+        const text = TRANSFER_CONFIG.recipient;
+
+        function showCopied() {
+            transferCopyStatus.textContent = tr('donate.transferCopied', 'Copied ' + text + '. Paste it into the transfer.', { name: text });
+        }
+
+        function fallbackCopy() {
+            const field = document.createElement('textarea');
+            field.value = text;
+            field.setAttribute('readonly', '');
+            field.style.position = 'fixed';
+            field.style.left = '-9999px';
+            document.body.appendChild(field);
+            field.select();
+            let copied = false;
+            try {
+                copied = document.execCommand('copy');
+            } catch (err) {
+                copied = false;
+            }
+            document.body.removeChild(field);
+            if (copied) {
+                showCopied();
+            } else {
+                transferCopyStatus.textContent = tr('donate.transferCopyFallback', 'Copy this name into the transfer: ' + text, { name: text });
+            }
+        }
+
+        if (!transferCopyStatus) {
+            return;
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(showCopied, fallbackCopy);
+        } else {
+            fallbackCopy();
         }
     }
 
@@ -336,8 +419,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function beginPayPalCheckout() {
         if (selectedMethod === 'zelle') {
-            updateZelleSummary();
+            updateMethodSummaries();
             zellePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+        }
+
+        if (selectedMethod === 'transfer') {
+            updateTransferSummary();
+            if (transferPanel) {
+                transferPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
             return;
         }
 

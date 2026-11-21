@@ -1209,10 +1209,10 @@ ul {
     margin-right: 0.5rem;
 }
 
-/* Pay with PayPal or Zelle */
+/* Pay with PayPal, Zelle, or money transfer */
 .pay-methods {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
     margin-bottom: var(--spacing-md);
 }
@@ -1228,8 +1228,10 @@ ul {
     border-radius: var(--radius-md);
     font-family: inherit;
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 1.02rem;
     letter-spacing: -0.02em;
+    text-align: center;
+    line-height: 1.15;
     cursor: pointer;
     transition: var(--transition);
 }
@@ -1249,11 +1251,40 @@ ul {
     color: #ffffff;
 }
 
-.zelle-mark {
+.zelle-mark,
+.transfer-mark {
     width: 1.85rem;
     height: 1.85rem;
     fill: currentColor;
     flex-shrink: 0;
+}
+
+.pay-method-transfer {
+    background: #0f6e56;
+    color: #ffffff;
+}
+
+.transfer-panel .zelle-brand,
+.transfer-panel .btn-zelle-copy {
+    background: #0f6e56;
+}
+
+.transfer-panel .btn-zelle-copy:hover {
+    background: #0c5a47;
+}
+
+.transfer-panel .zelle-phone-label {
+    color: #0f6e56;
+}
+
+.transfer-panel .zelle-brand .transfer-mark {
+    width: 2.8rem;
+    height: 2.8rem;
+}
+
+.transfer-recipient {
+    font-size: 1.45rem;
+    line-height: 1.25;
 }
 
 .pay-method.active {
@@ -1904,7 +1935,11 @@ ul {
     }
 
     .zelle-brand-name {
-        font-size: 1.7rem;
+        font-size: 1.55rem;
+    }
+
+    .transfer-recipient {
+        font-size: 1.25rem;
     }
     
     .donate-container {

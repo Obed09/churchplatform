@@ -9,7 +9,7 @@
     <title data-i18n="meta.title">Tabernacle Amour Pour Le Calvaire - Assemblée de Dieu</title>
     <meta name="description" data-i18n="meta.description" data-i18n-attr="content" content="Culte, communion et croissance spirituelle">
     
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -385,6 +385,12 @@
                         </svg>
                         <span>Zelle</span>
                     </button>
+                    <button type="button" class="pay-method pay-method-transfer" data-method="transfer" aria-pressed="false">
+                        <svg class="transfer-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path fill-rule="evenodd" d="M2.2 8.2h10.4c.8 0 1.5.7 1.5 1.5v.4h2.2l-1.7-1.8 1.6-1.5 3.8 4-3.8 4-1.6-1.5 1.7-1.8h-2.2v.7c0 .8-.7 1.5-1.5 1.5H2.2c-.8 0-1.5-.7-1.5-1.5V9.7c0-.8.7-1.5 1.5-1.5Zm5.2 1.7a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4Z"/>
+                        </svg>
+                        <span data-i18n="donate.transfer">Transfert</span>
+                    </button>
                 </div>
 
                 <div id="paypalPay">
@@ -426,13 +432,40 @@
                     <p class="zelle-confirm" data-i18n="donate.confirm">Votre banque affiche le nom inscrit sur ce compte Zelle avant que vous confirmiez le paiement.</p>
                 </div>
 
+                <div class="zelle-panel transfer-panel" id="transferPanel" hidden>
+                    <div class="zelle-brand">
+                        <svg class="transfer-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path fill-rule="evenodd" d="M2.2 8.2h10.4c.8 0 1.5.7 1.5 1.5v.4h2.2l-1.7-1.8 1.6-1.5 3.8 4-3.8 4-1.6-1.5 1.7-1.8h-2.2v.7c0 .8-.7 1.5-1.5 1.5H2.2c-.8 0-1.5-.7-1.5-1.5V9.7c0-.8.7-1.5 1.5-1.5Zm5.2 1.7a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4Z"/>
+                        </svg>
+                        <div>
+                            <p class="zelle-brand-kicker" data-i18n="donate.payWith">Payer avec</p>
+                            <p class="zelle-brand-name" data-i18n="donate.transferTitle">Transfert d'argent</p>
+                        </div>
+                    </div>
+                    <p class="zelle-lead" data-i18n="donate.transferLead">Envoyez ce don par transfert d'argent à Patricia Jean Fabien.</p>
+                    <p class="zelle-phone-label" data-i18n="donate.transferRecipient">Bénéficiaire</p>
+                    <p class="zelle-phone transfer-recipient" id="transferRecipient">Patricia Jean Fabien</p>
+                    <button type="button" class="btn-zelle-copy" id="transferCopyBtn">
+                        <i class="fas fa-copy" aria-hidden="true"></i> <span data-i18n="donate.transferCopy">Copier le nom</span>
+                    </button>
+                    <p class="zelle-copy-status" id="transferCopyStatus" role="status" aria-live="polite"></p>
+                    <p class="zelle-summary" id="transferSummary" data-i18n="donate.transferSummaryEmpty">Choisissez un motif et un montant ci-dessus, puis envoyez ce don à Patricia Jean Fabien.</p>
+                    <ol class="zelle-steps">
+                        <li data-i18n="donate.transferStep1">Ouvrez votre banque ou votre service de transfert d'argent.</li>
+                        <li data-i18n="donate.transferStep2">Envoyez le transfert à Patricia Jean Fabien.</li>
+                        <li data-i18n="donate.transferStep3">Saisissez le montant choisi ci-dessus.</li>
+                        <li data-i18n="donate.transferStep4">Indiquez le motif, par exemple Dîme ou Offrande, dans la note.</li>
+                    </ol>
+                    <p class="zelle-confirm" data-i18n="donate.transferConfirm">Le service affiche le nom Patricia Jean Fabien avant que vous confirmiez le transfert.</p>
+                </div>
+
                 <div class="donate-qr">
                     <a href="#donate" class="donate-qr-link">
                         <img src="images/donate-qr.png" width="200" height="200" alt="Code QR qui ouvre la section des dons" data-i18n="donate.qrAlt" data-i18n-attr="alt">
                     </a>
                     <div class="donate-qr-copy">
                         <h3 data-i18n="donate.scanTitle">Scanner pour donner</h3>
-                        <p data-i18n="donate.scanText">Pointez l'appareil photo de votre téléphone vers ce code. Il ouvre cette page pour choisir votre don et payer avec PayPal ou Zelle.</p>
+                        <p data-i18n="donate.scanText">Pointez l'appareil photo de votre téléphone vers ce code. Il ouvre cette page pour choisir votre don et payer avec PayPal, Zelle ou un transfert d'argent.</p>
                     </div>
                 </div>
             </div>
@@ -610,7 +643,7 @@ Villa Maria, STO. DGO. D.N.</p>
     <script src="js/countdown.js?v=2"></script>
     <script src="js/sermons.js?v=2"></script>
     <script src="js/events.js?v=2"></script>
-    <script src="js/donate.js?v=7"></script>
+    <script src="js/donate.js?v=8"></script>
     <script src="js/ministry-catalog.js?v=5"></script>
     <script src="js/ministries.js?v=6"></script>
     <script src="js/contact.js?v=2"></script>
